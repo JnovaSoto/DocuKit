@@ -1,0 +1,52 @@
+body{
+    background-color: rgb(255, 255, 255);
+}
+/*Stles for table and his childrens*/
+table {
+    table-layout:fixed ;
+    margin: 10px auto;
+    border-collapse: collapse;
+    width: 80%;
+}
+th,td {
+  padding: 0.6em;
+}
+tr{
+    border: 2px solid #3f5858;
+}
+tr:first-child{
+    background-color: #2a7e7e;
+    border-collapse: collapse;
+}
+.tagTable{
+    border: 5px solid black;
+}
+.tagTable th{
+    padding: 10px;
+}
+/*Styles for the Unique content button*/
+button{
+    background-color: #326164;
+    color: white;
+    padding: 10px 8px;
+    font-size: 16px;
+    gap: 5px;
+    align-items: center;
+    display: inline-flex;
+}
+button span{
+    display: inline-block;
+}
+button:hover{
+    background-color: #2a7e7e;
+}
+button:hover .arrow{
+    transform: translateY(4px);
+}
+.arrow{
+    transition: transform 0.2s ease;
+    display: inline-block;
+}
+.invisibleTr{
+    display: none;
+}
