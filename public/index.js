@@ -10,11 +10,34 @@
 }
 window.onload = async function () {
   try {
+    const tags = await getTags();
+    console.log(tags);
 
-    const tags = await getTags(); 
+    const table = document.querySelector(".tagTable");
 
-    console.log(tags); 
-    
+    // Limpiamos las filas anteriores (menos la primera fila de encabezados)
+    const header = table.querySelector("tr");
+    table.innerHTML = "";
+    table.appendChild(header);
+
+    // Generamos las filas dinámicamente
+    tags.forEach(tag => {
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${tag.tagName}</td>
+        <td>This section of an HTML document supplies metadata about the document itself</td>
+        <td>
+          <button>
+            Tags inside <strong>${tag.tagName}</strong>
+            <span class="material-symbols-outlined arrow">arrow_drop_down</span>
+          </button>
+        </td>
+      `;
+
+      table.appendChild(row);
+    });
+
   } catch (error) {
     console.error('❌ Error:', error.message);
   }
