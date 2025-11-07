@@ -50,9 +50,12 @@ function ejecutarScriptActual() {
     //If the path is correct then excecute the script that belong to the page and check if it was loaded
   if (path === '/' || path === '/home') {
     import('/js/home.js').then(mod => mod.init && mod.init());
+     import('/js/delate.js').then(mod => mod.init && mod.init());
   } else if (path === '/create') {
     import('/js/create.js').then(mod => mod.init && mod.init());
   }
 }
+
+
 //If the user clicks the back or fordward button it works properly
 window.addEventListener('popstate', () => cambiarPagina(location.pathname));

@@ -1,0 +1,18 @@
+.slide-alert {
+  position: fixed;
+  top: 20px;
+  right: -300px;          /* Start off-screen */
+  width: 250px;
+  background: green;
+  color: white;
+  padding: 10px;
+  z-index: 1050;
+  transition: right 0.5s ease, opacity 0.5s ease;
+  opacity: 0;
+  border-radius: 5px;
+}
+
+.slide-alert.show {
+  right: 20px;            /* Slide into position */
+  opacity: 1;
+}

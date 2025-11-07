@@ -16,10 +16,10 @@ th,td {
   padding: 0.6em;
 }
 tr{
-    border: 2px solid #3f5858;
+    border: 2px solid #cca31e;
 }
 tr:first-child{
-    background-color: #2a7e7e;
+    background-color: #cca31e;
     border-collapse: collapse;
 }
 .tagTable{
@@ -30,7 +30,7 @@ tr:first-child{
 }
 /*Styles for the Unique content button*/
 button{
-    background-color: #326164;
+    background-color: #cca31e;
     color: white;
     padding: 10px 8px;
     font-size: 16px;
@@ -42,7 +42,7 @@ button span{
     display: inline-block;
 }
 button:hover{
-    background-color: #2a7e7e;
+    background-color: #eeca54;
 }
 button:hover .arrow{
     transform: translateY(4px);
