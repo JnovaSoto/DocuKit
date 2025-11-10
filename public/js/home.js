@@ -38,6 +38,11 @@ export async function init() {
             <span class="material-symbols-outlined arrow">arrow_drop_down</span>
           </button>
         </td>
+          <td>
+          <button class="delete-btn delete" data-id="${tag.id}">
+           <span class="material-symbols-outlined icon_delete">delete</span>
+          </button>
+         </td>
       `;
 
       table.appendChild(row);

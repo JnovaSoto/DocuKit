@@ -1,24 +1,30 @@
 export async function init() {
   console.log('Delate script ejecutado');
 
-    const tagId = 1; 
+ // delete.js
+document.addEventListener('click', async (e) => {
+  const deleteBtn = e.target.closest('.delete-btn');
+  if (!deleteBtn) return; // Click wasn't on a delete button
 
-    try {
-        const response = await fetch('/tags/'+ tagId, {
-            method: 'DELETE',
-        });
+  const id = deleteBtn.dataset.id;
+  if (!id) return;
 
-        if (response.ok) {
-            const result = await response.json();
-            showTemporaryAlert('success'); 
-            console.log('Success:', result);
+  if (!confirm('Are you sure you want to delete this tag?')) return;
 
-        } else {
-            showTemporaryAlert('alert'); 
-            console.error('Server error:', response.statusText);
-        }
+  try {
+    const res = await fetch(`/tags/${id}`, { method: 'DELETE' });
 
-        } catch (error) {
-        console.error('Fetch failed:', error);
-        }
+    if (res.ok) {
+      // ✅ Remove the row from the table
+      const row = deleteBtn.closest('tr');
+      if (row) row.remove();
+      console.log(`Tag ${id} deleted successfully.`);
+    } else {
+      console.error('Failed to delete tag.');
+    }
+  } catch (err) {
+    console.error('Error deleting tag:', err);
+  }
+});
+
 }

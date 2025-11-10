@@ -54,3 +54,12 @@ button:hover .arrow{
 .invisibleTr{
     display: none;
 }
+.delete{
+    background-color: rgb(249, 130, 130);
+}
+.delete:hover{
+    background-color: rgb(255, 0, 0);
+}
+.icon_delete{
+    color: white;
+}
