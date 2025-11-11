@@ -40,7 +40,10 @@ git clone https://github.com/your-username/html-tags-explanation.git
 cd html-tags-explanation
 
 # Install dependencies
-npm install
+npm install sqlite3
+
+# Package JSON
+npm init -y
 
 # Start the server
-npm start
+npm node app.js

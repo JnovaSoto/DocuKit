@@ -5,20 +5,43 @@ const router = express.Router();
 
 // Create tag
 router.post('/', (req, res) => {
+  const { tagName, usability } = req.body;
 
-  console.log(req.body);
-  //Body for the post petition
-  const { tagName, usability, content } = req.body;
-  //Checking if it is empty
+  console.log('Inserting tag:', tagName, usability);
+
+
   if (!tagName) return res.status(400).json({ error: 'tagName es obligatorio' });
-  //SQL Script to create the new tag
-  const sql = `INSERT INTO tags (tagName, usability, content) VALUES (?, ?, ?)`;
-  //Make the petition and send the body
-  db.run(sql, [tagName, usability, content], function (err) {
+  if (!usability) return res.status(400).json({ error: 'usability es obligatorio' });
+
+  const sql = `INSERT INTO tags (tagName, usability) VALUES (?, ?)`;
+
+  db.run(sql, [tagName, usability], function (err) {
     if (err) return res.status(500).json({ error: err.message });
-    res.status(201).json({ id: this.lastID, tagName, usability, content });
+    res.status(201).json({ id: this.lastID, tagName, usability });
   });
 });
+
+router.post('/attributes', (req, res) => {
+  const { tagId, attributes } = req.body;
+
+  if (!Array.isArray(attributes)) {
+    return res.status(400).json({ error: '`attributes` debe ser un array' });
+  }
+
+  const sql = `INSERT INTO attributes (attribute, info, tag) VALUES (?, ?, ?)`;
+  const stmt = db.prepare(sql);
+
+  for (const attr of attributes) {
+    if (!attr.attribute) continue; // evitar errores NOT NULL
+    stmt.run([attr.attribute, attr.info, tagId]);
+  }
+
+  stmt.finalize(err => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(201).json({ message: 'Attributes added successfully' });
+  });
+});
+
 
 // Get tags
 router.get('/', (req, res) => {

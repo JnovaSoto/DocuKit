@@ -63,3 +63,16 @@ button:hover .arrow{
 .icon_delete{
     color: white;
 }
+.dropdown {
+  position: relative;
+}
+.dropdown-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+.dropdown-row[style*="display: table-row"] .dropdown-content {
+  max-height: 500px; 
+  opacity: 1;
+}

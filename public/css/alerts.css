@@ -3,7 +3,6 @@
   top: 20px;
   right: -300px;          /* Start off-screen */
   width: 250px;
-  background: green;
   color: white;
   padding: 10px;
   z-index: 1050;
@@ -11,7 +10,12 @@
   opacity: 0;
   border-radius: 5px;
 }
-
+#success{
+    background: green;
+}
+#alert{
+    background: rgb(196, 26, 26);
+}
 .slide-alert.show {
   right: 20px;            /* Slide into position */
   opacity: 1;

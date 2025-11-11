@@ -1,14 +1,22 @@
 <div class="container">
-    <form action="post" method="post" id="myForm" required>
+  <form action="post" method="post" id="myForm" required>
     <label for="tagName">Tag Name <span class="req">*</span></label>
-    <input type="text" placeholder="Name" id="tagName" required>
+    <input type="text" name="tagName" placeholder="Name" id="tagName" required>
+
     <label for="usability">Usability of the Tag <span class="req">*</span></label>
-    <input type="text" placeholder="Usability" id="usability" required>
-    <label for="content">Content of the Tag <span class="req">*</span></label>
-    <input type="text" placeholder="Content" id="content" required>
+    <input type="text" name="usability" placeholder="Usability" id="usability" required>
+
+    <div id="attributesContainer">
+      <div class="attributeBlock">
+        <label>Atribute of the Tag <span class="req">*</span></label>
+        <input type="text" name="attributeName[]" placeholder="Attribute Name" required>
+        <input type="text" name="attributeInfo[]" placeholder="Attribute Info" required>
+      </div>
+    </div>
+
+    <button type="button" id="addAttributeBtn">+ Another Attribute</button>
     <input type="submit" value="Submit">
-</form>
+  </form>
 
-<button id="btn-go-home">Volver a Home</button> 
-
+  <button id="btn-go-home">Volver a Home</button> 
 </div>
