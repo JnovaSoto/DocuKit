@@ -16,12 +16,23 @@ const db = new sqlite3.Database(dbPath, (err) => {
 //Use serialize to ensure it's the first command executed.
 //If the database doesn't exist, create it; if it already exists, ignore this command.
 db.serialize(() => {
+  // Create tags table
   db.run(`
     CREATE TABLE IF NOT EXISTS tags (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       tagName TEXT NOT NULL,
       usability TEXT,
       content TEXT
+    )
+  `);
+
+  // Create attributes table
+  db.run(`
+    CREATE TABLE IF NOT EXISTS attributes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      attributeName TEXT NOT NULL,
+      value TEXT,
+      description TEXT
     )
   `);
 });

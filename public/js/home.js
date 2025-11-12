@@ -10,11 +10,22 @@ export async function init() {
     // Then the function returns the data in JSON format
     return await response.json();
   }
+  // This function retrieves all the attributes from the database by accessing the `/tags/attributes` path
+  async function getAttributes() {
+    const response = await fetch('/tags/attributes');
+    if (!response.ok) throw new Error('Error fetching attributes');
+
+    // Then the function returns the data in JSON format
+    return await response.json();
+  }
 
   try {
     // The variable retrieves the data from getTags() function
     const tags = await getTags();
     console.log('✅ Tags loaded:', tags);
+    // The variable retrieves the data from getAttributes() function
+    const attributes = await getAttributes();
+    console.log('✅ Attributes loaded:', attributes);
 
     // Find the element called .tagTable
     const table = document.querySelector(".tagTable");
@@ -28,6 +39,9 @@ export async function init() {
     tags.forEach(tag => {
       // Main row
       const row = document.createElement("tr");
+
+      //Filter the attributes per id 
+      const tagAttributes = attributes.filter(att => att.tag === tag.id);
 
       row.innerHTML = `
         <td>${tag.tagName}</td>
@@ -45,19 +59,23 @@ export async function init() {
         </td>
       `;
 
-      // Dropdown content row (hidden by default)
-      const dropdownRow = document.createElement('tr');
+      const dropdownRow = document.createElement('th');
       dropdownRow.classList.add('dropdown-row');
       dropdownRow.style.display = 'none'; // hidden initially
       dropdownRow.innerHTML = `
         <td colspan="4">
-          <div class="dropdown-content">
-            <p>Tag 1</p>
-            <p>Tag 2</p>
-            <p>Tag 3</p>
+          <div class="dropdown-content">`;
+
+      tagAttributes.forEach(att =>{
+        dropdownRow.innerHTML += `
+            <p>${att.attribute} -> ${att.info}</p>
+        `
+      })
+      dropdownRow.innerHTML += `
           </div>
         </td>
       `;
+
 
       // Append both rows to the table
       table.appendChild(row);
@@ -69,14 +87,16 @@ export async function init() {
       const btn = e.target.closest('.dropdown-btn');
       if (!btn) return; // Click not on a dropdown button
 
-      const row = btn.closest('tr'); // Main row
-      const dropdownRow = row.nextElementSibling; // The hidden row below
+      const row = btn.closest('tr'); 
+      const dropdownRow = row.nextElementSibling; 
 
       if (dropdownRow.style.display === 'none') {
-        dropdownRow.style.display = 'table-row'; // Show the dropdown row
+        // Show the dropdown row
+        dropdownRow.style.display = 'table-row'; 
         btn.querySelector('.arrow').textContent = 'arrow_drop_up';
       } else {
-        dropdownRow.style.display = 'none'; // Hide the dropdown row
+        // Hide the dropdown row
+        dropdownRow.style.display = 'none'; 
         btn.querySelector('.arrow').textContent = 'arrow_drop_down';
       }
     });

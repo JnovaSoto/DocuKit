@@ -9,7 +9,6 @@ router.post('/', (req, res) => {
 
   console.log('Inserting tag:', tagName, usability);
 
-
   if (!tagName) return res.status(400).json({ error: 'tagName es obligatorio' });
   if (!usability) return res.status(400).json({ error: 'usability es obligatorio' });
 
@@ -21,6 +20,7 @@ router.post('/', (req, res) => {
   });
 });
 
+//Create attributes
 router.post('/attributes', (req, res) => {
   const { tagId, attributes } = req.body;
 
@@ -48,6 +48,16 @@ router.get('/', (req, res) => {
 
   //SQL Script to get all the tags
   db.all(`SELECT * FROM tags`, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+// Get attributes
+router.get('/attributes', (req, res) => {
+
+  //SQL Script to get all the attributes
+  db.all(`SELECT * FROM attributes`, [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(rows);
   });
