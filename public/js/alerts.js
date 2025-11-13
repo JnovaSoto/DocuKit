@@ -2,23 +2,23 @@
 export function showTemporaryAlert(id) {
 
   //Depends of the context you need the correct or the bad one
-  const el = document.getElementById(id);
-  if (!el) return;
+  const alert = document.getElementById(id);
+  if (!alert) return;
 
   //Makes the alert to appear
-  el.style.display = 'block';
+  alert.style.display = 'block';
   
   // Allow browser to register the initial position
   setTimeout(() => {
-    el.classList.add('show');
+    alert.classList.add('show');
   }, 50); 
 
   // Slide out and hide after 5 seconds
   setTimeout(() => {
-    el.classList.remove('show');
+    alert.classList.remove('show');
 
     setTimeout(() => {
-      el.style.display = 'none';
+      alert.style.display = 'none';
     }, 500); // matches transition duration
     
   }, 5000);

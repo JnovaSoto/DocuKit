@@ -1,97 +1,102 @@
-//Start the function if the Navigation file is loaded
+// -------------------------------
+// Start the function when the DOM is loaded
+// -------------------------------
 document.addEventListener('DOMContentLoaded', async () => {
   await loadFooterAndHeader(); 
   startNavigation();
   executeActualScript();
 });
 
-
+// -------------------------------
+// Navigation button handlers
+// -------------------------------
 function startNavigation() {
 
-  //Find the button that takes you to the Create Page
+  // Find the button that takes you to the Create Page
   const btnCreate = document.getElementById('btn-go-create');
-  //Clicking the Create button changes the page
   if (btnCreate) btnCreate.addEventListener('click', () => changePage('/create'));
 
-  //Find the button that takes you to the Home Page
+  // Find the button that takes you to the Home Page
   const btnHome = document.getElementById('btn-go-home');
-  //Clicking the Home button changes the page
   if (btnHome) btnHome.addEventListener('click', () => changePage('/home'));
 
-   //Find the button that takes you to the Home Page
-  const btnlogIn = document.getElementById('btn-log-in');
-  //Clicking the Home button changes the page
-  if (btnlogIn) btnlogIn.addEventListener('click', () => changePage('/logIn'));
-
+  // Find the button that takes you to the Log In Page
+  const btnLogIn = document.getElementById('btn-log-in');
+  if (btnLogIn) btnLogIn.addEventListener('click', () => changePage('/logIn'));
 }
 
-//Page changer
-function changePage(ruta) {
+// -------------------------------
+// Page changer function
+// -------------------------------
+function changePage(path) {
 
-  //Pushing a state to the next path State-Title-Url
-  history.pushState(null, null, ruta);
-  //Fetch the next path
-  fetch(ruta)
-  //Converts the response into text
-    .then(res => res.text())
-  //Handles the HTML text that was fetched
+  // Push a state to the next path: State-Title-URL
+  history.pushState(null, null, path);
+
+  // Fetch the next path
+  fetch(path)
+    .then(res => res.text()) // Convert the response into text
     .then(html => {
-      // Create a new DOM Parser
+      // Parse the text into a HTML Document
       const parser = new DOMParser();
-      //Parse the text into a HTML Document
       const doc = parser.parseFromString(html, 'text/html');
-      //Find the app container and select his content
+
+      // Replace the current content with the new content
       const newContent = doc.querySelector('#app').innerHTML;
-      //Replace the current content with the next one
       document.querySelector('#app').innerHTML = newContent;
 
+      // Reinitialize navigation and page-specific scripts
       startNavigation();
-      executeActualScript(); 
+      executeActualScript();
     })
     .catch(console.error);
 }
 
+// -------------------------------
+// Execute the script belonging to the current page
+// -------------------------------
 function executeActualScript() {
-  //Find the current path
   const path = window.location.pathname;
 
-    //If the path is correct then excecute the script that belong to the page and check if it was loaded
   if (path === '/' || path === '/home') {
     import('/js/home.js').then(mod => mod.init && mod.init());
-     import('/js/delate.js').then(mod => mod.init && mod.init());
+    import('/js/delate.js').then(mod => mod.init && mod.init());
   } else if (path === '/create') {
     import('/js/create.js').then(mod => mod.init && mod.init());
-  }else if (path === '/logIn') {
+  } else if (path === '/logIn') {
     import('/js/logIn.js').then(mod => mod.init && mod.init());
   }
 }
 
+// -------------------------------
+// Load header and footer if empty
+// -------------------------------
 async function loadFooterAndHeader() {
-
   const header = document.querySelector('#header');
   const footer = document.querySelector('#footer');
-  
-  // Only is loaded if its empty
+
   if (header && header.innerHTML.trim() === '') {
     try {
       const res = await fetch('/partials/header');
       const html = await res.text();
       header.innerHTML = html;
     } catch (err) {
-      console.error('Error cargando header:', err);
+      console.error('Error loading header:', err);
     }
   }
+
   if (footer && footer.innerHTML.trim() === '') {
     try {
       const res = await fetch('/partials/footer');
       const html = await res.text();
       footer.innerHTML = html;
     } catch (err) {
-      console.error('Error cargando header:', err);
+      console.error('Error loading footer:', err);
     }
   }
 }
 
-
-//If the user clicks the back or fordward button it works properly
+// -------------------------------
+// Handle browser back/forward buttons
+// -------------------------------
 window.addEventListener('popstate', () => changePage(location.pathname));
