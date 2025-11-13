@@ -1,6 +1,7 @@
 import { showTemporaryAlert } from './alerts.js';
 export async function init() {
-  console.log('Delate script ejecutado');
+
+  console.log('Delate script executed');
 
 document.addEventListener('click', async (e) => {
 

@@ -8,9 +8,7 @@ h3{
     color: white;
 }
 /*Stles for table and his childrens*/
-table {
-    background-color: rgb(255, 255, 255);
-    table-layout:fixed ;
+table{
     margin: 10px auto;
     border-collapse: collapse;
     width: 80%;
@@ -41,20 +39,20 @@ tr:first-child{
     background-color:aliceblue;
 }
 .attribute-table tr td:nth-child(1){
-    background-color: rgb(236, 225, 163);
+    background-color: #cca31e;
     font-weight: bold;
 }
 .attribute-table tr td:nth-child(3){
-    background-color: lightgreen;
+    background-color: rgb(236, 225, 163);
     font-weight: bold;
 }
 
 /*Styles for the Unique content button*/
-button{
+.table-button{
     background-color: #cca31e;
     color: white;
     padding: 10px 8px;
-    font-size: 16px;
+    font-size: 14px;
     gap: 5px;
     align-items: center;
     display: inline-flex;
@@ -62,7 +60,7 @@ button{
 button span{
     display: inline-block;
 }
-button:hover{
+button:hover[data-path="/home"]{
     background-color: #eeca54;
 }
 button:hover .arrow{

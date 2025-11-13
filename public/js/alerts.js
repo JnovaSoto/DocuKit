@@ -16,8 +16,10 @@ export function showTemporaryAlert(id) {
   // Slide out and hide after 5 seconds
   setTimeout(() => {
     el.classList.remove('show');
+
     setTimeout(() => {
       el.style.display = 'none';
     }, 500); // matches transition duration
+    
   }, 5000);
 }

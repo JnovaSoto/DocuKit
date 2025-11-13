@@ -1,5 +1,6 @@
 import express from 'express';
 import expressLayouts from 'express-ejs-layouts';
+import partialsRouter from './routes/partials.js';
 import tagsRoutes from './routes/tags.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -14,6 +15,7 @@ const __dirname = path.dirname(__filename);
 
 // Middleware 
 app.use(express.json()); // Allow manage JSON in petitions
+app.use('/partials', partialsRouter); // Customize paths for inyect the partials
 app.use('/tags', tagsRoutes); // Customize paths in /tags
 app.use(express.static(path.join(__dirname, 'public'))); // Statistical files
 
@@ -29,6 +31,10 @@ app.get(['/', '/home'], (req, res) => {
 
 app.get('/create', (req, res) => {
   res.render('create', { layout: 'layout', title: 'Create' });
+});
+
+app.get('/logIn', (req, res) => {
+  res.render('login', { layout: 'layout', title: 'LogIn' });
 });
 
 

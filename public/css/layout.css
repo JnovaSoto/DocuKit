@@ -1,0 +1,29 @@
+.pri{
+    background-color: #cca31e;
+}
+.sec{
+    background-color: #9b884a;
+}
+.ter{
+    background-color: #9b884a;
+}
+#app{
+    margin-top: 4%;
+    margin-bottom: 4%;
+}
+.search-form {
+  position:relative ;
+  width: 20%; 
+  left: 10%;
+}
+.search-form .form-control {
+  height: 30px;          
+  font-size: 0.9rem;     
+  padding: 0 0.5rem;      
+}
+.search-form .btn {
+  height: 30px;           
+  font-size: 0.9rem;      
+  padding: 0 0.5rem;    
+}
+

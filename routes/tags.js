@@ -9,8 +9,8 @@ router.post('/', (req, res) => {
 
   console.log('Inserting tag:', tagName, usability);
 
-  if (!tagName) return res.status(400).json({ error: 'tagName es obligatorio' });
-  if (!usability) return res.status(400).json({ error: 'usability es obligatorio' });
+  if (!tagName) return res.status(400).json({ error: 'tagName is obligatory' });
+  if (!usability) return res.status(400).json({ error: 'usability is obligatory' });
 
   const sql = `INSERT INTO tags (tagName, usability) VALUES (?, ?)`;
 
@@ -25,7 +25,7 @@ router.post('/attributes', (req, res) => {
   const { tagId, attributes } = req.body;
 
   if (!Array.isArray(attributes)) {
-    return res.status(400).json({ error: '`attributes` debe ser un array' });
+    return res.status(400).json({ error: 'attributes must be an array.' });
   }
 
   const sql = `INSERT INTO attributes (attribute, info, tag) VALUES (?, ?, ?)`;
@@ -74,10 +74,10 @@ router.delete('/:id',(req,res) => {
     if (err) return res.status(500).json({ error: err.message });
     
     if (this.changes === 0) {
-      return res.status(404).json({ message: 'No se encontró el tag a eliminar' });
+      return res.status(404).json({ message: 'The tag to remove was not found.' });
     }
 
-    res.json({ message: 'Tag eliminado correctamente', deletedId: id });
+    res.json({ message: 'Tag delated', deletedId: id });
   });
 
 });

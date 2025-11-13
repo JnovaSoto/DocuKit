@@ -1,6 +1,7 @@
 // Exported function to be executed in the navigation file 
 export async function init() {
-  console.log('🏠 Home script ejecutado');
+
+  console.log('🏠 Home script executed');
 
   // This function retrieves tags from the database by accessing the `/tags` path
   async function getTags() {
@@ -58,7 +59,7 @@ export async function init() {
         <td><strong>${escapeHTML(tag.tagName)}</strong></td>
         <td>${escapeHTML(tag.usability)}</td>
         <td>
-          <button class="dropdown-btn">
+          <button class="dropdown-btn table-button">
             <strong>Tags inside</strong>
             <span class="material-symbols-outlined arrow">arrow_drop_down</span>
           </button>

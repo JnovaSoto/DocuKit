@@ -4,7 +4,7 @@ import { showTemporaryAlert } from './alerts.js';
 // Script to create a new tag from the interfaz
 export function init() {
 
-  console.log('Create script ejecutado');
+  console.log('Create script execute');
 
   //Container
   const attributesContainer = document.getElementById('attributesContainer');
