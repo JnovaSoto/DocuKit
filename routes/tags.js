@@ -12,6 +12,7 @@ router.post('/', (req, res) => {
   if (!tagName) return res.status(400).json({ error: 'tagName is obligatory' });
   if (!usability) return res.status(400).json({ error: 'usability is obligatory' });
 
+  // SQL to insert a single tag
   const sql = `INSERT INTO tags (tagName, usability) VALUES (?, ?)`;
 
   db.run(sql, [tagName, usability], function (err) {
@@ -20,7 +21,7 @@ router.post('/', (req, res) => {
   });
 });
 
-//Create attributes
+// Create attributes (batch insert)
 router.post('/attributes', (req, res) => {
   const { tagId, attributes } = req.body;
 
@@ -28,11 +29,12 @@ router.post('/attributes', (req, res) => {
     return res.status(400).json({ error: 'attributes must be an array.' });
   }
 
+  // SQL to insert multiple attributes
   const sql = `INSERT INTO attributes (attribute, info, tag) VALUES (?, ?, ?)`;
   const stmt = db.prepare(sql);
 
   for (const attr of attributes) {
-    if (!attr.attribute) continue; // evitar errores NOT NULL
+    if (!attr.attribute) continue; // Avoid NOT NULL errors
     stmt.run([attr.attribute, attr.info, tagId]);
   }
 
@@ -42,12 +44,12 @@ router.post('/attributes', (req, res) => {
   });
 });
 
-
 // Get tags
 router.get('/', (req, res) => {
+  // SQL to get all tags
+  const sql = `SELECT * FROM tags`;
 
-  //SQL Script to get all the tags
-  db.all(`SELECT * FROM tags`, [], (err, rows) => {
+  db.all(sql, [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(rows);
   });
@@ -55,32 +57,31 @@ router.get('/', (req, res) => {
 
 // Get attributes
 router.get('/attributes', (req, res) => {
+  // SQL to get all attributes
+  const sql = `SELECT * FROM attributes`;
 
-  //SQL Script to get all the attributes
-  db.all(`SELECT * FROM attributes`, [], (err, rows) => {
+  db.all(sql, [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(rows);
   });
 });
 
-//Delate Tag
-router.delete('/:id',(req,res) => {
+// Delete tag
+router.delete('/:id', (req, res) => {
+  const id = req.params.id;
 
-  //Find the id from the path parameters
-  const id = req.params.id
+  // SQL to delete a single tag
+  const sql = `DELETE FROM tags WHERE id = ?`;
 
-  //Delate petition
-  db.run('DELETE FROM tags WHERE id = ?', [id], function(err) {
+  db.run(sql, [id], function(err) {
     if (err) return res.status(500).json({ error: err.message });
-    
+
     if (this.changes === 0) {
       return res.status(404).json({ message: 'The tag to remove was not found.' });
     }
 
-    res.json({ message: 'Tag delated', deletedId: id });
+    res.json({ message: 'Tag deleted', deletedId: id });
   });
-
 });
 
-//Export the router
 export default router;
