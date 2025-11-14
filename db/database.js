@@ -35,6 +35,17 @@ db.serialize(() => {
       description TEXT
     )
   `);
+
+  // Create attributes table
+  db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL,
+      email TEXT NOT NULL,
+      password TEXT,
+      admin INTEGER
+    )
+  `);
 });
 //Export the database connection for use in another file
 export default db;

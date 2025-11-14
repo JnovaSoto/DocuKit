@@ -19,6 +19,7 @@ app.use('/partials', partialsRouter); // Customize paths for inyect the partials
 app.use('/tags', tagsRoutes); // Customize paths in /tags
 app.use(express.static(path.join(__dirname, 'public'))); // Statistical files
 
+
 // EJS view engine configuration
 app.use(expressLayouts);
 app.set('view engine', 'ejs');
@@ -33,8 +34,8 @@ app.get('/create', (req, res) => {
   res.render('create', { layout: 'layout', title: 'Create' });
 });
 
-app.get('/logIn', (req, res) => {
-  res.render('login', { layout: 'layout', title: 'LogIn' });
+app.get('/signUp', (req, res) => {
+  res.render('signUp', { layout: 'layout', title: 'SignUp' });
 });
 
 

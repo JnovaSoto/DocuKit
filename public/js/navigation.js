@@ -21,8 +21,8 @@ function startNavigation() {
   if (btnHome) btnHome.addEventListener('click', () => changePage('/home'));
 
   // Find the button that takes you to the Log In Page
-  const btnLogIn = document.getElementById('btn-log-in');
-  if (btnLogIn) btnLogIn.addEventListener('click', () => changePage('/logIn'));
+  const btnSignUp = document.getElementById('btn-sign-up');
+  if (btnSignUp) btnSignUp.addEventListener('click', () => changePage('/signUp'));
 }
 
 // -------------------------------
@@ -63,8 +63,8 @@ function executeActualScript() {
     import('/js/delate.js').then(mod => mod.init && mod.init());
   } else if (path === '/create') {
     import('/js/create.js').then(mod => mod.init && mod.init());
-  } else if (path === '/logIn') {
-    import('/js/logIn.js').then(mod => mod.init && mod.init());
+  } else if (path === '/signUp') {
+    import('/js/signUp.js').then(mod => mod.init && mod.init());
   }
 }
 
