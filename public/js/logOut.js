@@ -1,6 +1,6 @@
 export function init(logOutButton){
 
-    console.log("Log Out Script Executed")
+    console.log("🚪 Log Out Script Executed")
 
     if (!logOutButton) return;
 

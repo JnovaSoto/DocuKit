@@ -1,6 +1,8 @@
 //This function is only used to control the behavior of alerts.
 export function showTemporaryAlert(id,text) {
 
+  console.log('🚩 Alert script execute');
+
   //Depends of the context you need the correct or the bad one
   const alert = document.getElementById(id);
   if (!alert) return;

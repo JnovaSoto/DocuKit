@@ -2,7 +2,7 @@ import { showTemporaryAlert } from './alerts.js';
 
 export async function init() {
 
-  console.log('Delete script executed');
+  console.log('🗑 Delete script executed');
 
   // -------------------------------
   // Handle delete button clicks

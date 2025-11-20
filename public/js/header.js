@@ -1,6 +1,6 @@
 // header.js
 export async function init() {
-  console.log("Header script executed");
+  console.log("🗣 Header script executed");
 
   try {
 

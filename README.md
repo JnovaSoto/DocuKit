@@ -45,6 +45,9 @@ cd html-tags-explanation
 
 # Install dependencies
 npm install sqlite3
+npm install bcrypt
+npm install validator
+npm install dotenv
 
 # Package JSON
 npm init -y

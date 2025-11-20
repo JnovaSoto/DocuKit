@@ -2,7 +2,7 @@ import { showTemporaryAlert } from './alerts.js';
 
 export async function init() {
 
-  console.log('SignUp script executed');
+  console.log('📸 SignUp script executed');
 
   // -------------------------------
   // Select form and handle submit

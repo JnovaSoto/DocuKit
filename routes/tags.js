@@ -77,11 +77,31 @@ router.post('/attributes/create',isAuthenticated, (req, res) => {
   });
 });
 
+//Get tag by id
+router.get('/idTag/:id', isAuthenticated, (req,res) =>{
+  const tagId = req.params.id;
+
+    const sqlTag = `SELECT * FROM tags WHERE id = ?`;
+
+    db.all(sqlTag, [tagId], (err, tagRows) => {
+      if (err) {
+        console.error('Database error:', err.message);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+
+      if (tagRows.length === 0) {
+        return res.status(404).json({ error: 'Tag not found' });
+      }
+        res.json(tagRows);
+    });
+
+})
+
 // Get tag by name
 router.get('/:name', isAuthenticated, (req, res) => {
   const tagName = req.params.name;
 
-  console.log(`[GET /tags/${tagName}] Tag request received`);
+  console.log("Getting a tag by name");
 
   const sql = `SELECT * FROM tags WHERE tagName = ?`;
 
@@ -95,9 +115,54 @@ router.get('/:name', isAuthenticated, (req, res) => {
       return res.status(404).json({ error: 'Tag not found' });
     }
 
-    res.json(rows[0]);
+    res.json(rows);
   });
 });
+
+// Get attribute by tag id
+router.get('/attribute/:id', isAuthenticated, (req, res) => {
+  const tagId = req.params.id;
+
+  console.log("Getting attributes for tag id", tagId);
+
+  const sql = `SELECT * FROM attributes WHERE tag = ?`;
+
+  db.all(sql, [tagId], (err, rows) => {
+    if (err) {
+      console.error('Database error:', err.message);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'No attributes found for this tag' });
+    }
+
+     res.json(rows || []); 
+  });
+});
+
+// Get attribute by name
+router.get('/attribute/:name', isAuthenticated, (req, res) => {
+  const name = req.params.name;
+
+  console.log("Getting attribute by name", name);
+
+  const sql = `SELECT * FROM attributes WHERE attribute = ?`;
+
+  db.all(sql, [name], (err, rows) => {
+    if (err) {
+      console.error('Database error:', err.message);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'No attributes found' });
+    }
+
+    res.json(rows)
+  });
+});
+
 
 // Delete tag
 router.delete('/:id', isAdminLevel1,(req, res) => {

@@ -24,6 +24,7 @@ async function loadHeaderAndFooter() {
 
       // Initialize header scripts AFTER insertion
       import('/js/header.js').then(mod => mod.init && mod.init());
+      import('/js/getTag.js').then(mod => mod.init && mod.init());
 
     } catch (err) {
       console.error('Error loading header:', err);
