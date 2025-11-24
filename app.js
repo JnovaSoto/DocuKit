@@ -3,6 +3,7 @@ import expressLayouts from 'express-ejs-layouts';
 import partialsRouter from './routes/partials.js';
 import tagsRoutes from './routes/tags.js';
 import usersRoutes from './routes/users.js';
+import attributesRoutes from './routes/attributes.js';
 import session from 'express-session';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -31,6 +32,7 @@ app.use(session({
 app.use(express.json()); // Allow manage JSON in petitions
 app.use('/partials', partialsRouter); // Customize paths for inyect the partials
 app.use('/tags', tagsRoutes); // Customize paths in /tags
+app.use('/attributes', attributesRoutes); // Customize paths in /attributes
 app.use('/users', usersRoutes); // Customize paths in /tags
 app.use(express.static(path.join(__dirname, 'public'))); // Statistical files
 app.use(expressLayouts); //Layout for EJS view

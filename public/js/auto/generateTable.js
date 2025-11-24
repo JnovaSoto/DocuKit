@@ -1,4 +1,4 @@
-import { escapeHTML } from './escapeHTML.js'
+import { escapeHTML } from '../tools/escapeHTML.js';
 export function generateTable(tag,attributes,row,dropdownRow){
 
     const safeTagName = tag && tag.tagName ? escapeHTML(tag.tagName) : '';

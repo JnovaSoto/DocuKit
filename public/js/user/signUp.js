@@ -1,4 +1,4 @@
-import { showTemporaryAlert } from './alerts.js';
+import { showTemporaryAlert } from '../tools/alerts.js';
 
 export async function init() {
 

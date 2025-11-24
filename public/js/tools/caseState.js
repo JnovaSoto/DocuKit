@@ -9,8 +9,12 @@ export async function cases(res, suppressAlert = false) {
                 case 404:
                     showTemporaryAlert('alert', 'No data found');
                     break;
+                case 401:
+                    showTemporaryAlert('alert', 'Unauthorized');
+                    break;
                 default:
                     showTemporaryAlert('alert', 'Failed to fetch');
+                     break;
             }
         }
         return false;

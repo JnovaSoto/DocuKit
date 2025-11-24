@@ -1,6 +1,6 @@
 // Home / navigation initialization
-import { generateTable } from './generateTable.js';
-import { dropdown } from './dropdownAtt.js';
+import { generateTable } from '../auto/generateTable.js';
+import { dropdown } from '../auto/dropdownAtt.js';
 
 export async function init() {
   
@@ -15,7 +15,7 @@ export async function init() {
   }
 
   async function getAttributes() {
-    const response = await fetch('/tags/attributes');
+    const response = await fetch('/attributes/attributes');
     if (!response.ok) throw new Error('Error fetching attributes');
     return await response.json();
   }

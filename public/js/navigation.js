@@ -23,8 +23,8 @@ async function loadHeaderAndFooter() {
       header.innerHTML = html;
 
       // Initialize header scripts AFTER insertion
-      import('/js/header.js').then(mod => mod.init && mod.init());
-      import('/js/getTag.js').then(mod => mod.init && mod.init());
+      import('/js/main/header.js').then(mod => mod.init && mod.init());
+      import('/js/tags/getTag.js').then(mod => mod.init && mod.init());
 
     } catch (err) {
       console.error('Error loading header:', err);
@@ -85,25 +85,26 @@ function executePageScript() {
   switch (path) {
     case '/':
     case '/home':
-      import('/js/home.js').then(mod => mod.init && mod.init());
-      import('/js/edit.js').then(mod => mod.init && mod.init());
-      import('/js/delate.js').then(mod => mod.init && mod.init());
+      import('/js/main/home.js').then(mod => mod.init && mod.init());
+      import('/js/tags/edit.js').then(mod => mod.init && mod.init());
+      import('/js/tags/delate.js').then(mod => mod.init && mod.init());
       break;
     case '/create':
-      import('/js/create.js').then(mod => mod.init && mod.init());
-      break;
-    case '/signUp':
-      import('/js/signUp.js').then(mod => mod.init && mod.init());
-      break;
-    case '/logIn':
-      import('/js/logIn.js').then(mod => mod.init && mod.init());
-      break;
-    case '/profile':
-      import('/js/profile.js').then(mod => mod.init && mod.init());
+      import('/js/tags/create.js').then(mod => mod.init && mod.init());
       break;
     case '/edit':
-      import('/js/edit.js').then(mod => mod.init && mod.init());
+      import('/js/tags/edit.js').then(mod => mod.init && mod.init());
       break;
+    case '/signUp':
+      import('/js/user/signUp.js').then(mod => mod.init && mod.init());
+      break;
+    case '/logIn':
+      import('/js/user/logIn.js').then(mod => mod.init && mod.init());
+      break;
+    case '/profile':
+      import('/js/user/profile.js').then(mod => mod.init && mod.init());
+      break;
+
   }
 }
 

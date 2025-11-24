@@ -1,7 +1,7 @@
-import { showTemporaryAlert } from './alerts.js';
-import { generateTable } from './generateTable.js';
-import { dropdown } from './dropdownAtt.js';
-import { cases } from './caseState.js';
+import { showTemporaryAlert } from '../tools/alerts.js';
+import { generateTable } from '../auto/generateTable.js';
+import { dropdown } from '../auto/dropdownAtt.js';
+import { cases } from '../tools/caseState.js';
 
 export async function init() {
   console.log('🧤 GetTag script executed');
@@ -56,7 +56,7 @@ export async function init() {
         // Ensure tags is always an array
         const tags = Array.isArray(rawTag) ? rawTag : [rawTag];
 
-        const resAttrAll = await fetch('/tags/attributes');
+        const resAttrAll = await fetch('/attributes/attributes');
         if (!resAttrAll.ok) throw new Error('Error fetching attributes list');
         const allAttributes = await resAttrAll.json();
 
@@ -82,7 +82,7 @@ export async function init() {
       }else {
 
          // If not found by name, search by attribute name (fallback)
-        const resAttr = await fetch(`/tags/attribute/attributeName/${encodeURIComponent(tagName)}`);
+        const resAttr = await fetch(`/attributes/attribute/attributeName/${encodeURIComponent(tagName)}`);
         if (!(await cases(resAttr,true))) {
               document.querySelector('.tagTable').innerHTML = "";
               error.style.display = 'block';

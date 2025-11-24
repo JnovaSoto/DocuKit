@@ -1,5 +1,5 @@
-import { showTemporaryAlert } from './alerts.js';
-import { cases } from './caseState.js';
+import { showTemporaryAlert } from '../tools/alerts.js';
+import { cases } from '../tools/caseState.js';
 
 export async function init() {
 

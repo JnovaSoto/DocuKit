@@ -1,5 +1,5 @@
 // Import the alerts for their uses
-import { showTemporaryAlert } from './alerts.js';
+import { showTemporaryAlert } from '../tools/alerts.js';
 
 // Script to create a new tag from the interface
 export function init() {
@@ -59,7 +59,13 @@ export function init() {
 
     try {
 
-        if(!isLogged()) return;
+       
+      const resSession = await fetch('/users/me');
+      const sessionData = await resSession.json();
+      if (!sessionData.loggedIn) {
+        showTemporaryAlert('alert', 'You must log in to delete a tag');
+        return;
+      }
 
       // -------------------------------
       // Create the tag first
@@ -89,7 +95,7 @@ export function init() {
       // Send all attributes linked to that tag
       // -------------------------------
       const attributesBody = { tagId, attributes };
-      const attrResponse = await fetch('/tags/attributes/create', {
+      const attrResponse = await fetch('/attributes/attributes/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(attributesBody)
