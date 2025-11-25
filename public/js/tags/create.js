@@ -1,19 +1,31 @@
-// Import the alerts for their uses
+/**
+ * Tag creation page functionality.
+ * Handles creating new HTML tags with their attributes.
+ */
+
 import { showTemporaryAlert } from '../tools/alerts.js';
+import { handleResponseError } from '../tools/caseState.js';
+import { requireLogin } from '../tools/session.js';
+import { API, SUCCESS_MESSAGES } from '../config/constants.js';
+import logger from '../tools/logger.js';
 
-// Script to create a new tag from the interface
+/**
+ * Initializes the tag creation page.
+ * Sets up dynamic attribute addition and form submission.
+ */
 export function init() {
+  logger.create('Create tag script initialized');
 
-  console.log('🔨Create script execute');
-
-  // Elements
   const attributesContainer = document.getElementById('attributesContainer');
   const addAttributeBtn = document.getElementById('addAttributeBtn');
   const form = document.getElementById('myForm');
 
-  // -------------------------------
+  if (!form || !attributesContainer || !addAttributeBtn) {
+    logger.warn('Create form elements not found');
+    return;
+  }
+
   // Add attribute block dynamically
-  // -------------------------------
   addAttributeBtn.addEventListener('click', () => {
     const newAttribute = document.createElement('div');
     newAttribute.classList.add('attributeBlock');
@@ -34,20 +46,24 @@ export function init() {
     });
   });
 
-  // -------------------------------
   // Handle form submission
-  // -------------------------------
-  form.addEventListener("submit", async (event) => {
+  form.addEventListener('submit', async (event) => {
     // Stop page reload
-    event.preventDefault(); 
+    event.preventDefault();
+
+    // Check if user is logged in
+    if (!await requireLogin()) {
+      showTemporaryAlert('alert', 'You must log in to create a tag');
+      return;
+    }
 
     // Get latest form values
-    const tagName = document.getElementById("tagName").value;
-    const usability = document.getElementById("usability").value;
+    const tagName = document.getElementById('tagName').value;
+    const usability = document.getElementById('usability').value;
 
     // Get all attributes from inputs
-    const attributeNames = Array.from(document.getElementsByName("attributeName[]")).map(input => input.value);
-    const attributeInfos = Array.from(document.getElementsByName("attributeInfo[]")).map(input => input.value);
+    const attributeNames = Array.from(document.getElementsByName('attributeName[]')).map(input => input.value);
+    const attributeInfos = Array.from(document.getElementsByName('attributeInfo[]')).map(input => input.value);
 
     const attributes = attributeNames.map((attribute, index) => ({
       attribute,
@@ -58,32 +74,16 @@ export function init() {
     const tagBody = { tagName, usability };
 
     try {
+      logger.network('Creating new tag');
 
-       
-      const resSession = await fetch('/users/me');
-      const sessionData = await resSession.json();
-      if (!sessionData.loggedIn) {
-        showTemporaryAlert('alert', 'You must log in to delete a tag');
-        return;
-      }
-
-      // -------------------------------
       // Create the tag first
-      // -------------------------------
-      const tagResponse = await fetch('/tags', {
+      const tagResponse = await fetch(API.TAGS.CREATE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(tagBody)
       });
 
-      if (!tagResponse.ok) {
-        const errData = await res.json();
-
-        if (res.status === 403) {
-          showTemporaryAlert('alert', 'You do not have permission to create this tag');
-        } else {
-          showTemporaryAlert('alert', errData.error || 'Failed to create tag');
-        }
+      if (handleResponseError(tagResponse)) {
         return;
       }
 
@@ -91,33 +91,24 @@ export function init() {
       const tagResult = await tagResponse.json();
       const tagId = tagResult.id;
 
-      // -------------------------------
+      logger.success(`Tag created with ID: ${tagId}`);
+
       // Send all attributes linked to that tag
-      // -------------------------------
       const attributesBody = { tagId, attributes };
-      const attrResponse = await fetch('/attributes/attributes/create', {
+      const attributesResponse = await fetch(API.ATTRIBUTES.CREATE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(attributesBody)
       });
 
-      if (!attrResponse.ok) {
-        const errData = await res.json();
-
-        if (res.status === 403) {
-          showTemporaryAlert('alert', 'You do not have permission to create this attribute');
-        } else {
-          showTemporaryAlert('alert', errData.error || 'Failed to create the attribute');
-        }
+      if (handleResponseError(attributesResponse)) {
         return;
       }
 
-      showTemporaryAlert('success');
-      console.log('Tag and attributes created successfully!');
+      showTemporaryAlert('success', SUCCESS_MESSAGES.TAG_CREATED);
+      logger.success('Tag and attributes created successfully');
 
-      // -------------------------------
       // Reset form for next input
-      // -------------------------------
       form.reset();
       attributesContainer.innerHTML = `
         <label>Attribute of the Tag <span class="req">*</span></label>
@@ -126,8 +117,8 @@ export function init() {
       `;
 
     } catch (error) {
-      console.error('Fetch failed:', error);
-      showTemporaryAlert('alert');
+      logger.error('Tag creation failed:', error);
+      showTemporaryAlert('alert', 'Something went wrong');
     }
   });
 }

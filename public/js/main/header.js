@@ -1,26 +1,20 @@
-// header.js
+/**
+ * Header functionality.
+ * Manages user session display, dropdown menu, and permission-based button states.
+ */
+
+import { checkSession } from '../tools/session.js';
+import logger from '../tools/logger.js';
+
+/**
+ * Initializes the header functionality.
+ * Updates UI based on user session and permissions.
+ */
 export async function init() {
-  console.log("🗣 Header script executed");
+  logger.info('Header script initialized');
 
   try {
-
-    const res = await fetch('/users/me');
-    const data = await res.json();
-
-    const waitForElement = async (selector) => {
-      return new Promise((resolve) => {
-        const el = document.querySelector(selector);
-        if (el) return resolve(el);
-        const observer = new MutationObserver(() => {
-          const elNow = document.querySelector(selector);
-          if (elNow) {
-            resolve(elNow);
-            observer.disconnect();
-          }
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
-      });
-    };
+    const sessionData = await checkSession();
 
     const btnCreate = document.getElementById('btn-create-tags');
     const btnEdit = document.getElementById('btn-edit-tags');
@@ -28,8 +22,11 @@ export async function init() {
     const headerDropdown = document.getElementById('headerDropdown');
     const dropdownMenu = headerDropdown.nextElementSibling;
 
-    // Helper to enable/disable buttons
-
+    /**
+     * Helper to enable/disable buttons based on permissions.
+     * @param {HTMLElement} btn - The button element
+     * @param {boolean} enabled - Whether to enable the button
+     */
     const setButtonState = (btn, enabled) => {
       if (!btn) return;
       if (enabled) {
@@ -42,7 +39,7 @@ export async function init() {
         btn.setAttribute('aria-disabled', 'true');
       }
     };
-    
+
     // Default: disable all buttons
     setButtonState(btnCreate, false);
     setButtonState(btnEdit, false);
@@ -51,9 +48,9 @@ export async function init() {
     // Clear dropdown items
     dropdownMenu.innerHTML = '';
 
-    if (data.loggedIn) {
+    if (sessionData.loggedIn) {
       // Update dropdown text
-      headerDropdown.textContent = data.username;
+      headerDropdown.textContent = sessionData.username;
 
       // Profile link
       const profileLink = document.createElement('a');
@@ -72,7 +69,7 @@ export async function init() {
       logoutLink.id = 'btn-log-out';
       logoutLink.textContent = 'Log out';
 
-      import('/js/logOut.js').then(mod => {
+      import('../user/logOut.js').then(mod => {
         if (mod.init) mod.init(logoutLink);
       });
 
@@ -80,35 +77,33 @@ export async function init() {
       dropdownMenu.append(profileLink, divider, logoutLink);
 
       // Admin-level logic
-      switch (data.admin) {
+      switch (sessionData.admin) {
         case 0:
-
-          //Can create tags
+          // Regular user: can create tags
           setButtonState(btnCreate, true);
-
           break;
         case 1:
-
-         //Can create, edit and delete tags
-          setButtonState(btnCreate, true); 
-          setButtonState(btnEdit, true);  
-          setButtonState(btnDelete, true); 
-          
+          // Admin: can create, edit and delete tags
+          setButtonState(btnCreate, true);
+          setButtonState(btnEdit, true);
+          setButtonState(btnDelete, true);
           break;
         default:
-          console.warn('Unknown admin level:', data.admin);
+          logger.warn('Unknown admin level:', sessionData.admin);
       }
-    }else {
-      // User not logged in: show Sign up 
+    } else {
+      // User not logged in: show Sign up
       const signUpLink = document.createElement('a');
       signUpLink.className = 'dropdown-item';
       signUpLink.href = '/signUp';
       signUpLink.id = 'btn-sign-up';
       signUpLink.textContent = 'Sign up';
+
       // Divider
       const divider = document.createElement('div');
       divider.className = 'dropdown-divider';
-      // User not logged in: show Log in
+
+      // Log in link
       const logInLink = document.createElement('a');
       logInLink.className = 'dropdown-item';
       logInLink.href = '/logIn';
@@ -122,6 +117,6 @@ export async function init() {
     }
 
   } catch (err) {
-    console.error('Error checking session:', err);
+    logger.error('Error initializing header:', err);
   }
 }

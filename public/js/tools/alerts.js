@@ -1,29 +1,54 @@
-//This function is only used to control the behavior of alerts.
-export function showTemporaryAlert(id,text) {
+/**
+ * Alert notification system.
+ * Displays temporary slide-in alerts to provide user feedback.
+ */
 
-  console.log('🚩 Alert script execute');
+import logger from './logger.js';
+import { ALERT_TIMING } from '../config/constants.js';
 
-  //Depends of the context you need the correct or the bad one
+/**
+ * Shows a temporary alert that slides in from the right and auto-dismisses.
+ * 
+ * @param {string} id - The ID of the alert element to show (e.g., 'success', 'alert')
+ * @param {string} [text] - Optional custom text to display in the alert
+ * 
+ * @example
+ * showTemporaryAlert('success', 'Tag created successfully!');
+ * showTemporaryAlert('alert', 'An error occurred');
+ */
+export function showTemporaryAlert(id, text) {
+  logger.alert('Showing alert', { id, text });
+
   const alert = document.getElementById(id);
-  if (!alert) return;
+  if (!alert) {
+    logger.warn(`Alert element with id "${id}" not found`);
+    return;
+  }
 
-  //Makes the alert to appear
+  // Make the alert visible
   alert.style.display = 'block';
-  
-  if(text) alert.textContent = text;
-  
-  // Allow browser to register the initial position
+
+  // Set custom text if provided
+  if (text) {
+    alert.textContent = text;
+  }
+
+  // Allow browser to register the initial position before animating
   setTimeout(() => {
     alert.classList.add('show');
-  }, 50); 
+  }, ALERT_TIMING.SHOW_DELAY);
 
-  // Slide out and hide after 5 seconds
+  // Slide out and hide after display duration
   setTimeout(() => {
     alert.classList.remove('show');
 
+    // Hide completely after transition completes
     setTimeout(() => {
       alert.style.display = 'none';
-    }, 500); // matches transition duration
-    
-  }, 5000);
+    }, ALERT_TIMING.HIDE_TRANSITION);
+
+  }, ALERT_TIMING.DISPLAY_DURATION);
 }
+
+export default showTemporaryAlert;
+

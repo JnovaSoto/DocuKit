@@ -1,0 +1,14 @@
+<div class="error-container">
+  <div class="error-content">
+    <h1 class="error-code"><%= statusCode %></h1>
+    <h2 class="error-title">
+      <% if (statusCode === 404) { %>
+        Page Not Found
+      <% } else { %>
+        Oops! Something Went Wrong
+      <% } %>
+    </h2>
+    <p class="error-message"><%= message %></p>
+    <a href="/" class="btn-home">Return to Home</a>
+  </div>
+</div>

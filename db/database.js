@@ -1,51 +1,157 @@
+// ============================================================================
+// Dependencies
+// ============================================================================
 import sqlite3 from 'sqlite3';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-//When using modules, it is essential to manually create global variables.
-const __filename = fileURLToPath(import.meta.url);//Full path of the current file
-const __dirname = path.dirname(__filename);//Path of the folder containing the current file
+// ============================================================================
+// Configuration
+// ============================================================================
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-//Using the current directory, access the SQLite database and attempt to connect to it.
-const dbPath = path.resolve(__dirname, '../database.sqlite');
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) console.error('Error al conectar SQLite:', err.message);
-  else console.log('Conectado a SQLite');
-});
+const DB_PATH = path.resolve(__dirname, '../database.sqlite');
+const DB_MODE = sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE;
 
-//Use serialize to ensure it's the first command executed.
-//If the database doesn't exist, create it; if it already exists, ignore this command.
-db.serialize(() => {
-  // Create tags table
-  db.run(`
+// ============================================================================
+// Database Connection
+// ============================================================================
+
+/**
+ * Initialize SQLite database connection
+ * @returns {sqlite3.Database} Database instance
+ */
+const initializeDatabase = () => {
+  const db = new sqlite3.Database(DB_PATH, DB_MODE, (err) => {
+    if (err) {
+      console.error('❌ Failed to connect to SQLite database:', err.message);
+      process.exit(1);
+    }
+    console.log('✅ Connected to SQLite database');
+  });
+
+  // Enable foreign keys
+  db.run('PRAGMA foreign_keys = ON');
+
+  return db;
+};
+
+const db = initializeDatabase();
+
+// ============================================================================
+// Schema Definitions
+// ============================================================================
+
+const TABLES = {
+  tags: `
     CREATE TABLE IF NOT EXISTS tags (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      tagName TEXT NOT NULL,
+      tagName TEXT NOT NULL UNIQUE,
       usability TEXT,
-      content TEXT
+      content TEXT,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )
-  `);
+  `,
 
-  // Create attributes table
-  db.run(`
+  attributes: `
     CREATE TABLE IF NOT EXISTS attributes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      attributeName TEXT NOT NULL,
+      attributeName TEXT NOT NULL UNIQUE,
       value TEXT,
-      description TEXT
+      description TEXT,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )
-  `);
+  `,
 
-  // Create attributes table
-  db.run(`
+  users: `
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT NOT NULL,
-      email TEXT NOT NULL,
-      password TEXT,
-      admin INTEGER
+      username TEXT NOT NULL UNIQUE,
+      email TEXT NOT NULL UNIQUE,
+      password TEXT NOT NULL,
+      admin INTEGER DEFAULT 0,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )
-  `);
+  `
+};
+
+// ============================================================================
+// Database Initialization
+// ============================================================================
+
+/**
+ * Create all database tables
+ * @returns {Promise<void>}
+ */
+const createTables = () => {
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      const tableNames = Object.keys(TABLES);
+      let completed = 0;
+      let hasError = false;
+
+      tableNames.forEach((tableName) => {
+        db.run(TABLES[tableName], (err) => {
+          if (err && !hasError) {
+            hasError = true;
+            console.error(`❌ Error creating table '${tableName}':`, err.message);
+            reject(err);
+            return;
+          }
+
+          completed++;
+
+          if (completed === tableNames.length && !hasError) {
+            console.log('✅ All database tables initialized successfully');
+            resolve();
+          }
+        });
+      });
+    });
+  });
+};
+
+// Initialize tables on startup
+createTables().catch((err) => {
+  console.error('❌ Failed to initialize database tables:', err.message);
+  process.exit(1);
 });
-//Export the database connection for use in another file
+
+// ============================================================================
+// Graceful Shutdown
+// ============================================================================
+
+/**
+ * Close database connection gracefully
+ */
+const closeDatabase = () => {
+  db.close((err) => {
+    if (err) {
+      console.error('❌ Error closing database:', err.message);
+    } else {
+      console.log('✅ Database connection closed');
+    }
+  });
+};
+
+// Handle process termination
+process.on('SIGINT', () => {
+  console.log('\n🛑 Shutting down gracefully...');
+  closeDatabase();
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  console.log('\n🛑 Shutting down gracefully...');
+  closeDatabase();
+  process.exit(0);
+});
+
+// ============================================================================
+// Export
+// ============================================================================
 export default db;

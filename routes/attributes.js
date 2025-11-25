@@ -1,15 +1,21 @@
+/**
+ * Attribute routes.
+ * Handles CRUD operations for tag attributes.
+ */
+
 import express from 'express';
 import db from '../db/database.js';
 import { isAuthenticated } from '../middleware/auth.js';
 import { isAdminLevel1 } from '../middleware/auth.js';
+
 const router = express.Router();
 
-// Get attributes
+/**
+ * Get all attributes.
+ * @route GET /attributes/attributes
+ */
 router.get('/attributes', (req, res) => {
-  // SQL to get all attributes
   const sql = `SELECT * FROM attributes`;
-
-    console.log("Getting the attributes")
 
   db.all(sql, [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -17,15 +23,12 @@ router.get('/attributes', (req, res) => {
   });
 });
 
-// Create attributes (batch insert)
-router.post('/attributes/create',isAuthenticated, (req, res) => {
+/**
+ * Create attributes for a tag (batch insert).
+ * @route POST /attributes/attributes/create
+ */
+router.post('/attributes/create', isAuthenticated, (req, res) => {
   const { tagId, attributes } = req.body;
-
-   console.log(
-  'Inserting attributes:', 
-  tagId, 
-  attributes, 
-  );
 
   if (!Array.isArray(attributes)) {
     return res.status(400).json({ error: 'attributes must be an array.' });
@@ -46,11 +49,12 @@ router.post('/attributes/create',isAuthenticated, (req, res) => {
   });
 });
 
-// Get attribute by tag id
+/**
+ * Get attributes by tag ID.
+ * @route GET /attributes/attributes/idAttribute/:id
+ */
 router.get('/attributes/idAttribute/:id', isAuthenticated, (req, res) => {
   const tagId = req.params.id;
-
-  console.log("Getting attributes for tag id", tagId);
 
   const sql = `SELECT * FROM attributes WHERE tag = ?`;
 
@@ -64,15 +68,16 @@ router.get('/attributes/idAttribute/:id', isAuthenticated, (req, res) => {
       return res.status(404).json({ error: 'No attributes found for this tag' });
     }
 
-     res.json(rows || []); 
+    res.json(rows || []);
   });
 });
 
-// Get attribute by name
+/**
+ * Get attributes by name.
+ * @route GET /attributes/attribute/attributeName/:name
+ */
 router.get('/attribute/attributeName/:name', isAuthenticated, (req, res) => {
   const name = req.params.name;
-
-  console.log("Getting attribute by name", name);
 
   const sql = `SELECT * FROM attributes WHERE attribute = ?`;
 

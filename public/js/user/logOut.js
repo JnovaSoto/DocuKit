@@ -1,16 +1,48 @@
+/**
+ * Logout functionality.
+ * Handles user session termination.
+ */
 
-export function init(logOutButton){
+import { API, SUCCESS_MESSAGES } from '../config/constants.js';
+import { showTemporaryAlert } from '../tools/alerts.js';
+import logger from '../tools/logger.js';
 
-    console.log("🚪 Log Out Script Executed")
+/**
+ * Initializes the logout functionality.
+ * 
+ * @param {HTMLElement} logOutButton - The logout button element
+ */
+export function init(logOutButton) {
+    logger.auth('Logout script initialized');
 
-    if (!logOutButton) return;
+    if (!logOutButton) {
+        logger.warn('Logout button not found');
+        return;
+    }
 
-    logOutButton.addEventListener('click', async event => {
+    logOutButton.addEventListener('click', async (event) => {
+        event.preventDefault();
 
-        await fetch('/users/logout', { method: 'POST' });
-        
-        //Redirect
-        window.location.href = "/home";
+        try {
+            logger.network('Sending logout request');
+
+            const response = await fetch(API.USERS.LOGOUT, {
+                method: 'POST',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                logger.success('User logged out successfully');
+                showTemporaryAlert('success', SUCCESS_MESSAGES.LOGOUT);
+            }
+
+            // Redirect to home page
+            window.location.href = '/home';
+
+        } catch (error) {
+            logger.error('Logout failed:', error);
+            // Still redirect even if logout request fails
+            window.location.href = '/home';
+        }
     });
-
 }

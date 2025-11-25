@@ -1,47 +1,66 @@
-// Home / navigation initialization
+/**
+ * Home page functionality.
+ * Loads and displays all HTML tags with their attributes in a table.
+ */
+
 import { generateTable } from '../auto/generateTable.js';
 import { dropdown } from '../auto/dropdownAtt.js';
+import logger from '../tools/logger.js';
 
+/**
+ * Initializes the home page.
+ * Fetches tags and attributes, then populates the table.
+ */
 export async function init() {
-  
-  console.log('🏠 Home script executed');
-  // -------------------------------
-  // Fetch helpers
-  // -------------------------------
+  logger.info('Home script initialized');
+
+  /**
+   * Fetches all tags from the server.
+   * @returns {Promise<Array>} Array of tag objects
+   */
   async function getTags() {
     const response = await fetch('/tags');
-    if (!response.ok) throw new Error('Error fetching tags');
+    if (!response.ok) {
+      throw new Error('Error fetching tags');
+    }
     return await response.json();
   }
 
+  /**
+   * Fetches all attributes from the server.
+   * @returns {Promise<Array>} Array of attribute objects
+   */
   async function getAttributes() {
     const response = await fetch('/attributes/attributes');
-    if (!response.ok) throw new Error('Error fetching attributes');
+    if (!response.ok) {
+      throw new Error('Error fetching attributes');
+    }
     return await response.json();
   }
 
   try {
-    // -------------------------------
     // Fetch data
-    // -------------------------------
     const tags = await getTags();
-    //console.log('✅ Tags loaded:', tags);
-
     const attributes = await getAttributes();
-    //console.log('✅ Attributes loaded:', attributes);
 
-    const table = document.querySelector(".tagTable");
-    const header = table.querySelector("tr");
-    table.innerHTML = "";
-    if (header) table.appendChild(header);
+    logger.success(`Loaded ${tags.length} tags and ${attributes.length} attributes`);
 
+    const table = document.querySelector('.tagTable');
+    const header = table.querySelector('tr');
+    table.innerHTML = '';
+
+    if (header) {
+      table.appendChild(header);
+    }
+
+    // Generate table rows for each tag
     tags.forEach(tag => {
-      const row = document.createElement("tr");
+      const row = document.createElement('tr');
       const dropdownRow = document.createElement('tr');
       dropdownRow.classList.add('dropdown-row');
       dropdownRow.style.display = 'none';
 
-      // Robust filter: ensure types match
+      // Filter attributes for this tag
       const tagAttributes = attributes.filter(att => Number(att.tag) === Number(tag.id));
 
       const filledRows = generateTable(tag, tagAttributes, row, dropdownRow);
@@ -49,10 +68,10 @@ export async function init() {
       table.appendChild(filledRows.dropdownRow);
     });
 
-    // Use centralized dropdown binding (idempotent)
+    // Initialize dropdown functionality
     dropdown(table);
 
   } catch (error) {
-    console.error('❌ Error loading tags:', error.message);
+    logger.error('Error loading tags:', error);
   }
 }

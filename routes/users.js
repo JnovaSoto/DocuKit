@@ -1,13 +1,20 @@
+/**
+ * User routes.
+ * Handles user authentication, registration, and session management.
+ */
+
 import express from 'express';
-import bcrypt from "bcrypt";
-import validator from "validator";
+import bcrypt from 'bcrypt';
+import validator from 'validator';
 import db from '../db/database.js';
 import { isAdminLevel1 } from '../middleware/auth.js';
+
 const router = express.Router();
 
-// -------------------------------
-// Create a new user
-// -------------------------------
+/**
+ * Create a new user account.
+ * @route POST /users/user
+ */
 router.post('/user', async (req, res) => {
   const { username, email, password, admin } = req.body;
 
@@ -37,19 +44,18 @@ router.post('/user', async (req, res) => {
   });
 });
 
-// -------------------------------
-// Log In user (username or email)
-// -------------------------------
+/**
+ * Log in user with username or email.
+ * @route POST /users/login
+ */
 router.post('/login', (req, res) => {
   const { login, password } = req.body;
-
-  console.log("Iniciando sesion")
 
   if (!login || !password) return res.status(400).json({ error: 'All the inputs have to be fulled' });
 
   // Find user by username OR email
   const sql = `SELECT * FROM users WHERE username = ? OR email = ?`;
-  
+
   db.get(sql, [login, login], async (err, user) => {
     console.log('User from DB:', user);
     if (err) return res.status(500).json({ error: err.message });
@@ -68,9 +74,10 @@ router.post('/login', (req, res) => {
   });
 });
 
-// -------------------------------
-// Log Out
-// -------------------------------
+/**
+ * Log out current user.
+ * @route POST /users/logout
+ */
 router.post('/logout', (req, res) => {
 
   if (req.session) {
@@ -81,7 +88,7 @@ router.post('/logout', (req, res) => {
         return res.status(500).json({ message: 'Could not log out' });
       }
       // Clear cookie 
-      res.clearCookie('connect.sid'); 
+      res.clearCookie('connect.sid');
       res.json({ message: 'Logged out successfully' });
     });
   } else {
@@ -89,10 +96,11 @@ router.post('/logout', (req, res) => {
   }
 });
 
-// -------------------------------
-// Get user by ID
-// -------------------------------
-router.get('/users/:id',isAdminLevel1, (req, res) => {
+/**
+ * Get user by ID (admin only).
+ * @route GET /users/users/:id
+ */
+router.get('/users/:id', isAdminLevel1, (req, res) => {
   const id = parseInt(req.params.id, 10);
   console.log("Getting the user with the id = " + id);
 
@@ -106,16 +114,14 @@ router.get('/users/:id',isAdminLevel1, (req, res) => {
   });
 });
 
-// -------------------------------
-// Logged?
-// -------------------------------
+/**
+ * Check if user is logged in.
+ * @route GET /users/me
+ */
 router.get('/me', (req, res) => {
-
   if (req.session.userId) {
-    console.log("Logged");
     res.json({ loggedIn: true, username: req.session.username, admin: req.session.admin });
   } else {
-    console.log("Not Logged");
     res.json({ loggedIn: false });
   }
 });
