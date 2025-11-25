@@ -7,6 +7,7 @@ import express from 'express';
 import db from '../db/database.js';
 import { isAuthenticated } from '../middleware/auth.js';
 import { isAdminLevel1 } from '../middleware/auth.js';
+import ROUTES from '../config/routes.js';
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ const router = express.Router();
  * Get all tags.
  * @route GET /tags
  */
-router.get('/', (req, res) => {
+router.get(ROUTES.TAGS.BASE, (req, res) => {
   const sql = `SELECT * FROM tags`;
 
   db.all(sql, [], (err, rows) => {
@@ -28,7 +29,7 @@ router.get('/', (req, res) => {
  * Create a new tag (authenticated users only).
  * @route POST /tags
  */
-router.post('/', isAuthenticated, (req, res) => {
+router.post(ROUTES.TAGS.CREATE, isAuthenticated, (req, res) => {
   const { tagName, usability } = req.body;
 
   if (!tagName || !usability) return res.status(400).json({ error: 'Missing fields' });
@@ -47,7 +48,7 @@ router.post('/', isAuthenticated, (req, res) => {
  * Get tags by IDs (comma-separated).
  * @route GET /tags/idTag/:ids
  */
-router.get('/idTag/:ids', isAuthenticated, (req, res) => {
+router.get(ROUTES.TAGS.BY_IDS, isAuthenticated, (req, res) => {
   const idsParam = req.params.ids;
   if (!idsParam) {
     return res.status(400).json({ error: 'No IDs received' });
@@ -74,7 +75,7 @@ router.get('/idTag/:ids', isAuthenticated, (req, res) => {
  * Get tag by name.
  * @route GET /tags/tagName/:name
  */
-router.get('/tagName/:name', isAuthenticated, (req, res) => {
+router.get(ROUTES.TAGS.BY_NAME, isAuthenticated, (req, res) => {
   const tagName = req.params.name;
 
   const sql = `SELECT * FROM tags WHERE tagName = ?`;
@@ -98,7 +99,7 @@ router.get('/tagName/:name', isAuthenticated, (req, res) => {
  * Delete a tag (admin only).
  * @route DELETE /tags/:id
  */
-router.delete('/:id', isAdminLevel1, (req, res) => {
+router.delete(ROUTES.TAGS.DELETE, isAdminLevel1, (req, res) => {
   const id = req.params.id;
   const sql = `DELETE FROM tags WHERE id = ?`;
 

@@ -7,6 +7,7 @@ import express from 'express';
 import db from '../db/database.js';
 import { isAuthenticated } from '../middleware/auth.js';
 import { isAdminLevel1 } from '../middleware/auth.js';
+import ROUTES from '../config/routes.js';
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ const router = express.Router();
  * Get all attributes.
  * @route GET /attributes/attributes
  */
-router.get('/attributes', (req, res) => {
+router.get(ROUTES.ATTRIBUTES.BASE, (req, res) => {
   const sql = `SELECT * FROM attributes`;
 
   db.all(sql, [], (err, rows) => {
@@ -27,7 +28,7 @@ router.get('/attributes', (req, res) => {
  * Create attributes for a tag (batch insert).
  * @route POST /attributes/attributes/create
  */
-router.post('/attributes/create', isAuthenticated, (req, res) => {
+router.post(ROUTES.ATTRIBUTES.CREATE, isAuthenticated, (req, res) => {
   const { tagId, attributes } = req.body;
 
   if (!Array.isArray(attributes)) {
@@ -53,7 +54,7 @@ router.post('/attributes/create', isAuthenticated, (req, res) => {
  * Get attributes by tag ID.
  * @route GET /attributes/attributes/idAttribute/:id
  */
-router.get('/attributes/idAttribute/:id', isAuthenticated, (req, res) => {
+router.get(ROUTES.ATTRIBUTES.BY_TAG_ID, isAuthenticated, (req, res) => {
   const tagId = req.params.id;
 
   const sql = `SELECT * FROM attributes WHERE tag = ?`;
@@ -76,7 +77,7 @@ router.get('/attributes/idAttribute/:id', isAuthenticated, (req, res) => {
  * Get attributes by name.
  * @route GET /attributes/attribute/attributeName/:name
  */
-router.get('/attribute/attributeName/:name', isAuthenticated, (req, res) => {
+router.get(ROUTES.ATTRIBUTES.BY_NAME, isAuthenticated, (req, res) => {
   const name = req.params.name;
 
   const sql = `SELECT * FROM attributes WHERE attribute = ?`;

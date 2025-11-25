@@ -8,6 +8,7 @@ import bcrypt from 'bcrypt';
 import validator from 'validator';
 import db from '../db/database.js';
 import { isAdminLevel1 } from '../middleware/auth.js';
+import ROUTES from '../config/routes.js';
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ const router = express.Router();
  * Create a new user account.
  * @route POST /users/user
  */
-router.post('/user', async (req, res) => {
+router.post(ROUTES.USERS.SIGNUP, async (req, res) => {
   const { username, email, password, admin } = req.body;
 
   const saltRounds = 10;
@@ -48,7 +49,7 @@ router.post('/user', async (req, res) => {
  * Log in user with username or email.
  * @route POST /users/login
  */
-router.post('/login', (req, res) => {
+router.post(ROUTES.USERS.LOGIN, (req, res) => {
   const { login, password } = req.body;
 
   if (!login || !password) return res.status(400).json({ error: 'All the inputs have to be fulled' });
@@ -78,7 +79,7 @@ router.post('/login', (req, res) => {
  * Log out current user.
  * @route POST /users/logout
  */
-router.post('/logout', (req, res) => {
+router.post(ROUTES.USERS.LOGOUT, (req, res) => {
 
   if (req.session) {
     // Destroy session
@@ -100,7 +101,7 @@ router.post('/logout', (req, res) => {
  * Get user by ID (admin only).
  * @route GET /users/users/:id
  */
-router.get('/users/:id', isAdminLevel1, (req, res) => {
+router.get(ROUTES.USERS.BY_ID, isAdminLevel1, (req, res) => {
   const id = parseInt(req.params.id, 10);
   console.log("Getting the user with the id = " + id);
 
@@ -118,7 +119,7 @@ router.get('/users/:id', isAdminLevel1, (req, res) => {
  * Check if user is logged in.
  * @route GET /users/me
  */
-router.get('/me', (req, res) => {
+router.get(ROUTES.USERS.ME, (req, res) => {
   if (req.session.userId) {
     res.json({ loggedIn: true, username: req.session.username, admin: req.session.admin });
   } else {
