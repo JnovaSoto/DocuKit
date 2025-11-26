@@ -43,7 +43,7 @@ export async function init() {
       });
 
       // Show alert if login fails
-      if (handleResponseError(response)) {
+      if (await handleResponseError(response)) {
         return;
       }
 

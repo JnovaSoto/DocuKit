@@ -84,7 +84,7 @@ export async function init() {
       });
 
       // Show alert if creation fails
-      if (handleResponseError(response)) {
+      if (await handleResponseError(response)) {
         return;
       }
 

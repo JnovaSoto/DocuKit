@@ -53,17 +53,23 @@ export const API = {
         ME: '/users/me',
         LOGIN: '/users/login',
         LOGOUT: '/users/logout',
-        SIGNUP: '/users/user'
+        SIGNUP: '/users/user',
+        BY_ID: (id) => `/users/${id}`
     },
     TAGS: {
         BASE: '/tags',
-        CREATE: '/tags',
-        UPDATE: '/tags',
-        DELETE: '/tags'
+        CREATE: '/tags/create',
+        BY_ID: (id) => `/tags/tagId/${id}`,
+        BY_IDS: (ids) => `/tags/tagIds/${ids}`,
+        BY_NAME: (name) => `/tags/tagName/${name}`,
+        UPDATE: (id) => `/tags/${id}`,
+        DELETE: (id) => `/tags/delete/${id}`
     },
     ATTRIBUTES: {
         BASE: '/attributes',
-        CREATE: '/attributes/attributes/create'
+        CREATE: '/attributes/attributesCreate',
+        BY_TAG_ID: (id) => `/attributes/attributeTagId/${id}`,
+        BY_NAME: (name) => `/attributes/attributeName/${name}`
     },
     PARTIALS: {
         HEADER: '/partials/header',

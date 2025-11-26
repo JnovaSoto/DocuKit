@@ -13,7 +13,7 @@ const router = express.Router();
 
 /**
  * Get all tags.
- * @route GET /tags
+ * @route GET /
  */
 router.get(ROUTES.TAGS.BASE, (req, res) => {
   const sql = `SELECT * FROM tags`;
@@ -27,7 +27,7 @@ router.get(ROUTES.TAGS.BASE, (req, res) => {
 
 /**
  * Create a new tag (authenticated users only).
- * @route POST /tags
+ * @route POST /create
  */
 router.post(ROUTES.TAGS.CREATE, isAuthenticated, (req, res) => {
   const { tagName, usability } = req.body;
@@ -43,10 +43,24 @@ router.post(ROUTES.TAGS.CREATE, isAuthenticated, (req, res) => {
   });
 });
 
+/**
+ * Get a tag by ID (authenticated users only).
+ * @route GET /tagId/:id
+ */
+router.get(ROUTES.TAGS.BY_ID, isAuthenticated, (req, res) => {
+  const id = req.params.id;
+  const sql = `SELECT * FROM tags WHERE id = ?`;
+
+  db.get(sql, [id], (err, row) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!row) return res.status(404).json({ error: 'Tag not found' });
+    res.json(row);
+  });
+});
 
 /**
  * Get tags by IDs (comma-separated).
- * @route GET /tags/idTag/:ids
+ * @route GET /tagIds/:ids
  */
 router.get(ROUTES.TAGS.BY_IDS, isAuthenticated, (req, res) => {
   const idsParam = req.params.ids;
@@ -73,7 +87,7 @@ router.get(ROUTES.TAGS.BY_IDS, isAuthenticated, (req, res) => {
 
 /**
  * Get tag by name.
- * @route GET /tags/tagName/:name
+ * @route GET /tagName/:name
  */
 router.get(ROUTES.TAGS.BY_NAME, isAuthenticated, (req, res) => {
   const tagName = req.params.name;
@@ -97,7 +111,7 @@ router.get(ROUTES.TAGS.BY_NAME, isAuthenticated, (req, res) => {
 
 /**
  * Delete a tag (admin only).
- * @route DELETE /tags/:id
+ * @route DELETE /delete/:id  
  */
 router.delete(ROUTES.TAGS.DELETE, isAdminLevel1, (req, res) => {
   const id = req.params.id;

@@ -62,7 +62,7 @@ router.post(ROUTES.USERS.LOGIN, (req, res) => {
     if (err) return res.status(500).json({ error: err.message });
     if (!user) return res.status(401).json({ error: 'User or password are incorrect' });
 
-    // Compare password
+    // Compare passwordGetting the user with the id 
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ error: 'User or password are incorrect' });
 
@@ -98,8 +98,20 @@ router.post(ROUTES.USERS.LOGOUT, (req, res) => {
 });
 
 /**
+ * Check if user is logged in.
+ * @route GET /users/me
+ */
+router.get(ROUTES.USERS.ME, (req, res) => {
+  if (req.session.userId) {
+    res.json({ loggedIn: true, username: req.session.username, admin: req.session.admin });
+  } else {
+    res.json({ loggedIn: false });
+  }
+});
+
+/**
  * Get user by ID (admin only).
- * @route GET /users/users/:id
+ * @route GET /users/:id
  */
 router.get(ROUTES.USERS.BY_ID, isAdminLevel1, (req, res) => {
   const id = parseInt(req.params.id, 10);
@@ -113,18 +125,6 @@ router.get(ROUTES.USERS.BY_ID, isAdminLevel1, (req, res) => {
     if (!row) return res.status(404).json({ error: 'User not found' });
     res.json(row);
   });
-});
-
-/**
- * Check if user is logged in.
- * @route GET /users/me
- */
-router.get(ROUTES.USERS.ME, (req, res) => {
-  if (req.session.userId) {
-    res.json({ loggedIn: true, username: req.session.username, admin: req.session.admin });
-  } else {
-    res.json({ loggedIn: false });
-  }
 });
 
 export default router;

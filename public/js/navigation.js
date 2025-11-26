@@ -73,12 +73,12 @@ async function loadHeaderAndFooter() {
 function initNavigation() {
   // Event delegation: any click inside body
   document.body.addEventListener('click', e => {
+    if (e.target.matches('#btn-edit-tags')) changePage(ROUTES.EDIT);
     if (e.target.matches('#btn-go-create')) changePage(ROUTES.CREATE);
     if (e.target.matches('#btn-go-home')) changePage(ROUTES.HOME);
     if (e.target.matches('#btn-sign-up')) changePage(ROUTES.SIGNUP);
     if (e.target.matches('#btn-log-in')) changePage(ROUTES.LOGIN);
     if (e.target.matches('#btn-go-profile')) changePage(ROUTES.PROFILE);
-    if (e.target.matches('#btn-edit-tags')) changePage(ROUTES.EDIT);
   });
 }
 
@@ -89,16 +89,59 @@ function initNavigation() {
  * @param {string} path - The path to navigate to
  * @fires {changePage} changePage
  */
-function changePage(path) {
+import { requireLogin } from './tools/session.js';
+import { showTemporaryAlert } from './tools/alerts.js';
+
+// ... (existing imports)
+
+async function changePage(path) {
   logger.navigation(`Navigating to: ${path}`);
+
+  // Check if the route is protected
+  const protectedRoutes = [ROUTES.CREATE, ROUTES.EDIT, ROUTES.PROFILE];
+  if (protectedRoutes.includes(path)) {
+    if (!await requireLogin()) {
+      showTemporaryAlert('alert', 'You must log in to access this page');
+      // Optionally redirect to login if not already there
+      if (window.location.pathname !== ROUTES.LOGIN) {
+        changePage(ROUTES.LOGIN);
+      }
+      return;
+    }
+  }
+
   history.pushState(null, null, path);
 
   fetch(path)
-    .then(response => response.text())
+    .then(async response => {
+      // Handle server-side redirects (e.g. if session expired during fetch)
+      if (response.redirected) {
+        const newUrl = new URL(response.url);
+        const newPath = newUrl.pathname;
+        logger.navigation(`Redirected to: ${newPath}`);
+        history.replaceState(null, null, newPath);
+        // If redirected to login, maybe show alert?
+        if (newPath === ROUTES.LOGIN) {
+          showTemporaryAlert('alert', 'Session expired, please log in again');
+        }
+        return response.text();
+      }
+      return response.text();
+    })
     .then(html => {
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
-      const newContent = doc.querySelector('#app').innerHTML;
+
+      // Check if we got a full page or just content. 
+      // If the server returned a full login page due to auth failure but no redirect (200 OK),
+      // we might need to detect that. But usually redirects handle it.
+
+      const newContent = doc.querySelector('#app') ? doc.querySelector('#app').innerHTML : null;
+
+      if (!newContent) {
+        logger.error('Could not find #app content in response');
+        return;
+      }
 
       // Remove any meta tags that might have been included in the content
       const tempDiv = document.createElement('div');

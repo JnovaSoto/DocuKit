@@ -5,26 +5,27 @@
 
 export const ROUTES = {
     USERS: {
-        BASE: '/users',
-        SIGNUP: '/user',
+        BASE: '/',
+        ME: '/me',
         LOGIN: '/login',
         LOGOUT: '/logout',
-        ME: '/me',
-        BY_ID: '/users/:id'
+        SIGNUP: '/user',
+        BY_ID: '/:id'
     },
     TAGS: {
         BASE: '/',
-        CREATE: '/',
-        BY_ID: '/:id',
-        BY_IDS: '/idTag/:ids',
+        CREATE: '/create',
+        BY_ID: '/tagId/:id',
+        BY_IDS: '/tagIds/:ids',
         BY_NAME: '/tagName/:name',
-        DELETE: '/:id'
+        UPDATE: '/:id',
+        DELETE: '/delete/:id'
     },
     ATTRIBUTES: {
-        BASE: '/attributes',
-        CREATE: '/attributes/create',
-        BY_TAG_ID: '/attributes/idAttribute/:id',
-        BY_NAME: '/attribute/attributeName/:name'
+        BASE: '/',
+        CREATE: '/attributeCreate',
+        BY_TAG_ID: '/attributeTagId/:id',
+        BY_NAME: '/attributeName/:name'
     },
     PARTIALS: {
         HEADER: '/header',

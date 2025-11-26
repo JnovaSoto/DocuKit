@@ -83,7 +83,7 @@ export function init() {
         body: JSON.stringify(tagBody)
       });
 
-      if (handleResponseError(tagResponse)) {
+      if (await handleResponseError(tagResponse)) {
         return;
       }
 
@@ -101,7 +101,7 @@ export function init() {
         body: JSON.stringify(attributesBody)
       });
 
-      if (handleResponseError(attributesResponse)) {
+      if (await handleResponseError(attributesResponse)) {
         return;
       }
 

@@ -14,6 +14,7 @@ import logger from '../tools/logger.js';
  * Sets up event delegation for delete button clicks.
  */
 export async function init() {
+
     logger.delete('Delete tag script initialized');
 
     // Handle delete button clicks using event delegation
@@ -44,12 +45,12 @@ export async function init() {
 
             logger.network(`Deleting tag with ID: ${id}`);
 
-            const response = await fetch(`${API.TAGS.BASE}/${id}`, {
+            const response = await fetch(API.TAGS.DELETE(id), {
                 method: 'DELETE',
                 credentials: 'include'
             });
 
-            if (handleResponseError(response)) {
+            if (await handleResponseError(response)) {
                 return;
             }
 

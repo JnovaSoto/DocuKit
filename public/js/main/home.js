@@ -6,6 +6,7 @@
 import { generateTable } from '../auto/generateTable.js';
 import { dropdown } from '../auto/dropdownAtt.js';
 import logger from '../tools/logger.js';
+import { API } from '../config/constants.js';
 
 /**
  * Initializes the home page.
@@ -19,7 +20,7 @@ export async function init() {
    * @returns {Promise<Array>} Array of tag objects
    */
   async function getTags() {
-    const response = await fetch('/tags');
+    const response = await fetch(API.TAGS.BASE);
     if (!response.ok) {
       throw new Error('Error fetching tags');
     }
@@ -31,7 +32,7 @@ export async function init() {
    * @returns {Promise<Array>} Array of attribute objects
    */
   async function getAttributes() {
-    const response = await fetch('/attributes/attributes');
+    const response = await fetch(API.ATTRIBUTES.BASE);
     if (!response.ok) {
       throw new Error('Error fetching attributes');
     }
