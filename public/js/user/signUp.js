@@ -8,16 +8,27 @@ import { handleResponseError } from '../tools/caseState.js';
 import { API, SUCCESS_MESSAGES, VALIDATION } from '../config/constants.js';
 import logger from '../tools/logger.js';
 
+// Flag to prevent duplicate initialization
+let isInitialized = false;
+
 /**
  * Initializes the sign up page functionality.
  * Sets up form validation and submission handler.
  */
 export async function init() {
+  // Prevent duplicate initialization
+  if (isInitialized) {
+    logger.debug('SignUp module already initialized, skipping');
+    return;
+  }
+
   logger.form('SignUp script initialized');
+  isInitialized = true;
 
   const form = document.getElementById('signUp-form');
   if (!form) {
     logger.warn('SignUp form not found');
+    isInitialized = false; // Reset flag if form not found
     return;
   }
 

@@ -92,6 +92,10 @@ app.get('/edit', (req, res) => {
   res.render('edit', { layout: 'layout', title: 'Edit' });
 });
 
+app.get('/profile', (req, res) => {
+  res.render('profile', { layout: 'layout', title: 'Profile' });
+});
+
 // ============================================================================
 // Error Handling Middleware
 // ============================================================================

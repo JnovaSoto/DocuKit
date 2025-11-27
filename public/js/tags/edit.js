@@ -10,37 +10,12 @@ import { API, ROUTES, SUCCESS_MESSAGES } from "../config/constants.js";
 import logger from '../tools/logger.js';
 import { tagForm } from '../auto/tagForm.js';
 
+
 logger.edit('Edit module loaded');
 
-// 1. Event Delegation for "Edit" button click (Global)
-// This runs once when the module is first loaded.
-// We use a named function to avoid duplicates if re-imported, though modules are cached.
-document.body.addEventListener("click", async (event) => {
-    const editBtn = event.target.closest("#btn-edit-tags");
-    if (!editBtn) return;
-
-    // Prevent default if it's a link, though it's a button usually
-    event.preventDefault();
-
-    const tagId = editBtn.dataset.id;
-    if (tagId) {
-        if (!await requireLogin()) {
-            showTemporaryAlert('alert', 'You must log in to edit');
-            return;
-        }
-
-        // Save ID to session storage for the Edit page to use
-        sessionStorage.setItem('editTagId', tagId);
-        logger.info('Edit button clicked. ID saved:', tagId);
-
-        // Navigate to edit page
-        // We can use the global changePage if exposed, or just history/location
-        // Since navigation.js handles clicks on #btn-edit-tags too, we might have a race condition.
-        // But navigation.js only looks for IDs. 
-        // If navigation.js also listens to #btn-edit-tags, it will trigger changePage.
-        // So we don't need to do anything here except save the ID!
-    }
-});
+// Flag to prevent duplicate initialization
+let isEditButtonListenerAttached = false;
+let isInitialized = false;
 
 /**
  * Initializes the edition functionality.
@@ -48,6 +23,62 @@ document.body.addEventListener("click", async (event) => {
  */
 export async function init() {
     logger.edit('Edit init() called');
+
+    // 1. Attach the global "Edit" button listener ONCE
+    if (!isEditButtonListenerAttached) {
+        logger.edit('Attaching edit button listener');
+        isEditButtonListenerAttached = true;
+
+        document.body.addEventListener("click", async (event) => {
+            const editBtn = event.target.closest("#btn-edit-tags");
+            if (!editBtn) return;
+
+            // Prevent default behavior (page reload)
+            event.preventDefault();
+
+            // Stop event propagation to prevent other handlers from firing
+            event.stopPropagation();
+
+            const tagId = editBtn.dataset.id;
+            if (!tagId) {
+                logger.warn('Edit button missing data-id attribute');
+                return;
+            }
+
+            // Check login first
+            if (!await requireLogin()) {
+                showTemporaryAlert('alert', 'You must log in to edit');
+                return;
+            }
+
+            // Save ID to session storage for the Edit page to use
+            sessionStorage.setItem('editTagId', tagId);
+            logger.info('Edit button clicked. ID saved:', tagId);
+
+            // Navigate to edit page using history API (SPA navigation)
+            history.pushState(null, null, ROUTES.EDIT);
+
+            // Manually fetch and load the edit page content
+            try {
+                const response = await fetch(ROUTES.EDIT);
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newContent = doc.querySelector('#app');
+
+                if (newContent) {
+                    document.querySelector('#app').innerHTML = newContent.innerHTML;
+                    // Load the edit form with the saved tag ID
+                    await loadEditForm();
+                } else {
+                    logger.error('Could not find #app in edit page response');
+                }
+            } catch (error) {
+                logger.error('Error navigating to edit page:', error);
+                showTemporaryAlert('alert', 'Failed to load edit page');
+            }
+        });
+    }
 
     // 2. Logic for the Edit Page itself
     // This needs to run every time we navigate to /edit

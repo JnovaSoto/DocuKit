@@ -68,17 +68,35 @@ async function loadHeaderAndFooter() {
 /**
  * Sets up global SPA navigation using event delegation.
  * Listens for clicks on navigation buttons and triggers page changes.
+ * Note: #btn-edit-tags is handled by edit.js to save tag ID before navigation
  * @fires {changePage} changePage
  */
 function initNavigation() {
   // Event delegation: any click inside body
   document.body.addEventListener('click', e => {
-    if (e.target.matches('#btn-edit-tags')) changePage(ROUTES.EDIT);
-    if (e.target.matches('#btn-go-create')) changePage(ROUTES.CREATE);
-    if (e.target.matches('#btn-go-home')) changePage(ROUTES.HOME);
-    if (e.target.matches('#btn-sign-up')) changePage(ROUTES.SIGNUP);
-    if (e.target.matches('#btn-log-in')) changePage(ROUTES.LOGIN);
-    if (e.target.matches('#btn-go-profile')) changePage(ROUTES.PROFILE);
+    // Note: #btn-edit-tags is NOT handled here - it's handled by edit.js
+    // to ensure the tag ID is saved to sessionStorage before navigation
+
+    if (e.target.matches('#btn-go-create')) {
+      e.preventDefault();
+      changePage(ROUTES.CREATE);
+    }
+    if (e.target.matches('#btn-go-home')) {
+      e.preventDefault();
+      changePage(ROUTES.HOME);
+    }
+    if (e.target.matches('#btn-sign-up')) {
+      e.preventDefault();
+      changePage(ROUTES.SIGNUP);
+    }
+    if (e.target.matches('#btn-log-in')) {
+      e.preventDefault();
+      changePage(ROUTES.LOGIN);
+    }
+    if (e.target.matches('#btn-go-profile')) {
+      e.preventDefault();
+      changePage(ROUTES.PROFILE);
+    }
   });
 }
 

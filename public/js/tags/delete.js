@@ -9,13 +9,22 @@ import { requireLogin } from '../tools/session.js';
 import { API, SUCCESS_MESSAGES } from '../config/constants.js';
 import logger from '../tools/logger.js';
 
+// Flag to prevent duplicate initialization
+let isInitialized = false;
+
 /**
  * Initializes the tag deletion functionality.
  * Sets up event delegation for delete button clicks.
  */
 export async function init() {
+    // Prevent duplicate initialization
+    if (isInitialized) {
+        logger.debug('Delete module already initialized, skipping');
+        return;
+    }
 
     logger.delete('Delete tag script initialized');
+    isInitialized = true;
 
     // Handle delete button clicks using event delegation
     document.addEventListener('click', async (e) => {
@@ -23,6 +32,9 @@ export async function init() {
 
         // Click wasn't on a delete button
         if (!deleteBtn) return;
+
+        // Prevent default behavior (page reload)
+        e.preventDefault();
 
         // Take the id provided through the button's data attributes
         const id = deleteBtn.dataset.id;

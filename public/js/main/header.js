@@ -6,12 +6,22 @@
 import { checkSession } from '../tools/session.js';
 import logger from '../tools/logger.js';
 
+// Flag to prevent duplicate initialization
+let isInitialized = false;
+
 /**
  * Initializes the header functionality.
  * Updates UI based on user session and permissions.
  */
 export async function init() {
+  // Prevent duplicate initialization
+  if (isInitialized) {
+    logger.debug('Header module already initialized, skipping');
+    return;
+  }
+
   logger.info('Header script initialized');
+  isInitialized = true;
 
   try {
     const sessionData = await checkSession();

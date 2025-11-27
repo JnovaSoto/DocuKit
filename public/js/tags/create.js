@@ -9,12 +9,22 @@ import { requireLogin } from '../tools/session.js';
 import { API, SUCCESS_MESSAGES } from '../config/constants.js';
 import logger from '../tools/logger.js';
 
+// Flag to prevent duplicate initialization
+let isInitialized = false;
+
 /**
  * Initializes the tag creation page.
  * Sets up dynamic attribute addition and form submission.
  */
 export function init() {
+  // Prevent duplicate initialization
+  if (isInitialized) {
+    logger.debug('Create module already initialized, skipping');
+    return;
+  }
+
   logger.create('Create tag script initialized');
+  isInitialized = true;
 
   const attributesContainer = document.getElementById('attributesContainer');
   const addAttributeBtn = document.getElementById('addAttributeBtn');
@@ -22,6 +32,7 @@ export function init() {
 
   if (!form || !attributesContainer || !addAttributeBtn) {
     logger.warn('Create form elements not found');
+    isInitialized = false; // Reset flag if elements not found
     return;
   }
 

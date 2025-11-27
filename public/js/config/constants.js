@@ -67,7 +67,7 @@ export const API = {
     },
     ATTRIBUTES: {
         BASE: '/attributes',
-        CREATE: '/attributes/attributesCreate',
+        CREATE: '/attributes/attributeCreate',
         BY_TAG_ID: (id) => `/attributes/attributeTagId/${id}`,
         BY_NAME: (name) => `/attributes/attributeName/${name}`
     },

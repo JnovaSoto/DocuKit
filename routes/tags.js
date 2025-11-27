@@ -110,21 +110,129 @@ router.get(ROUTES.TAGS.BY_NAME, isAuthenticated, (req, res) => {
 
 
 /**
+ * Update a tag and its attributes (admin only).
+ * @route PUT /:id
+ */
+router.put('/:id', isAdminLevel1, (req, res) => {
+  const id = req.params.id;
+  const { tagName, usability, attributes } = req.body;
+
+  if (!tagName || !usability) {
+    return res.status(400).json({ error: 'Missing required fields: tagName and usability' });
+  }
+
+  // Update the tag
+  const updateTagSql = `UPDATE tags SET tagName = ?, usability = ? WHERE id = ?`;
+
+  db.run(updateTagSql, [tagName, usability, id], function (err) {
+    if (err) {
+      console.error('Error updating tag:', err.message);
+      return res.status(500).json({ error: 'Failed to update tag: ' + err.message });
+    }
+
+    if (this.changes === 0) {
+      return res.status(404).json({ error: 'Tag not found' });
+    }
+
+    console.log(`Updated tag ${id}`);
+
+    // If attributes are provided, update them
+    if (attributes && Array.isArray(attributes)) {
+      // Delete existing attributes for this tag
+      const deleteAttrSql = `DELETE FROM attributes WHERE tag = ?`;
+
+      db.run(deleteAttrSql, [id], function (err) {
+        if (err) {
+          console.error('Error deleting old attributes:', err.message);
+          return res.status(500).json({ error: 'Failed to update attributes: ' + err.message });
+        }
+
+        console.log(`Deleted ${this.changes} old attribute(s) for tag ${id}`);
+
+        // Insert new attributes
+        if (attributes.length > 0) {
+          const insertAttrSql = `INSERT INTO attributes (attribute, info, tag) VALUES (?, ?, ?)`;
+          const stmt = db.prepare(insertAttrSql);
+
+          for (const attr of attributes) {
+            if (attr.attribute) { // Only insert if attribute name exists
+              stmt.run([attr.attribute, attr.info || '', id]);
+            }
+          }
+
+          stmt.finalize((err) => {
+            if (err) {
+              console.error('Error inserting new attributes:', err.message);
+              return res.status(500).json({ error: 'Failed to insert new attributes: ' + err.message });
+            }
+
+            res.json({
+              message: 'Tag and attributes updated successfully',
+              id,
+              tagName,
+              usability
+            });
+          });
+        } else {
+          // No attributes to insert
+          res.json({
+            message: 'Tag updated successfully (no attributes)',
+            id,
+            tagName,
+            usability
+          });
+        }
+      });
+    } else {
+      // No attributes provided, just return success for tag update
+      res.json({
+        message: 'Tag updated successfully',
+        id,
+        tagName,
+        usability
+      });
+    }
+  });
+});
+
+
+/**
  * Delete a tag (admin only).
+ * Deletes all related attributes first, then deletes the tag.
  * @route DELETE /delete/:id  
  */
 router.delete(ROUTES.TAGS.DELETE, isAdminLevel1, (req, res) => {
   const id = req.params.id;
-  const sql = `DELETE FROM tags WHERE id = ?`;
 
-  db.run(sql, [id], function (err) {
-    if (err) return res.status(500).json({ error: err.message });
+  // First, delete all attributes associated with this tag
+  const deleteAttributesSql = `DELETE FROM attributes WHERE tag = ?`;
 
-    if (this.changes === 0) {
-      return res.status(404).json({ message: 'The tag to remove was not found.' });
+  db.run(deleteAttributesSql, [id], function (err) {
+    if (err) {
+      console.error('Error deleting attributes:', err.message);
+      return res.status(500).json({ error: 'Failed to delete tag attributes: ' + err.message });
     }
 
-    res.json({ message: 'Tag deleted', deletedId: id });
+    console.log(`Deleted ${this.changes} attribute(s) for tag ${id}`);
+
+    // Now delete the tag itself
+    const deleteTagSql = `DELETE FROM tags WHERE id = ?`;
+
+    db.run(deleteTagSql, [id], function (err) {
+      if (err) {
+        console.error('Error deleting tag:', err.message);
+        return res.status(500).json({ error: 'Failed to delete tag: ' + err.message });
+      }
+
+      if (this.changes === 0) {
+        return res.status(404).json({ message: 'The tag to remove was not found.' });
+      }
+
+      res.json({
+        message: 'Tag and related attributes deleted successfully',
+        deletedId: id
+      });
+    });
   });
 });
 

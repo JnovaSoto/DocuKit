@@ -11,12 +11,22 @@ import { requireLogin } from '../tools/session.js';
 import logger from '../tools/logger.js';
 import { API } from '../config/constants.js';
 
+// Flag to prevent duplicate initialization
+let isInitialized = false;
+
 /**
  * Initializes the tag search functionality.
  * Sets up form submission handler for tag retrieval using event delegation.
  */
 export async function init() {
+  // Prevent duplicate initialization
+  if (isInitialized) {
+    logger.debug('GetTag module already initialized, skipping');
+    return;
+  }
+
   logger.tag('GetTag script initialized');
+  isInitialized = true;
 
   // Use event delegation on body with 'submit'
   // This is the most robust way to handle dynamic forms without breaking other interactions
@@ -30,6 +40,7 @@ export async function init() {
     if (!formGetTag) return;
 
     // If it IS the getTag form, we handle it and prevent default submission
+    event.preventDefault();
     console.log('✅ getTag form submitted');
 
     const error = document.getElementById('error');
