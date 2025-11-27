@@ -3,10 +3,16 @@
   <form action="post" method="post" id="myForm" required>
 
     <label for="tagName">Tag Name <span class="req">*</span></label>
-    <input type="text" name="tagName" placeholder="Name" id="tagName" required>
+    <div class="input-wrapper">
+        <span class="material-symbols-outlined">label</span>
+        <input type="text" name="tagName" placeholder="Name" id="tagName" required>
+    </div>
 
     <label for="usability">Usability of the Tag <span class="req">*</span></label>
-    <input type="text" name="usability" placeholder="Usability" id="usability" required>
+    <div class="input-wrapper">
+        <span class="material-symbols-outlined">info</span>
+        <input type="text" name="usability" placeholder="Usability" id="usability" required>
+    </div>
 
     <div id="attributesContainer">
 
@@ -14,8 +20,14 @@
 
         <label>Atribute of the Tag <span class="req">*</span></label>
         
-        <input type="text" name="attributeName[]" placeholder="Attribute Name" required>
-        <input type="text" name="attributeInfo[]" placeholder="Attribute Info" required>
+        <div class="input-wrapper">
+            <span class="material-symbols-outlined">edit_attributes</span>
+            <input type="text" name="attributeName[]" placeholder="Attribute Name" required>
+        </div>
+        <div class="input-wrapper">
+            <span class="material-symbols-outlined">description</span>
+            <input type="text" name="attributeInfo[]" placeholder="Attribute Info" required>
+        </div>
 
       </div>
 

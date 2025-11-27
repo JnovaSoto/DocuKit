@@ -1,54 +1,66 @@
 @import url('https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@200..700&display=swap');
-body{
+
+body {
     background-color: rgb(250, 237, 237);
     font-family: "Stack Sans Notch", sans-serif;
 }
-h3{
+
+h3 {
     padding: 5px;
     color: white;
 }
+
 /*Stles for table and his childrens*/
-table{
+table {
     margin: 10px auto;
     border-collapse: collapse;
     width: 80%;
 }
-th,td {
-  padding: 20px;
-  border: 1px solid black;
+
+th,
+td {
+    padding: 20px;
+    border: 1px solid black;
 }
-tr{
+
+tr {
     border: 2px solid #cca31e;
     padding: 10px;
     text-align: center;
 }
-tr:first-child{
+
+tr:first-child {
 
     border: 5px solid rgb(44, 43, 32);
     background-color: #cca31e;
-  
+
 }
-.tagTable{
+
+.tagTable {
     border: 5px solid black;
 }
-.tagTable th{
+
+.tagTable th {
     padding: 10px;
 }
-.attribute-table tr{
+
+.attribute-table tr {
     border: none;
-    background-color:aliceblue;
+    background-color: aliceblue;
 }
-.attribute-table tr td:nth-child(1){
+
+.attribute-table tr td:nth-child(1) {
     background-color: #cca31e;
     font-weight: bold;
 }
-.attribute-table tr td:nth-child(3){
+
+.attribute-table tr td:nth-child(3) {
     background-color: rgb(236, 225, 163);
     font-weight: bold;
 }
 
 /*Styles for the Unique content button*/
-.table-button{
+.table-button {
     background-color: #cca31e;
     color: white;
     padding: 10px 8px;
@@ -57,44 +69,85 @@ tr:first-child{
     align-items: center;
     display: inline-flex;
 }
-button span{
+
+button span {
     display: inline-block;
 }
-button:hover[data-path="/home"]{
+
+button:hover[data-path="/home"] {
     background-color: #eeca54;
 }
-button:hover .arrow{
+
+button:hover .arrow {
     transform: translateY(4px);
 }
-.arrow{
+
+.arrow {
     transition: transform 0.2s ease;
     display: inline-block;
 }
-.invisibleTr{
+
+.invisibleTr {
     display: none;
 }
+
 /*Delete button*/
-.delete{
+.delete {
     background-color: rgb(249, 130, 130);
 }
-.delete:hover{
+
+.delete:hover {
     background-color: rgb(255, 0, 0);
 }
-.icon_delete{
+
+.icon_delete {
     color: white;
 }
+
 /*Attributes box*/
 .dropdown {
-  position: relative;
+    position: relative;
 }
+
 .dropdown-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.5s ease, opacity 0.s ease;
-  opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, opacity 0.s ease;
+    opacity: 0;
 }
+
 /*Just if have the attribute then use the style*/
 .dropdown-row[style*="display: table-row"] .dropdown-content {
-  max-height: 500px; 
-  opacity: 1;
+    max-height: 500px;
+    opacity: 1;
+}
+
+/*Styles for input icons*/
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.input-wrapper input {
+    padding-left: 2.5rem !important;
+    /* Space for the icon */
+}
+
+.input-wrapper .material-symbols-outlined {
+    position: absolute;
+    left: 0.75rem;
+    color: #888;
+    pointer-events: none;
+    /* Let clicks pass through to input */
+    font-size: 1.2rem;
+}
+
+/* Cute focus effect */
+.input-wrapper input:focus+.material-symbols-outlined,
+.input-wrapper input:focus~.material-symbols-outlined {
+    color: #cca31e;
+    /* Match the primary color */
+    transition: color 0.3s ease;
 }

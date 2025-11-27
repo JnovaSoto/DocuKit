@@ -4,21 +4,30 @@
     <div class="mb-3">
         <label for="user" class="form-label">Username</label>
         <div class="form-text">
-            <input type="text" name="user" class="form-control" id="user-input" placeholder="Enter your username" minlength="8"  maxlength="20" required>
+            <div class="input-wrapper">
+                <span class="material-symbols-outlined">person</span>
+                <input type="text" name="user" class="form-control" id="user-input" placeholder="Enter your username" minlength="8"  maxlength="20" required>
+            </div>
         </div>
     </div>
 
     <div class="mb-3">
         <label for="email" class="form-label">Email adress</label>
         <div class="form-text">
-            <input type="email" name="email" class="form-control" id="email-input" placeholder="Enter your email" minlength="8" maxlength="40" required>
+            <div class="input-wrapper">
+                <span class="material-symbols-outlined">mail</span>
+                <input type="email" name="email" class="form-control" id="email-input" placeholder="Enter your email" minlength="8" maxlength="40" required>
+            </div>
         </div>
     </div>
 
     <div class="mb-3">
         <label for="pass" class="form-label">Password</label>
         <div class="form-password">
-            <input type="password" class="form-control" name="pass" id="password-input"  placeholder="Enter your password" minlength="8" required>
+            <div class="input-wrapper">
+                <span class="material-symbols-outlined">lock</span>
+                <input type="password" class="form-control" name="pass" id="password-input"  placeholder="Enter your password" minlength="8" required>
+            </div>
             <button type="button" class="form-password-action" data-coreui-toggle="password" aria-label="Toggle password visibility">
             <span class="form-password-action-icon"></span>
             </button>
@@ -27,7 +36,10 @@
     <div class="mb-3">
         <label for="passConf" class="form-label">Repeat Password</label>
         <div class="form-password">
-            <input type="password" class="form-control" name="passConf" id="repeat-password-input"  placeholder="Enter your password" minlength="8" required>
+            <div class="input-wrapper">
+                <span class="material-symbols-outlined">lock_reset</span>
+                <input type="password" class="form-control" name="passConf" id="repeat-password-input"  placeholder="Enter your password" minlength="8" required>
+            </div>
             <button type="button" class="form-password-action" data-coreui-toggle="password" aria-label="Toggle password visibility">
             <span class="form-password-action-icon"></span>
             </button>

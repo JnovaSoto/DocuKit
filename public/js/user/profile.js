@@ -5,6 +5,7 @@
 
 import { checkSession } from '../tools/session.js';
 import logger from '../tools/logger.js';
+import { API } from '../config/constants.js';
 
 // Flag to prevent duplicate initialization
 let isInitialized = false;
@@ -34,4 +35,23 @@ export async function init() {
     logger.info(`Profile loaded for user: ${session.username}`);
 
     // TODO: Add profile display and editing functionality
+
+    console.log(session);
+
+    const data = await fetch(API.USERS.BY_ID(session.id), {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    const user = await data.json();
+
+    const username = document.getElementById('profile-username');
+    const email = document.getElementById('profile-email');
+    const role = document.getElementById('profile-role');
+
+    username.textContent = user.username;
+    email.textContent = user.email;
+    role.textContent = user.admin ? 'Admin' : 'User';
 }

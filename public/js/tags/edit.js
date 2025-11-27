@@ -121,7 +121,7 @@ async function loadEditForm() {
             attributes: attributesData
         };
 
-        const mainForm = document.getElementById('edit-form');
+        const mainForm = document.getElementById('form-container');
         if (!mainForm) {
             logger.error('Edit form container not found');
             return;

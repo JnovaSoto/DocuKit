@@ -90,7 +90,8 @@ export async function getCurrentUser() {
 
   return {
     username: session.username,
-    admin: session.admin
+    admin: session.admin,
+    id: session.id
   };
 }
 

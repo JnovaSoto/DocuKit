@@ -4,7 +4,7 @@ export function fillForm(tag, attributes) {
   document.getElementById('usability').value = tag.usability;
 
   const wrapper = document.getElementById('attributes-wrapper');
-  wrapper.innerHTML = ""; // limpiamos por si acaso
+  wrapper.innerHTML = "";
 
   attributes.forEach((att, index) => {
 

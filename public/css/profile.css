@@ -1,0 +1,23 @@
+.profile-container {
+    background-color: white;
+    text-align: center;
+    padding: 2em;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.info-section {
+    margin: 1em;
+    text-align: justify;
+}
+
+.info-section img {
+    display: block;
+    margin: 0 auto;
+    width: 8em;
+    border-radius: 50%;
+}

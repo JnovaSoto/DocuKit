@@ -103,7 +103,7 @@ router.post(ROUTES.USERS.LOGOUT, (req, res) => {
  */
 router.get(ROUTES.USERS.ME, (req, res) => {
   if (req.session.userId) {
-    res.json({ loggedIn: true, username: req.session.username, admin: req.session.admin });
+    res.json({ loggedIn: true, username: req.session.username, admin: req.session.admin, id: req.session.userId });
   } else {
     res.json({ loggedIn: false });
   }
@@ -126,5 +126,6 @@ router.get(ROUTES.USERS.BY_ID, isAdminLevel1, (req, res) => {
     res.json(row);
   });
 });
+
 
 export default router;

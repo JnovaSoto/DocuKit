@@ -1,16 +1,16 @@
 export function tagForm(tag) {
     const form = document.getElementById('form-container');
-    form.id = 'edit-form';
     form.method = 'post';
-    form.action = '/tags';
+    form.action = 'post';
     form.innerHTML = `
-        <label>Name of the tag</label>
+        <div class="container">
+            <label for="name"><h3 id="label-name"><span class="material-symbols-outlined">sticker</span>Name of the tag</h3></label>
         <input type="text" name="name" id="name" placeholder="${tag.tag.tagName}" value="${tag.tag.tagName}" required>
         
-        <label>Utility of the tag</label>
+        <label for="utility"><h3 id="label-utility"><span class="material-symbols-outlined">build</span>Utility of the tag</h3></label>
         <input type="text" name="utility" id="utility" placeholder="${tag.tag.usability}" value="${tag.tag.usability}" required>
         
-        <label>Attributes</label>
+        <label for="attributes-container" ><h4 id="label-attributes"><span class="material-symbols-outlined">description</span>Attributes</h4></label>
         <div id="attributes-container">
             ${tag.attributes.map((attr, index) => `
                 <div class="attribute-group">
@@ -23,7 +23,8 @@ export function tagForm(tag) {
         </div>
         
         <input type="hidden" name="tagId" id="tag-id" value="${tag.tag.id}">
-        <button type="submit" class="btn btn-primary mt-3" >Save Changes</button>
+        <button type="submit" >Save Changes</button>
+        </div>
     `;
     return form;
 }
