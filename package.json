@@ -4,7 +4,8 @@
   "description": "This page will contain usefull information about the tags of html, their uses, styles and his childs.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
