@@ -55,4 +55,4 @@ npm install multer
 npm init -y
 
 # Start the server
-npm node app.js
+node app.js

@@ -7,6 +7,8 @@ import { showTemporaryAlert } from '../tools/alerts.js';
 import { handleResponseError } from '../tools/caseState.js';
 import { API, SUCCESS_MESSAGES } from '../config/constants.js';
 import logger from '../tools/logger.js';
+import { pass } from '../tools/passwordHide.js';
+import { VALIDATION } from '../config/constants.js';
 
 // Flag to prevent duplicate initialization
 let isInitialized = false;
@@ -32,13 +34,32 @@ export async function init() {
     return;
   }
 
+  const loginInput = document.getElementById('login-input');
+  const passwordInput = document.getElementById('password-input');
+  const togglePasswordButton = document.getElementById('toggle-password');
+  const togglePasswordIcon = document.getElementById('toggle-password-icon');
+
+  pass(togglePasswordButton, passwordInput, togglePasswordIcon)
+
   form.addEventListener('submit', async (event) => {
     // Prevent page reload
     event.preventDefault();
 
     // Get user login input
-    const login = document.getElementById('login-input').value;
-    const password = document.getElementById('password-input').value;
+    const login = loginInput.value;
+    const password = passwordInput.value;
+
+    if (loginInput.value.length < VALIDATION.LOGIN.MAX_LENGTH) {
+      loginInput.setCustomValidity(`Username must be ${VALIDATION.LOGIN.MAX_LENGTH} characters or less`);
+    } else {
+      loginInput.setCustomValidity('');
+    }
+
+    if (passwordInput.value.length < VALIDATION.PASSWORD.MAX_LENGTH) {
+      passwordInput.setCustomValidity(`Password must be ${VALIDATION.PASSWORD.MAX_LENGTH} characters or less`);
+    } else {
+      passwordInput.setCustomValidity('');
+    }
 
     const requestBody = { login, password };
 

@@ -1,5 +1,5 @@
 <div class="container">
-    <form action="post" method="post" id="signUp-form" enctype="multipart/form-data" required>
+    <form id="signUp-form" enctype="multipart/form-data" required>
 
     <div class="mb-3">
         <label for="user" class="form-label">Username</label>
@@ -28,8 +28,8 @@
                 <span class="material-symbols-outlined">lock</span>
                 <input type="password" class="form-control" name="pass" id="password-input"  placeholder="Enter your password" minlength="8" required>
             </div>
-            <button type="button" class="form-password-action" data-coreui-toggle="password" aria-label="Toggle password visibility">
-            <span class="form-password-action-icon"></span>
+            <button type="button" class="form-password-action"  id="toggle-password"  data-coreui-toggle="password" aria-label="Toggle password visibility">
+            <span class="material-symbols-outlined" id="toggle-password-icon">visibility</span>
             </button>
         </div>
     </div>
@@ -40,8 +40,8 @@
                 <span class="material-symbols-outlined">lock_reset</span>
                 <input type="password" class="form-control" name="passConf" id="repeat-password-input"  placeholder="Enter your password" minlength="8" required>
             </div>
-            <button type="button" class="form-password-action" data-coreui-toggle="password" aria-label="Toggle password visibility">
-            <span class="form-password-action-icon"></span>
+            <button type="button" class="form-password-action"  id="toggle-repeat-password"  data-coreui-toggle="password" aria-label="Toggle password visibility">
+            <span class="material-symbols-outlined" id="toggle-repeat-password-icon">visibility</span>
             </button>
         </div>
     </div>

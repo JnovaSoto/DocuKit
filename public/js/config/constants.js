@@ -24,6 +24,10 @@ export const VALIDATION = {
     },
     ATTRIBUTE: {
         MAX_LENGTH: 100
+    },
+    LOGIN: {
+        MAX_LENGTH: 40,
+        MIN_LENGTH: 3
     }
 };
 

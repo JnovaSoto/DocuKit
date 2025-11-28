@@ -7,6 +7,9 @@ import { showTemporaryAlert } from '../tools/alerts.js';
 import { handleResponseError } from '../tools/caseState.js';
 import { API, SUCCESS_MESSAGES, VALIDATION } from '../config/constants.js';
 import logger from '../tools/logger.js';
+import { pass } from '../tools/passwordHide.js';
+import { changePage } from '../navigation.js';
+import { ROUTES } from '../config/constants.js';
 
 // Flag to prevent duplicate initialization
 let isInitialized = false;
@@ -38,6 +41,11 @@ export async function init() {
   const photoInput = document.getElementById('img-input');
   const passwordInput = document.getElementById('password-input');
   const passwordRepeatInput = document.getElementById('repeat-password-input');
+  const togglePasswordButton = document.getElementById('toggle-password');
+  const toggleRepeatPasswordButton = document.getElementById('toggle-repeat-password');
+  const togglePasswordIcon = document.getElementById('toggle-password-icon');
+  const toggleRepeatPasswordIcon = document.getElementById('toggle-repeat-password-icon');
+
 
   // Real-time validation for username (alphanumeric and underscore only)
   usernameInput.addEventListener('input', () => {
@@ -49,6 +57,9 @@ export async function init() {
       usernameInput.setCustomValidity('');
     }
   });
+
+  pass(togglePasswordButton, passwordInput, togglePasswordIcon)
+  pass(toggleRepeatPasswordButton, passwordRepeatInput, toggleRepeatPasswordIcon)
 
   // Real-time email validation
   emailInput.addEventListener('input', () => {
@@ -102,7 +113,7 @@ export async function init() {
       // Send request to create user with FormData
       const response = await fetch(API.USERS.SIGNUP, {
         method: 'POST',
-        body: formData // Don't set Content-Type header - browser will set it automatically with boundary
+        body: formData
       });
 
       // Show alert if creation fails
@@ -119,6 +130,8 @@ export async function init() {
       passwordInput.value = '';
       passwordRepeatInput.value = '';
       photoInput.value = '';
+
+      changePage(ROUTES.LOGIN);
 
     } catch (error) {
       // Handle fetch/network errors

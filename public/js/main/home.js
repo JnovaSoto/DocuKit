@@ -3,8 +3,7 @@
  * Loads and displays all HTML tags with their attributes in a table.
  */
 
-import { generateTable } from '../auto/generateTable.js';
-import { dropdown } from '../auto/dropdownAtt.js';
+import { renderTable } from '../auto/renderTable.js';
 import logger from '../tools/logger.js';
 import { API } from '../config/constants.js';
 
@@ -47,30 +46,7 @@ export async function init() {
     logger.success(`Loaded ${tags.length} tags and ${attributes.length} attributes`);
 
     const table = document.querySelector('.tagTable');
-    const header = table.querySelector('tr');
-    table.innerHTML = '';
-
-    if (header) {
-      table.appendChild(header);
-    }
-
-    // Generate table rows for each tag
-    tags.forEach(tag => {
-      const row = document.createElement('tr');
-      const dropdownRow = document.createElement('tr');
-      dropdownRow.classList.add('dropdown-row');
-      dropdownRow.style.display = 'none';
-
-      // Filter attributes for this tag
-      const tagAttributes = attributes.filter(att => Number(att.tag) === Number(tag.id));
-
-      const filledRows = generateTable(tag, tagAttributes, row, dropdownRow);
-      table.appendChild(filledRows.row);
-      table.appendChild(filledRows.dropdownRow);
-    });
-
-    // Initialize dropdown functionality
-    dropdown(table);
+    renderTable(table, tags, attributes);
 
   } catch (error) {
     logger.error('Error loading tags:', error);

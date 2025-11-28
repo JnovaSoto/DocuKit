@@ -1,128 +1,108 @@
 @import url('https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@200..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0');
 
-body {
-    background-color: rgb(250, 237, 237);
-    font-family: "Stack Sans Notch", sans-serif;
-}
-
-h3 {
-    padding: 5px;
-    color: white;
-}
-
-/*Stles for table and his childrens*/
-table {
-    margin: 10px auto;
-    border-collapse: collapse;
-    width: 80%;
-}
-
-th,
-td {
-    padding: 20px;
-    border: 1px solid black;
-}
-
-tr {
-    border: 2px solid #cca31e;
-    padding: 10px;
-    text-align: center;
-}
-
-tr:first-child {
-
-    border: 5px solid rgb(44, 43, 32);
-    background-color: #cca31e;
-
-}
-
-.tagTable {
-    border: 5px solid black;
-}
-
-.tagTable th {
-    padding: 10px;
-}
-
-.attribute-table tr {
-    border: none;
-    background-color: aliceblue;
-}
-
-.attribute-table tr td:nth-child(1) {
-    background-color: #cca31e;
-    font-weight: bold;
-}
-
-.attribute-table tr td:nth-child(3) {
-    background-color: rgb(236, 225, 163);
-    font-weight: bold;
-}
-
-/*Styles for the Unique content button*/
-.table-button {
-    background-color: #cca31e;
-    color: white;
-    padding: 10px 8px;
-    font-size: 14px;
-    gap: 5px;
-    align-items: center;
-    display: inline-flex;
-}
-
-button span {
-    display: inline-block;
-}
-
-button:hover[data-path="/home"] {
-    background-color: #eeca54;
-}
-
-button:hover .arrow {
-    transform: translateY(4px);
-}
-
-.arrow {
-    transition: transform 0.2s ease;
-    display: inline-block;
-}
-
-.invisibleTr {
-    display: none;
-}
-
-/*Delete button*/
-.delete {
-    background-color: rgb(249, 130, 130);
-}
-
-.delete:hover {
-    background-color: rgb(255, 0, 0);
-}
-
-.icon_delete {
-    color: white;
-}
-
-/*Attributes box*/
-.dropdown {
+/* ==========================================================================
+   Base & Layout (formerly layout.css)
+   ========================================================================== */
+html {
+    min-height: 100%;
     position: relative;
 }
 
-.dropdown-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.5s ease, opacity 0.s ease;
-    opacity: 0;
+body {
+    margin: 0;
+    margin-bottom: 60px;
+    background-color: #f0f2f5;
+    font-family: "Stack Sans Notch", sans-serif;
+    color: #333;
 }
 
-/*Just if have the attribute then use the style*/
-.dropdown-row[style*="display: table-row"] .dropdown-content {
-    max-height: 500px;
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+#app {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+}
+
+/* Utility Classes */
+.pri {
+    background-color: #cca31e;
+}
+
+.sec {
+    background-color: #9b884a;
+}
+
+.ter {
+    background-color: #9b884a;
+}
+
+/* Navigation Search Form */
+.search-form {
+    position: relative;
+    width: 250px;
+}
+
+.search-form .form-control {
+    height: 35px;
+    font-size: 0.9rem;
+    padding: 0 1rem;
+    border-radius: 20px;
+}
+
+.search-form .btn {
+    height: 35px;
+    font-size: 0.9rem;
+    padding: 0 1rem;
+    border-radius: 20px;
+    margin-left: 5px;
+}
+
+/* Cursors */
+#btn-sign-up,
+#btn-log-in,
+#btn-log-out,
+#btn-go-profile {
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   Alerts (formerly alerts.css)
+   ========================================================================== */
+.slide-alert {
+    position: fixed;
+    top: 80px;
+    right: -350px;
+    width: 300px;
+    color: white;
+    padding: 15px 20px;
+    z-index: 1050;
+    transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+    opacity: 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.slide-alert.show {
+    right: 20px;
     opacity: 1;
 }
 
-/*Styles for input icons*/
+/* Input Icons */
 .input-wrapper {
     position: relative;
     display: flex;
@@ -131,23 +111,223 @@ button:hover .arrow {
 }
 
 .input-wrapper input {
-    padding-left: 2.5rem !important;
-    /* Space for the icon */
+    padding-left: 2.8rem !important;
 }
 
 .input-wrapper .material-symbols-outlined {
     position: absolute;
-    left: 0.75rem;
-    color: #888;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
     pointer-events: none;
-    /* Let clicks pass through to input */
     font-size: 1.2rem;
 }
 
-/* Cute focus effect */
-.input-wrapper input:focus+.material-symbols-outlined,
-.input-wrapper input:focus~.material-symbols-outlined {
+/* ==========================================================================
+   Error Pages (formerly error.css)
+   ========================================================================== */
+.error-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    padding: 2rem;
+    text-align: center;
+}
+
+.error-content {
+    max-width: 600px;
+}
+
+.error-code {
+    font-size: 6rem;
+    font-weight: 700;
+    margin: 0;
+    background: linear-gradient(135deg, #cca31e 0%, #d68306 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.error-title {
+    font-size: 2rem;
+    margin: 1rem 0;
+    color: #333;
+}
+
+.error-message {
+    font-size: 1.1rem;
+    color: #666;
+    margin: 1.5rem 0;
+    line-height: 1.6;
+}
+
+.btn-home {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background-color: #cca31e;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    margin-top: 1rem;
+}
+
+.btn-home:hover {
+    background-color: #b38f1a;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(204, 163, 30, 0.3);
+    color: white;
+    text-decoration: none;
+}
+
+/* ==========================================================================
+   Home Table & Attributes (formerly index.css)
+   ========================================================================== */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 20px 0;
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Header th*/
+
+
+th {
+    background-color: #cea520;
+    padding: 18px 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+}
+
+th h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: white;
+    padding: 0;
+}
+
+/* Body Rows */
+tbody tr {
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
+}
+
+tbody tr:hover {
+    background-color: #fff9e6;
+}
+
+td {
+    padding: 15px 20px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f0f0f0;
+    color: #555;
+}
+
+/* Buttons */
+.table-button {
+    background-color: #cca31e;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.table-button:hover {
+    background-color: #b38f1a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(204, 163, 30, 0.2);
+    color: white;
+}
+
+.delete {
+    background-color: #ff6b6b;
+}
+
+.delete:hover {
+    background-color: #fa5252;
+    box-shadow: 0 4px 8px rgba(255, 107, 107, 0.2);
+}
+
+.icon_delete {
+    font-size: 1.1rem;
+    color: white;
+}
+
+/* Attributes Dropdown */
+.invisibleTr {
+    display: none;
+}
+
+.dropdown-row {
+    background-color: #fcfcfc;
+}
+
+.dropdown-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+    opacity: 0;
+    padding: 0 20px;
+}
+
+.dropdown-row[style*="display: table-row"] .dropdown-content {
+    max-height: 500px;
+    opacity: 1;
+    padding: 20px;
+    border-bottom: 2px solid #cca31e;
+}
+
+/* Inner Attribute Table */
+.attribute-table {
+    width: 100%;
+    margin: 0;
+    box-shadow: none;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.attribute-table tr {
+    background-color: white;
+    border-bottom: 1px solid #eee;
+}
+
+.attribute-table td {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+}
+
+.attribute-table tr td:first-child,
+.attribute-table tr td:nth-child(3) {
+    background-color: #fff9e6;
     color: #cca31e;
-    /* Match the primary color */
-    transition: color 0.3s ease;
+    font-weight: 600;
+    width: 30%;
+    border: 1px solid #fffeb9;
+}
+
+.attribute-table tr td:nth-child(2) {
+    color: #666;
 }

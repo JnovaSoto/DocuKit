@@ -1,12 +1,12 @@
 <div class="container">
-    <form action="post" method="post" id="login-form" required>
+    <form id="login-form" required>
 
     <div class="mb-3">
         <label for="user" class="form-label">Username or Email</label>
         <div class="form-text">
             <div class="input-wrapper">
                 <span class="material-symbols-outlined">person</span>
-                <input type="text" name="user" class="form-control" id="login-input" placeholder="Enter your username" maxlength="20" required>
+                <input type="text" name="user" class="form-control" id="login-input" placeholder="Enter your username" maxlength="40" required>
             </div>
         </div>
     </div>
@@ -17,8 +17,8 @@
                 <span class="material-symbols-outlined">lock</span>
                 <input type="password" class="form-control" name="pass" id="password-input"  placeholder="Enter your password" required>
             </div>
-            <button type="button" class="form-password-action" data-coreui-toggle="password" aria-label="Toggle password visibility">
-            <span class="form-password-action-icon"></span>
+            <button type="button" class="form-password-action"  id="toggle-password" aria-label="Toggle password visibility">
+            <span class="material-symbols-outlined" id="toggle-password-icon">visibility</span>
             </button>
         </div>
     </div>

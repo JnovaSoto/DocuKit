@@ -26,6 +26,15 @@ select {
   box-sizing: border-box;
 }
 
+#toggle-password-icon,
+#toggle-repeat-password-icon {
+  position: absolute;
+  right: 0.1em;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ccc;
+}
+
 input[type=submit] {
   width: 100%;
   background-color: #cca31e;

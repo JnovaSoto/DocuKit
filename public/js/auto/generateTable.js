@@ -1,10 +1,10 @@
 import { escapeHTML } from '../tools/escapeHTML.js';
-export function generateTable(tag,attributes,row,dropdownRow){
+export function generateTable(tag, attributes, row, dropdownRow) {
 
     const safeTagName = tag && tag.tagName ? escapeHTML(tag.tagName) : '';
     const safeUsability = tag && tag.usability ? escapeHTML(tag.usability) : '';
 
-        row.innerHTML =`
+    row.innerHTML = `
         <td><strong>${safeTagName}</strong></td>
         <td>${safeUsability}</td>
         <td>
@@ -26,13 +26,13 @@ export function generateTable(tag,attributes,row,dropdownRow){
     `;
 
     let html = `<td colspan="4" class="dropdown-content"><table class="attribute-table">`;
-    
+
     // Build inner rows for each attribute
     if (Array.isArray(attributes)) {
-        
+
         attributes.forEach(att => {
 
-        html += `
+            html += `
           <tr>
             <td>Attribute</td>
             <td>${escapeHTML(att.attribute)}</td>
@@ -41,12 +41,12 @@ export function generateTable(tag,attributes,row,dropdownRow){
           </tr>
         `;
 
-    });
+        });
     }
 
     html += `</table></td>`;
     dropdownRow.innerHTML = html;
 
-    return {row, dropdownRow}
+    return { row, dropdownRow }
 
 }

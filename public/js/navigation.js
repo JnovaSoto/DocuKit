@@ -116,7 +116,7 @@ import { showTemporaryAlert } from './tools/alerts.js';
 
 // ... (existing imports)
 
-async function changePage(path) {
+export async function changePage(path) {
   logger.navigation(`Navigating to: ${path}`);
 
   // Check if the route is protected
