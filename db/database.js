@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DB_PATH = path.resolve(__dirname, '../database.sqlite');
+const DB_PATH = path.resolve(__dirname, 'database.sqlite');
 const DB_MODE = sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE;
 
 // ============================================================================
@@ -73,6 +73,8 @@ const TABLES = {
       email TEXT NOT NULL UNIQUE,
       password TEXT NOT NULL,
       admin INTEGER DEFAULT 0,
+      photo TEXT DEFAULT '/uploads/users/cat_default.webp',
+      favTags TEXT DEFAULT '[]',
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
       updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )

@@ -1,5 +1,5 @@
 <div class="container">
-    <form action="post" method="post" id="signUp-form" required>
+    <form action="post" method="post" id="signUp-form" enctype="multipart/form-data" required>
 
     <div class="mb-3">
         <label for="user" class="form-label">Username</label>
@@ -43,6 +43,15 @@
             <button type="button" class="form-password-action" data-coreui-toggle="password" aria-label="Toggle password visibility">
             <span class="form-password-action-icon"></span>
             </button>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="img" class="form-label">Profile Image (Optional)</label>
+        <div class="form-text">
+            <div class="input-wrapper">
+                <span class="material-symbols-outlined">image</span>
+                <input type="file" name="img" class="form-control" id="img-input" accept="image/*">
+            </div>
         </div>
     </div>
 

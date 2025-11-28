@@ -97,6 +97,10 @@ function initNavigation() {
       e.preventDefault();
       changePage(ROUTES.PROFILE);
     }
+    if (e.target.matches('#btn-go-favorites')) {
+      e.preventDefault();
+      changePage(ROUTES.FAVORITES);
+    }
   });
 }
 
@@ -116,7 +120,7 @@ async function changePage(path) {
   logger.navigation(`Navigating to: ${path}`);
 
   // Check if the route is protected
-  const protectedRoutes = [ROUTES.CREATE, ROUTES.EDIT, ROUTES.PROFILE];
+  const protectedRoutes = [ROUTES.CREATE, ROUTES.EDIT, ROUTES.PROFILE, ROUTES.FAVORITES];
   if (protectedRoutes.includes(path)) {
     if (!await requireLogin()) {
       showTemporaryAlert('alert', 'You must log in to access this page');
@@ -138,7 +142,6 @@ async function changePage(path) {
         const newPath = newUrl.pathname;
         logger.navigation(`Redirected to: ${newPath}`);
         history.replaceState(null, null, newPath);
-        // If redirected to login, maybe show alert?
         if (newPath === ROUTES.LOGIN) {
           showTemporaryAlert('alert', 'Session expired, please log in again');
         }
@@ -149,10 +152,6 @@ async function changePage(path) {
     .then(html => {
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
-
-      // Check if we got a full page or just content. 
-      // If the server returned a full login page due to auth failure but no redirect (200 OK),
-      // we might need to detect that. But usually redirects handle it.
 
       const newContent = doc.querySelector('#app') ? doc.querySelector('#app').innerHTML : null;
 
@@ -205,6 +204,9 @@ function executePageScript() {
       break;
     case ROUTES.PROFILE:
       import('/js/user/profile.js').then(mod => mod.init && mod.init());
+      break;
+    case ROUTES.FAVORITES:
+      import('/js/user/favorites.js').then(mod => mod.init && mod.init());
       break;
   }
 }

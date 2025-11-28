@@ -35,6 +35,7 @@ export async function init() {
   // Get input elements
   const usernameInput = document.getElementById('user-input');
   const emailInput = document.getElementById('email-input');
+  const photoInput = document.getElementById('img-input');
   const passwordInput = document.getElementById('password-input');
   const passwordRepeatInput = document.getElementById('repeat-password-input');
 
@@ -69,6 +70,7 @@ export async function init() {
     const email = emailInput.value;
     const password = passwordInput.value;
     const passwordRepeat = passwordRepeatInput.value;
+    const photo = photoInput.files[0];
 
     // Check if passwords match
     if (password !== passwordRepeat) {
@@ -82,16 +84,25 @@ export async function init() {
       return;
     }
 
-    const requestBody = { username, password, email, admin: 0 };
+    // Create FormData object to handle file upload
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('password', password);
+    formData.append('email', email);
+    formData.append('admin', 0);
+
+    // Add photo file if selected
+    if (photo) {
+      formData.append('photo', photo);
+    }
 
     try {
       logger.network('Sending user registration request');
 
-      // Send request to create user
+      // Send request to create user with FormData
       const response = await fetch(API.USERS.SIGNUP, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
+        body: formData // Don't set Content-Type header - browser will set it automatically with boundary
       });
 
       // Show alert if creation fails
@@ -107,6 +118,7 @@ export async function init() {
       emailInput.value = '';
       passwordInput.value = '';
       passwordRepeatInput.value = '';
+      photoInput.value = '';
 
     } catch (error) {
       // Handle fetch/network errors

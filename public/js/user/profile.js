@@ -38,20 +38,30 @@ export async function init() {
 
     console.log(session);
 
-    const data = await fetch(API.USERS.BY_ID(session.id), {
+    // Use the /users/me endpoint which returns current user's data without requiring admin
+    const data = await fetch(API.USERS.ME, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         }
     });
 
-    const user = await data.json();
+    const response = await data.json();
 
     const username = document.getElementById('profile-username');
     const email = document.getElementById('profile-email');
     const role = document.getElementById('profile-role');
+    const img = document.getElementById('profile-img');
 
-    username.textContent = user.username;
-    email.textContent = user.email;
-    role.textContent = user.admin ? 'Admin' : 'User';
+    username.textContent = response.username;
+    email.textContent = response.email;
+
+    // Set profile image with correct fallback path
+    if (!response.photo || response.photo === '/uploads/users/cat_default.webp') {
+        img.src = '/uploads/users/cat_default.webp';
+    } else {
+        img.src = response.photo;
+    }
+
+    role.textContent = response.admin ? 'Admin' : 'User';
 }

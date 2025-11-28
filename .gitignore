@@ -1,0 +1,30 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Database
+*.sqlite
+*.db
+
+# Uploaded files (except defaults)
+uploads/users/*
+!uploads/users/cat_default.webp
+uploads/tags/*
+!uploads/tags/.gitkeep
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

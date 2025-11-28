@@ -60,6 +60,7 @@ app.use(session({
 
 // Static files middleware
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ============================================================================
 // Routes
@@ -113,6 +114,19 @@ app.use((req, res) => {
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error('Error:', err.stack);
+
+  // Handle Multer errors
+  if (err.name === 'MulterError') {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: 'File size too large. Maximum size is 5MB.' });
+    }
+    return res.status(400).json({ error: err.message });
+  }
+
+  // Handle custom Multer filter errors
+  if (err.message && err.message.includes('Only image files')) {
+    return res.status(400).json({ error: err.message });
+  }
 
   const statusCode = err.statusCode || 500;
   const message = NODE_ENV === 'production'

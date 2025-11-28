@@ -20,6 +20,7 @@
 - Bcrypt
 - Validator
 - dotenv
+- Multer
 
 ### Database
 - SQLite3  
@@ -48,6 +49,7 @@ npm install sqlite3
 npm install bcrypt
 npm install validator
 npm install dotenv
+npm install multer
 
 # Package JSON
 npm init -y

@@ -10,7 +10,8 @@ export const ROUTES = {
         LOGIN: '/login',
         LOGOUT: '/logout',
         SIGNUP: '/user',
-        BY_ID: '/:id'
+        BY_ID: '/:id',
+        FAVORITES: '/favorites'
     },
     TAGS: {
         BASE: '/',

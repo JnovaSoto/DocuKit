@@ -27,6 +27,7 @@ export async function init() {
     const sessionData = await checkSession();
 
     const btnCreate = document.getElementById('btn-create-tags');
+    const btnFavorites = document.getElementById('btn-favorites-tags');
     const btnEdit = document.getElementById('btn-edit-tags');
     const btnDelete = document.getElementById('btn-delete-tags');
     const headerDropdown = document.getElementById('headerDropdown');
@@ -54,6 +55,7 @@ export async function init() {
     setButtonState(btnCreate, false);
     setButtonState(btnEdit, false);
     setButtonState(btnDelete, false);
+    setButtonState(btnFavorites, false);
 
     // Clear dropdown items
     dropdownMenu.innerHTML = '';
@@ -91,10 +93,12 @@ export async function init() {
         case 0:
           // Regular user: can create tags
           setButtonState(btnCreate, true);
+          setButtonState(btnFavorites, true);
           break;
         case 1:
           // Admin: can create, edit and delete tags
           setButtonState(btnCreate, true);
+          setButtonState(btnFavorites, true);
           setButtonState(btnEdit, true);
           setButtonState(btnDelete, true);
           break;

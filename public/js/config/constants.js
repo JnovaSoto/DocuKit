@@ -54,7 +54,8 @@ export const API = {
         LOGIN: '/users/login',
         LOGOUT: '/users/logout',
         SIGNUP: '/users/user',
-        BY_ID: (id) => `/users/${id}`
+        BY_ID: (id) => `/users/${id}`,
+        FAVORITES: '/users/favorites'
     },
     TAGS: {
         BASE: '/tags',
@@ -134,7 +135,8 @@ export const ROUTES = {
     EDIT: '/edit',
     LOGIN: '/logIn',
     SIGNUP: '/signUp',
-    PROFILE: '/profile'
+    PROFILE: '/profile',
+    FAVORITES: '/favorites'
 };
 
 export default {
