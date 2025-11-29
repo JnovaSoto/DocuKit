@@ -106,7 +106,7 @@ export async function init() {
 
       const attData = await attributeResponse.json();
       const attributesFound = Array.isArray(attData) ? attData : [attData];
-      const tagIds = attData.map(attr => attr.tag);
+      const tagIds = attData.map(attr => attr.tagId);
 
       console.log(`Attributes found, fetching tags by IDs: ${tagIds.join(',')}`);
       const tagsByIdResponse = await fetch(API.TAGS.BY_IDS(tagIds.join(',')));

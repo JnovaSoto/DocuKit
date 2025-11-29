@@ -58,11 +58,12 @@ const TABLES = {
   attributes: `
     CREATE TABLE IF NOT EXISTS attributes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      attributeName TEXT NOT NULL UNIQUE,
-      value TEXT,
-      description TEXT,
+      attribute TEXT NOT NULL,
+      info TEXT,
+      tagId INTEGER NOT NULL,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (tagId) REFERENCES tags(id) ON DELETE CASCADE
     )
   `,
 
@@ -74,7 +75,7 @@ const TABLES = {
       password TEXT NOT NULL,
       admin INTEGER DEFAULT 0,
       photo TEXT DEFAULT '/uploads/users/cat_default.webp',
-      favTags TEXT DEFAULT '[]',
+      favorites TEXT DEFAULT '[]',
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
       updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )

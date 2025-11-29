@@ -36,7 +36,7 @@ router.post(ROUTES.ATTRIBUTES.CREATE, isAuthenticated, (req, res) => {
   }
 
   // SQL to insert multiple attributes
-  const sql = `INSERT INTO attributes (attribute, info, tag) VALUES (?, ?, ?)`;
+  const sql = `INSERT INTO attributes (attribute, info, tagId) VALUES (?, ?, ?)`;
   const stmt = db.prepare(sql);
 
   for (const attr of attributes) {
@@ -57,7 +57,7 @@ router.post(ROUTES.ATTRIBUTES.CREATE, isAuthenticated, (req, res) => {
 router.get(ROUTES.ATTRIBUTES.BY_TAG_ID, isAuthenticated, (req, res) => {
   const tagId = req.params.id;
 
-  const sql = `SELECT * FROM attributes WHERE tag = ?`;
+  const sql = `SELECT * FROM attributes WHERE tagId = ?`;
 
   db.all(sql, tagId, (err, rows) => {
     if (err) {

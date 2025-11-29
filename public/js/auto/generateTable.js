@@ -25,7 +25,7 @@ export function generateTable(tag, attributes, row, dropdownRow) {
         </td>
     `;
 
-    let html = `<td colspan="4" class="dropdown-content"><table class="attribute-table">`;
+    let html = `<td colspan="5" class="dropdown-content"><table class="attribute-table">`;
 
     // Build inner rows for each attribute
     if (Array.isArray(attributes)) {

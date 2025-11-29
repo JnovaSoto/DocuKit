@@ -331,3 +331,291 @@ td {
 .attribute-table tr td:nth-child(2) {
     color: #666;
 }
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+/* Table Wrapper for Horizontal Scroll */
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 20px 0;
+}
+
+.table-wrapper table {
+    margin: 0;
+}
+
+/* Large Desktops and above (1200px+) */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1400px;
+    }
+}
+
+/* Tablets and Small Desktops (992px - 1199px) */
+@media (max-width: 1199px) {
+    .container {
+        max-width: 100%;
+        padding: 15px;
+    }
+
+    th {
+        padding: 15px 12px;
+        font-size: 0.9rem;
+    }
+
+    td {
+        padding: 12px 10px;
+        font-size: 0.9rem;
+    }
+
+    .table-button {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Tablets (768px - 991px) */
+@media (max-width: 991px) {
+    #app {
+        padding: 0 0.5rem;
+    }
+
+    .search-form {
+        width: 200px;
+    }
+
+    .search-form .form-control,
+    .search-form .btn {
+        font-size: 0.85rem;
+        height: 32px;
+    }
+
+    th h3 {
+        font-size: 0.85rem;
+    }
+
+    th,
+    td {
+        padding: 10px 8px;
+    }
+
+    .table-button {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+        gap: 4px;
+    }
+
+    .dropdown-content {
+        padding: 0 15px;
+    }
+
+    .dropdown-row[style*="display: table-row"] .dropdown-content {
+        padding: 15px;
+    }
+}
+
+/* Small Tablets and Large Phones (576px - 767px) */
+@media (max-width: 767px) {
+    body {
+        font-size: 14px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .search-form {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    /* Make table scrollable horizontally */
+    table {
+        min-width: 700px;
+    }
+
+    th {
+        padding: 10px 6px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+
+    th h3 {
+        font-size: 0.75rem;
+    }
+
+    td {
+        padding: 8px 6px;
+        font-size: 0.8rem;
+    }
+
+    .table-button {
+        padding: 6px 8px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+
+    .table-button strong {
+        display: none;
+    }
+
+    .table-button .arrow {
+        margin: 0;
+    }
+
+    /* Adjust dropdown content */
+    .attribute-table td {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+    }
+
+    /* Alert positioning */
+    .slide-alert {
+        width: 90%;
+        max-width: 300px;
+        right: -100%;
+    }
+
+    .slide-alert.show {
+        right: 5%;
+    }
+}
+
+/* Mobile Phones (up to 575px) */
+@media (max-width: 575px) {
+    #app {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        padding: 0 0.25rem;
+    }
+
+    .container {
+        padding: 5px;
+    }
+
+    /* Navigation adjustments */
+    .search-form {
+        width: 100%;
+    }
+
+    .search-form .form-control {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .search-form .btn {
+        width: 100%;
+    }
+
+    /* Table must scroll horizontally */
+    table {
+        min-width: 650px;
+        font-size: 0.75rem;
+    }
+
+    th {
+        padding: 8px 4px;
+        font-size: 0.7rem;
+    }
+
+    th h3 {
+        font-size: 0.7rem;
+    }
+
+    td {
+        padding: 6px 4px;
+        font-size: 0.75rem;
+    }
+
+    /* Make buttons more compact */
+    .table-button {
+        padding: 4px 6px;
+        font-size: 0.7rem;
+        min-width: auto;
+    }
+
+    /* Icon buttons only on mobile */
+    .edit,
+    .delete {
+        padding: 6px;
+        border-radius: 4px;
+    }
+
+    .icon_edit,
+    .icon_delete {
+        font-size: 1rem;
+    }
+
+    /* Dropdown adjustments */
+    .dropdown-content {
+        padding: 0 10px;
+    }
+
+    .dropdown-row[style*="display: table-row"] .dropdown-content {
+        padding: 10px;
+    }
+
+    .attribute-table {
+        font-size: 0.7rem;
+    }
+
+    .attribute-table td {
+        padding: 6px 8px;
+        font-size: 0.7rem;
+    }
+
+    /* Footer adjustments */
+    footer {
+        font-size: 0.75rem;
+        height: 35px;
+    }
+
+    body {
+        margin-bottom: 40px;
+    }
+}
+
+/* Extra Small Phones (up to 374px) */
+@media (max-width: 374px) {
+    table {
+        min-width: 600px;
+        font-size: 0.7rem;
+    }
+
+    th,
+    td {
+        padding: 6px 3px;
+    }
+
+    .table-button {
+        padding: 4px;
+        font-size: 0.65rem;
+    }
+
+    .attribute-table {
+        font-size: 0.65rem;
+    }
+
+    .attribute-table td {
+        padding: 5px 6px;
+        font-size: 0.65rem;
+    }
+}
+
+/* Ensure touch targets are at least 44x44px for accessibility */
+@media (hover: none) and (pointer: coarse) {
+
+    .table-button,
+    .edit,
+    .delete {
+        min-height: 44px;
+        min-width: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

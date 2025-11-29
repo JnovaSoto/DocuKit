@@ -1,0 +1,90 @@
+-- TAGS
+INSERT INTO tags (tagName, usability, content) VALUES
+('img', 'Used to embed images', 'Self-closing'),
+('a', 'Defines a hyperlink', 'Inline'),
+('script', 'Embeds or references executable code', 'Inline'),
+('link', 'Defines relationships between document and external resources', 'Void'),
+('video', 'Embeds a media player', 'Block'),
+('audio', 'Embeds sound content', 'Inline/Block'),
+('form', 'Represents a document section with user-input controls', 'Block'),
+('input', 'User input element', 'Self-closing'),
+('button', 'Clickable button', 'Inline'),
+('iframe', 'Inline frame to embed external content', 'Inline'),
+('source', 'Multiple media sources for audio/video', 'Void');
+
+-- ATTRIBUTES
+-- IMG
+INSERT INTO attributes (attribute, info, tagId) VALUES
+('src', 'Image source URL', 1),
+('alt', 'Alternative text', 1),
+('width', 'Image width', 1),
+('height', 'Image height', 1),
+('loading', 'Lazy loading behavior', 1);
+
+-- A
+INSERT INTO attributes (attribute, info, tagId) VALUES
+('href', 'URL the link points to', 2),
+('target', 'Specifies where to open linked document', 2),
+('rel', 'Relationship between current and linked document', 2),
+('id', 'Unique identifier', 2);
+
+-- SCRIPT
+INSERT INTO attributes (attribute, info, tagId) VALUES
+('src', 'External script file URL', 3),
+('type', 'Script type', 3),
+('async', 'Load script asynchronously', 3),
+('defer', 'Defer script execution', 3);
+
+-- LINK
+INSERT INTO attributes (attribute, info, tagId) VALUES
+('href', 'URL to external resource', 4),
+('rel', 'Defines relation to document', 4),
+('type', 'Specifies type of linked resource', 4);
+
+-- VIDEO
+INSERT INTO attributes (attribute, info, tagId) VALUES
+('src', 'Video source', 5),
+('controls', 'Show video controls', 5),
+('autoplay', 'Play automatically', 5),
+('loop', 'Loop video', 5),
+('poster', 'Preview image', 5);
+
+-- AUDIO
+INSERT INTO attributes (attribute, info, tagId) VALUES
+('src', 'Audio source', 6),
+('controls', 'Show audio controls', 6),
+('autoplay', 'Play automatically', 6),
+('loop', 'Loop audio', 6);
+
+-- FORM
+INSERT INTO attributes (attribute, info, tagId) VALUES
+('action', 'Form submission URL', 7),
+('method', 'HTTP method', 7),
+('autocomplete', 'Enable autofill', 7),
+('id', 'Unique identifier', 7);
+
+-- INPUT
+INSERT INTO attributes (attribute, info, tagId) VALUES
+('type', 'Type of input control', 8),
+('value', 'Initial value', 8),
+('placeholder', 'Hint text', 8),
+('name', 'Input name', 8),
+('required', 'Field must be filled', 8);
+
+-- BUTTON
+INSERT INTO attributes (attribute, info, tagId) VALUES
+('type', 'Button type', 9),
+('disabled', 'Disable button', 9),
+('id', 'Unique identifier', 9);
+
+-- IFRAME
+INSERT INTO attributes (attribute, info, tagId) VALUES
+('src', 'Source URL of embedded page', 10),
+('width', 'Frame width', 10),
+('height', 'Frame height', 10),
+('loading', 'Lazy loading behavior', 10);
+
+-- SOURCE
+INSERT INTO attributes (attribute, info, tagId) VALUES
+('src', 'Media source', 11),
+('type', 'Media type', 11);

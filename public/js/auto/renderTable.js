@@ -38,8 +38,9 @@ export function renderTable(table, tags, attributes) {
         dropdownRow.classList.add('dropdown-row');
         dropdownRow.style.display = 'none';
 
-        const tagAttributes = attributes.filter(att => Number(att.tag) === Number(tag.id));
+        const tagAttributes = attributes.filter(att => Number(att.tagId) === Number(tag.id));
         const filledRows = generateTable(tag, tagAttributes, row, dropdownRow);
+
 
         table.appendChild(filledRows.row);
         table.appendChild(filledRows.dropdownRow);

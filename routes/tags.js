@@ -139,7 +139,7 @@ router.put('/:id', isAdminLevel1, (req, res) => {
     // If attributes are provided, update them
     if (attributes && Array.isArray(attributes)) {
       // Delete existing attributes for this tag
-      const deleteAttrSql = `DELETE FROM attributes WHERE tag = ?`;
+      const deleteAttrSql = `DELETE FROM attributes WHERE tagId = ?`;
 
       db.run(deleteAttrSql, [id], function (err) {
         if (err) {
@@ -151,7 +151,7 @@ router.put('/:id', isAdminLevel1, (req, res) => {
 
         // Insert new attributes
         if (attributes.length > 0) {
-          const insertAttrSql = `INSERT INTO attributes (attribute, info, tag) VALUES (?, ?, ?)`;
+          const insertAttrSql = `INSERT INTO attributes (attribute, info, tagId) VALUES (?, ?, ?)`;
           const stmt = db.prepare(insertAttrSql);
 
           for (const attr of attributes) {
@@ -205,7 +205,7 @@ router.delete(ROUTES.TAGS.DELETE, isAdminLevel1, (req, res) => {
   const id = req.params.id;
 
   // First, delete all attributes associated with this tag
-  const deleteAttributesSql = `DELETE FROM attributes WHERE tag = ?`;
+  const deleteAttributesSql = `DELETE FROM attributes WHERE tagId = ?`;
 
   db.run(deleteAttributesSql, [id], function (err) {
     if (err) {
