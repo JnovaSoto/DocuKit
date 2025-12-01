@@ -10,17 +10,17 @@ export const ROUTES = {
         LOGIN: '/login',
         LOGOUT: '/logout',
         SIGNUP: '/user',
-        BY_ID: '/:id',
+        BY_ID: '/userbyid/:id',
         FAVORITES: '/favorites'
     },
     TAGS: {
         BASE: '/',
-        CREATE: '/create',
+        CREATE: '/tagCreate',
         BY_ID: '/tagId/:id',
         BY_IDS: '/tagIds/:ids',
         BY_NAME: '/tagName/:name',
-        UPDATE: '/:id',
-        DELETE: '/delete/:id'
+        UPDATE: '/tagUpdate/:id',
+        DELETE: '/tagDelete/:id'
     },
     ATTRIBUTES: {
         BASE: '/',

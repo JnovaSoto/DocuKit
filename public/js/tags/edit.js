@@ -105,12 +105,16 @@ async function loadEditForm() {
         logger.info('Fetching data for tag ID:', tagId);
 
         // Fetch Tag Data
-        const tagResponse = await fetch(API.TAGS.BY_ID(tagId));
+        const tagResponse = await fetch(API.TAGS.BY_ID(tagId), {
+            credentials: 'include'
+        });
         if (await handleResponseError(tagResponse)) return;
         const tagData = await tagResponse.json();
 
         // Fetch Attributes Data for this Tag
-        const attrResponse = await fetch(API.ATTRIBUTES.BY_TAG_ID(tagId));
+        const attrResponse = await fetch(API.ATTRIBUTES.BY_TAG_ID(tagId), {
+            credentials: 'include'
+        });
         let attributesData = [];
         if (attrResponse.ok) {
             attributesData = await attrResponse.json();
@@ -182,6 +186,7 @@ function setupSubmitHandler(formElement, tagId) {
             const response = await fetch(API.TAGS.UPDATE(tagId), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include', // Important: Send session cookie
                 body: JSON.stringify(updateBody)
             });
 

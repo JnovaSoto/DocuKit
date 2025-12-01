@@ -58,17 +58,18 @@ export const API = {
         LOGIN: '/users/login',
         LOGOUT: '/users/logout',
         SIGNUP: '/users/user',
-        BY_ID: (id) => `/users/${id}`,
-        FAVORITES: '/users/favorites'
+        BY_ID: (id) => `/users/userbyid/${id}`,
+        FAVORITES: '/users/favorites',
+        DELETE_FAVORITE: (tagId) => `/users/favorites/${tagId}`
     },
     TAGS: {
         BASE: '/tags',
-        CREATE: '/tags/create',
+        CREATE: '/tags/tagCreate',
         BY_ID: (id) => `/tags/tagId/${id}`,
         BY_IDS: (ids) => `/tags/tagIds/${ids}`,
         BY_NAME: (name) => `/tags/tagName/${name}`,
-        UPDATE: (id) => `/tags/${id}`,
-        DELETE: (id) => `/tags/delete/${id}`
+        UPDATE: (id) => `/tags/tagUpdate/${id}`,
+        DELETE: (id) => `/tags/tagDelete/${id}`
     },
     ATTRIBUTES: {
         BASE: '/attributes',

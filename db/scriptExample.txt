@@ -11,6 +11,7 @@ INSERT INTO tags (tagName, usability, content) VALUES
 ('button', 'Clickable button', 'Inline'),
 ('iframe', 'Inline frame to embed external content', 'Inline'),
 ('source', 'Multiple media sources for audio/video', 'Void');
+('style','Defines style information for a document','Raw text element')
 
 -- ATTRIBUTES
 -- IMG

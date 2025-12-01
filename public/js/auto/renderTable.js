@@ -6,8 +6,9 @@ import { dropdown } from './dropdownAtt.js';
  * @param {HTMLElement} table - The table element to populate.
  * @param {Array} tags - Array of tag objects.
  * @param {Array} attributes - Array of attribute objects.
+ * @param {Array} userFavorites - Array of favorite tag IDs for the current user.
  */
-export function renderTable(table, tags, attributes) {
+export function renderTable(table, tags, attributes, userFavorites = []) {
     if (!table) return;
 
     // Preserve the header row
@@ -24,6 +25,7 @@ export function renderTable(table, tags, attributes) {
                 <th><h3>Tags</h3></th>
                 <th><h3>Usability</h3></th>
                 <th><h3>Attributes</h3></th>
+                <th><h3>Favorite</h3></th>
                 <th><h3>Edit</h3></th>
                 <th><h3>Delete</h3></th>
               </tr>
@@ -39,7 +41,8 @@ export function renderTable(table, tags, attributes) {
         dropdownRow.style.display = 'none';
 
         const tagAttributes = attributes.filter(att => Number(att.tagId) === Number(tag.id));
-        const filledRows = generateTable(tag, tagAttributes, row, dropdownRow);
+        const isFavorite = userFavorites.includes(Number(tag.id));
+        const filledRows = generateTable(tag, tagAttributes, row, dropdownRow, isFavorite);
 
 
         table.appendChild(filledRows.row);

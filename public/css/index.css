@@ -276,6 +276,11 @@ td {
     color: white;
 }
 
+.favorited:hover {
+    background-color: #fa5252;
+    box-shadow: 0 4px 8px rgba(255, 107, 107, 0.2);
+}
+
 /* Attributes Dropdown */
 .invisibleTr {
     display: none;
@@ -610,6 +615,7 @@ td {
 @media (hover: none) and (pointer: coarse) {
 
     .table-button,
+    .favorite-btn,
     .edit,
     .delete {
         min-height: 44px;

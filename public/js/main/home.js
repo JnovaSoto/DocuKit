@@ -38,17 +38,41 @@ export async function init() {
     return await response.json();
   }
 
+  /**
+   * Fetches user's favorite tags.
+   * @returns {Promise<Array>} Array of favorite tag IDs
+   */
+  async function getUserFavorites() {
+    try {
+      const response = await fetch(API.USERS.FAVORITES, {
+        credentials: 'include'
+      });
+      if (!response.ok) {
+        // User not logged in or error - return empty array
+        return [];
+      }
+      const data = await response.json();
+      return data.favorites || [];
+    } catch (error) {
+      logger.warn('Could not fetch favorites:', error);
+      return [];
+    }
+  }
+
   try {
     // Fetch data
     const tags = await getTags();
     const attributes = await getAttributes();
+    const userFavorites = await getUserFavorites();
 
     logger.success(`Loaded ${tags.length} tags and ${attributes.length} attributes`);
+    logger.info(`User favorites: ${userFavorites}`);
 
     const table = document.querySelector('.tagTable');
-    renderTable(table, tags, attributes);
+    renderTable(table, tags, attributes, userFavorites);
 
   } catch (error) {
     logger.error('Error loading tags:', error);
   }
 }
+

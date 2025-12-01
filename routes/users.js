@@ -7,7 +7,7 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import validator from 'validator';
 import db from '../db/database.js';
-import { isAdminLevel1 } from '../middleware/auth.js';
+import { isAdminLevel1, isAuthenticated } from '../middleware/auth.js';
 import ROUTES from '../config/routes.js';
 import upload, { movePhotoToUserFolder } from '../config/multer.js';
 
@@ -190,12 +190,149 @@ router.get(ROUTES.USERS.ME, (req, res) => {
 });
 
 /**
+ * Get user's favorite tags.
+ * @route GET /users/favorites
+ */
+router.get(ROUTES.USERS.FAVORITES, isAuthenticated, (req, res) => {
+  const userId = req.session.userId;
+
+  const sql = `SELECT favorites FROM users WHERE id = ?`;
+  db.get(sql, userId, (err, row) => {
+    if (err) {
+      console.error('❌ Error fetching favorites:', err);
+      return res.status(500).json({ error: err.message });
+    }
+    if (!row) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    if (!row.favorites) {
+      return res.json({ favorites: [] });
+    }
+
+    // Parse favorites JSON string to array
+    let favorites = [];
+    try {
+      favorites = row.favorites ? JSON.parse(row.favorites) : [];
+    } catch (parseErr) {
+      console.error('❌ Error parsing favorites:', parseErr);
+      favorites = [];
+    }
+
+    res.json({ favorites });
+  });
+});
+
+/**
+ * Add a tag to user's favorites.
+ * @route POST /users/favorites
+ */
+router.post(ROUTES.USERS.FAVORITES, isAuthenticated, (req, res) => {
+  const userId = req.session.userId;
+  const { tagId } = req.body;
+
+  if (!tagId) {
+    return res.status(400).json({ error: 'Tag ID is required' });
+  }
+
+  // First, get current favorites
+  const selectSql = `SELECT favorites FROM users WHERE id = ?`;
+  db.get(selectSql, [userId], (err, row) => {
+    if (err) {
+      console.error('❌ Error fetching favorites:', err);
+      return res.status(500).json({ error: err.message });
+    }
+    if (!row) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Parse current favorites
+    let favorites = [];
+    try {
+      favorites = row.favorites ? JSON.parse(row.favorites) : [];
+    } catch (parseErr) {
+      console.error('❌ Error parsing favorites:', parseErr);
+      favorites = [];
+    }
+
+    // Add tagId if not already in favorites
+    const tagIdNum = parseInt(tagId, 10);
+    if (!favorites.includes(tagIdNum)) {
+      favorites.push(tagIdNum);
+    } else {
+      return res.status(400).json({ error: 'Tag already in favorites' });
+    }
+
+    // Update database
+    const updateSql = `UPDATE users SET favorites = ? WHERE id = ?`;
+    db.run(updateSql, [JSON.stringify(favorites), userId], function (err) {
+      if (err) {
+        console.error('❌ Error updating favorites:', err);
+        return res.status(500).json({ error: err.message });
+      }
+
+      console.log('✅ Added tag to favorites:', tagIdNum);
+      res.json({ message: 'Tag added to favorites', favorites });
+    });
+  });
+});
+
+/**
+ * Remove a tag from user's favorites.
+ * @route DELETE /users/favorites/:tagId
+ */
+router.delete(`${ROUTES.USERS.FAVORITES}/:tagId`, isAuthenticated, (req, res) => {
+  const userId = req.session.userId;
+  const tagId = parseInt(req.params.tagId, 10);
+
+  if (isNaN(tagId)) {
+    return res.status(400).json({ error: 'Invalid tag ID' });
+  }
+
+  // First, get current favorites
+  const selectSql = `SELECT favorites FROM users WHERE id = ?`;
+  db.get(selectSql, [userId], (err, row) => {
+    if (err) {
+      console.error('❌ Error fetching favorites:', err);
+      return res.status(500).json({ error: err.message });
+    }
+    if (!row) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Parse current favorites
+    let favorites = [];
+    try {
+      favorites = row.favorites ? JSON.parse(row.favorites) : [];
+    } catch (parseErr) {
+      console.error('❌ Error parsing favorites:', parseErr);
+      favorites = [];
+    }
+
+    // Remove tagId from favorites
+    favorites = favorites.filter(id => id !== tagId);
+
+    // Update database
+    const updateSql = `UPDATE users SET favorites = ? WHERE id = ?`;
+    db.run(updateSql, [JSON.stringify(favorites), userId], function (err) {
+      if (err) {
+        console.error('❌ Error updating favorites:', err);
+        return res.status(500).json({ error: err.message });
+      }
+
+      console.log('✅ Removed tag from favorites:', tagId);
+      res.json({ message: 'Tag removed from favorites', favorites });
+    });
+  });
+});
+
+/**
  * Get user by ID (admin only).
  * @route GET /users/:id
  */
 router.get(ROUTES.USERS.BY_ID, isAdminLevel1, (req, res) => {
-  const id = parseInt(req.params.id, 10);
-  console.log("Getting the user with the id = " + id);
+  console.log("Before getting the user with the id = " + req.params.id);
+  const id = parseInt(req.params.id);
+  console.log("After getting the user with the id = " + id);
 
   if (isNaN(id)) return res.status(400).json({ error: 'Invalid user ID' });
 
