@@ -30,7 +30,7 @@ export async function init() {
         isEditButtonListenerAttached = true;
 
         document.body.addEventListener("click", async (event) => {
-            const editBtn = event.target.closest("#btn-edit-tags");
+            const editBtn = event.target.closest(".edit-btn");
             if (!editBtn) return;
 
             // Prevent default behavior (page reload)

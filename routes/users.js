@@ -254,14 +254,6 @@ router.post(ROUTES.USERS.FAVORITES, isAuthenticated, (req, res) => {
       favorites = [];
     }
 
-    // Add tagId if not already in favorites
-    const tagIdNum = parseInt(tagId, 10);
-    if (!favorites.includes(tagIdNum)) {
-      favorites.push(tagIdNum);
-    } else {
-      return res.status(400).json({ error: 'Tag already in favorites' });
-    }
-
     // Update database
     const updateSql = `UPDATE users SET favorites = ? WHERE id = ?`;
     db.run(updateSql, [JSON.stringify(favorites), userId], function (err) {
