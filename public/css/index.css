@@ -281,6 +281,91 @@ td {
     box-shadow: 0 4px 8px rgba(255, 107, 107, 0.2);
 }
 
+/* Edit Button */
+.edit-btn {
+    background-color: #4dabf7;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-btn:hover {
+    background-color: #339af0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(77, 171, 247, 0.3);
+}
+
+.icon_edit {
+    font-size: 1.1rem;
+    color: white;
+}
+
+/* Delete Button */
+.delete-btn {
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-btn:hover {
+    background-color: #fa5252;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
+}
+
+/* Favorite Button */
+.favorite-btn {
+    background-color: #ffd43b;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.favorite-btn:hover {
+    background-color: #fcc419;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 212, 59, 0.3);
+}
+
+.icon_favorite {
+    font-size: 1.1rem;
+    color: white;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Favorited State */
+.favorite-btn.favorited {
+    background-color: #ff6b6b;
+}
+
+.favorite-btn.favorited:hover {
+    background-color: #fa5252;
+    box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
+}
+
+.favorite-btn.favorited .icon_favorite {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
 /* Attributes Dropdown */
 .invisibleTr {
     display: none;

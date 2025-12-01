@@ -254,6 +254,16 @@ router.post(ROUTES.USERS.FAVORITES, isAuthenticated, (req, res) => {
       favorites = [];
     }
 
+    // Convert tagId to number and add to favorites if not already present
+    const tagIdNum = parseInt(tagId, 10);
+    if (isNaN(tagIdNum)) {
+      return res.status(400).json({ error: 'Invalid tag ID' });
+    }
+
+    if (!favorites.includes(tagIdNum)) {
+      favorites.push(tagIdNum);
+    }
+
     // Update database
     const updateSql = `UPDATE users SET favorites = ? WHERE id = ?`;
     db.run(updateSql, [JSON.stringify(favorites), userId], function (err) {

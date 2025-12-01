@@ -15,7 +15,7 @@ export function generateTable(tag, attributes, row, dropdownRow, isFavorite = fa
     const safeUsability = tag && tag.usability ? escapeHTML(tag.usability) : '';
 
     // Determine heart icon style based on favorite status
-    const heartIcon = isFavorite ? 'bookmark_heart' : 'bookmark';
+    const heartIcon = isFavorite ? 'favorite' : 'favorite_border';
 
     row.innerHTML = `
         <td><strong>${safeTagName}</strong></td>
