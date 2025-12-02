@@ -331,7 +331,7 @@ td {
     background-color: #ffd43b;
     color: white;
     border: none;
-    padding: 8px 12px;
+    padding: 8px;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -709,4 +709,57 @@ td {
         align-items: center;
         justify-content: center;
     }
+}
+
+/* ==========================================================================
+   Fixes for Alignment and Appearance
+   ========================================================================== */
+
+/* Center Action Columns */
+table th:nth-child(4),
+table td:nth-child(4),
+table th:nth-child(5),
+table td:nth-child(5),
+table th:nth-child(6),
+table td:nth-child(6) {
+    text-align: center;
+}
+
+/* Vibrant Button Colors */
+.delete,
+.delete-btn {
+    background-color: #e03131;
+}
+
+.delete:hover,
+.delete-btn:hover {
+    background-color: #c92a2a;
+    box-shadow: 0 4px 8px rgba(224, 49, 49, 0.2);
+}
+
+.edit-btn {
+    background-color: #1c7ed6;
+}
+
+.edit-btn:hover {
+    background-color: #1864ab;
+    box-shadow: 0 4px 8px rgba(28, 126, 214, 0.3);
+}
+
+.favorite-btn {
+    background-color: #f08c00;
+}
+
+.favorite-btn:hover {
+    background-color: #e67700;
+    box-shadow: 0 4px 8px rgba(240, 140, 0, 0.3);
+}
+
+.favorite-btn.favorited {
+    background-color: #e03131;
+}
+
+.favorite-btn.favorited:hover {
+    background-color: #c92a2a;
+    box-shadow: 0 4px 8px rgba(224, 49, 49, 0.3);
 }
