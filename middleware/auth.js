@@ -10,6 +10,18 @@ export function isAuthenticated(req, res, next) {
   res.status(401).json({ message: 'Unauthorized' });
 }
 
+/**
+ * Middleware to check if user is logged in for page access.
+ * Redirects to home if not authenticated.
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+export function requireAuth(req, res, next) {
+  if (req.session.userId) return next();
+  res.redirect('/home');
+}
+
 /** Middleware to check if user is admin level 1
  * @param {*} req 
  * @param {*} res 

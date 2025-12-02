@@ -7,6 +7,7 @@ import session from 'express-session';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { requireAuth } from './middleware/auth.js';
 
 // Route imports
 import partialsRouter from './routes/partials.js';
@@ -77,7 +78,7 @@ app.get(['/', '/home'], (req, res) => {
   res.render('home', { layout: 'layout', title: 'Home' });
 });
 
-app.get('/create', (req, res) => {
+app.get('/create', requireAuth, (req, res) => {
   res.render('create', { layout: 'layout', title: 'Create' });
 });
 
@@ -89,12 +90,16 @@ app.get('/logIn', (req, res) => {
   res.render('logIn', { layout: 'layout', title: 'LogIn' });
 });
 
-app.get('/edit', (req, res) => {
+app.get('/edit', requireAuth, (req, res) => {
   res.render('edit', { layout: 'layout', title: 'Edit' });
 });
 
-app.get('/profile', (req, res) => {
+app.get('/profile', requireAuth, (req, res) => {
   res.render('profile', { layout: 'layout', title: 'Profile' });
+});
+
+app.get('/favorites', requireAuth, (req, res) => {
+  res.render('favorites', { layout: 'layout', title: 'Favorites' });
 });
 
 // ============================================================================
