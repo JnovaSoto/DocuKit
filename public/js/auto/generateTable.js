@@ -49,7 +49,8 @@ export function generateTable(tag, attributes, row, dropdownRow, isFavorite = fa
         </button>`;
     }
 
-    row.innerHTML = `
+    // Build row HTML with only the columns that should be visible
+    let rowHTML = `
         <td><strong>${safeTagName}</strong></td>
         <td>${safeUsability}</td>
         <td>
@@ -57,13 +58,24 @@ export function generateTable(tag, attributes, row, dropdownRow, isFavorite = fa
             <strong>Tags inside</strong>
             <span class="material-symbols-outlined arrow">arrow_drop_down</span>
         </button>
-        </td>
-        <td>${favoriteButtonHTML}</td>   
-        <td>${editButtonHTML}</td>
-        <td>${deleteButtonHTML}</td>
-    `;
+        </td>`;
 
-    let html = `<td colspan="6" class="dropdown-content"><table class="attribute-table">`;
+    // Add action columns only if they have content
+    if (showFavorite) {
+        rowHTML += `<td>${favoriteButtonHTML}</td>`;
+    }
+    if (showEdit) {
+        rowHTML += `<td>${editButtonHTML}</td>`;
+    }
+    if (showDelete) {
+        rowHTML += `<td>${deleteButtonHTML}</td>`;
+    }
+
+    row.innerHTML = rowHTML;
+
+    // Calculate colspan for dropdown row based on visible columns
+    const totalColumns = 3 + (showFavorite ? 1 : 0) + (showEdit ? 1 : 0) + (showDelete ? 1 : 0);
+    let html = `<td colspan="${totalColumns}" class="dropdown-content"><table class="attribute-table">`;
 
     // Build inner rows for each attribute
     if (Array.isArray(attributes)) {
