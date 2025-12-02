@@ -6,7 +6,6 @@
 import { showTemporaryAlert } from '../tools/alerts.js';
 import { renderTable } from '../auto/renderTable.js';
 import { handleResponseError } from '../tools/caseState.js';
-import { requireLogin } from '../tools/session.js';
 import logger from '../tools/logger.js';
 import { API } from '../config/constants.js';
 
@@ -45,13 +44,6 @@ export async function init() {
     if (!input || !input.value.trim()) {
       console.log('⚠️ Input empty');
       showTemporaryAlert('alert', 'Please enter a tag name to search');
-      return;
-    }
-
-    // Check if user is logged in
-    if (!await requireLogin()) {
-      console.log('⚠️ User not logged in');
-      showTemporaryAlert('alert', 'You must log in to search a tag');
       return;
     }
 
@@ -97,7 +89,7 @@ export async function init() {
         const allAttributes = await attributesResponse.json();
 
         if (table) {
-          renderTable(table, tags, allAttributes, userFavorites);
+          await renderTable(table, tags, allAttributes, userFavorites);
         }
 
         showTemporaryAlert('success', 'Tags retrieved successfully');
@@ -131,7 +123,7 @@ export async function init() {
       const tagsArray = Array.isArray(tags) ? tags : [tags];
 
       if (table) {
-        renderTable(table, tagsArray, attributesFound, userFavorites);
+        await renderTable(table, tagsArray, attributesFound, userFavorites);
       }
 
       showTemporaryAlert('success', 'Tag(s) and attribute(s) found');

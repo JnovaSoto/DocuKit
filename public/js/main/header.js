@@ -91,8 +91,7 @@ export async function init() {
       // Admin-level logic
       switch (sessionData.admin) {
         case 0:
-          // Regular user: can create tags
-          setButtonState(btnCreate, true);
+          // Regular user: can only use favorites
           setButtonState(btnFavorites, true);
           break;
         case 1:

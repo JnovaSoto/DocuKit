@@ -1,5 +1,6 @@
 import { generateTable } from './generateTable.js';
 import { dropdown } from './dropdownAtt.js';
+import { checkSession } from '../tools/session.js';
 
 /**
  * Renders the tags table with the given tags and attributes.
@@ -8,8 +9,22 @@ import { dropdown } from './dropdownAtt.js';
  * @param {Array} attributes - Array of attribute objects.
  * @param {Array} userFavorites - Array of favorite tag IDs for the current user.
  */
-export function renderTable(table, tags, attributes, userFavorites = []) {
+export async function renderTable(table, tags, attributes, userFavorites = []) {
     if (!table) return;
+
+    // Fetch user session to determine permissions
+    let userPermissions = { loggedIn: false, adminLevel: null };
+    try {
+        const sessionData = await checkSession();
+        if (sessionData.loggedIn) {
+            userPermissions = {
+                loggedIn: true,
+                adminLevel: sessionData.admin
+            };
+        }
+    } catch (error) {
+        console.log('Could not fetch session, treating as guest');
+    }
 
     // Preserve the header row
     const header = table.querySelector('tr');
@@ -42,7 +57,7 @@ export function renderTable(table, tags, attributes, userFavorites = []) {
 
         const tagAttributes = attributes.filter(att => Number(att.tagId) === Number(tag.id));
         const isFavorite = userFavorites.includes(Number(tag.id));
-        const filledRows = generateTable(tag, tagAttributes, row, dropdownRow, isFavorite);
+        const filledRows = generateTable(tag, tagAttributes, row, dropdownRow, isFavorite, userPermissions);
 
 
         table.appendChild(filledRows.row);
