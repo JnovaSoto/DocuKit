@@ -1,0 +1,99 @@
+/* ==========================================================================
+   CSS Variables - Global Design Tokens
+   ========================================================================== */
+:root {
+    /* Primary Colors */
+    --color-primary: #cca31e;
+    --color-primary-dark: #b38f1a;
+    --color-primary-light: #cea520;
+    --color-primary-lighter: #eeca54;
+    --color-primary-gradient: #d68306;
+
+    /* Secondary Colors */
+    --color-secondary: #9b884a;
+
+    /* Blue Colors (Edit) */
+    --color-blue: #1c7ed6;
+    --color-blue-hover: #1864ab;
+    --color-blue-light: #4dabf7;
+    --color-blue-light-hover: #339af0;
+
+    /* Red Colors (Delete/Error) */
+    --color-red: #e03131;
+    --color-red-hover: #c92a2a;
+    --color-red-light: #ff6b6b;
+    --color-red-light-hover: #fa5252;
+    --color-red-dark: rgb(196, 26, 26);
+
+    /* Green Colors (Success) */
+    --color-green: green;
+    --color-green-dark: #2d5016;
+
+    /* Orange/Yellow Colors (Favorite) */
+    --color-orange: #f08c00;
+    --color-orange-hover: #e67700;
+    --color-yellow: #ffd43b;
+    --color-yellow-hover: #fcc419;
+    --color-yellow-light: #fffeb9;
+
+    /* Neutral Colors */
+    --color-white: #ffffff;
+    --color-black: #000000;
+    --color-gray-dark: #333;
+    --color-gray: #555;
+    --color-gray-medium: #666;
+    --color-gray-light: #aaa;
+    --color-gray-lighter: #ccc;
+    --color-gray-lightest: #eee;
+    --color-gray-border: #ddd;
+
+    /* Background Colors */
+    --bg-body: #f0f2f5;
+    --bg-light: #f2f2f2;
+    --bg-hover: #fff9e6;
+    --bg-dropdown: #fcfcfc;
+
+    /* Border Colors */
+    --border-light: 1px solid var(--color-gray-lighter);
+    --border-lightest: 1px solid var(--color-gray-lightest);
+    --border-gray: 1px solid var(--color-gray-border);
+
+    /* Shadow Colors */
+    --shadow-light: rgba(0, 0, 0, 0.05);
+    --shadow-medium: rgba(0, 0, 0, 0.15);
+    --shadow-primary: rgba(204, 163, 30, 0.2);
+    --shadow-primary-strong: rgba(204, 163, 30, 0.3);
+    --shadow-blue: rgba(28, 126, 214, 0.3);
+    --shadow-blue-light: rgba(77, 171, 247, 0.3);
+    --shadow-red: rgba(224, 49, 49, 0.2);
+    --shadow-red-strong: rgba(224, 49, 49, 0.3);
+    --shadow-red-light: rgba(255, 107, 107, 0.2);
+    --shadow-red-light-strong: rgba(255, 107, 107, 0.3);
+    --shadow-orange: rgba(240, 140, 0, 0.3);
+    --shadow-yellow: rgba(255, 212, 59, 0.3);
+
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-medium: 0.4s ease;
+    --transition-slow: 0.5s ease;
+    --transition-dropdown: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-alert: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    /* Border Radius */
+    --radius-small: 4px;
+    --radius-medium: 6px;
+    --radius-large: 8px;
+    --radius-xlarge: 12px;
+    --radius-round: 20px;
+
+    /* Spacing */
+    --spacing-xs: 5px;
+    --spacing-sm: 10px;
+    --spacing-md: 15px;
+    --spacing-lg: 20px;
+    --spacing-xl: 30px;
+
+    /* Z-index */
+    --z-dropdown: 1000;
+    --z-alert: 1050;
+}

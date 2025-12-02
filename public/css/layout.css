@@ -1,3 +1,5 @@
+@import url('./variables.css');
+
 html {
   min-height: 100%;
   position: relative;
@@ -9,24 +11,24 @@ body {
 }
 
 footer {
-  background-color: black;
+  background-color: var(--color-black);
   position: absolute;
   bottom: 0;
   width: 100%;
   height: 40px;
-  color: white;
+  color: var(--color-white);
 }
 
 .pri {
-  background-color: #cca31e;
+  background-color: var(--color-primary);
 }
 
 .sec {
-  background-color: #9b884a;
+  background-color: var(--color-secondary);
 }
 
 .ter {
-  background-color: #9b884a;
+  background-color: var(--color-secondary);
 }
 
 #app {
@@ -67,35 +69,26 @@ footer {
   padding: 1em;
 }
 
-#btn-sign-up {
-  cursor: pointer;
-}
-
-#btn-log-in {
-  cursor: pointer;
-}
-
-#btn-log-out {
-  cursor: pointer;
-}
-
+#btn-sign-up,
+#btn-log-in,
+#btn-log-out,
 #btn-go-profile {
   cursor: pointer;
 }
 
 #edit-form {
-  background-color: #f2f2f2;
-  padding: 20px;
+  background-color: var(--bg-light);
+  padding: var(--spacing-lg);
   width: 50%;
   margin: auto;
 }
 
 #edit-form button {
-  background-color: #cca31e;
-  color: white;
-  padding: 10px 8px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  padding: var(--spacing-sm) 8px;
   font-size: 14px;
-  gap: 5px;
+  gap: var(--spacing-xs);
   align-items: center;
   display: block;
   margin: auto;

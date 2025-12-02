@@ -1,3 +1,5 @@
+@import url('./variables.css');
+
 .error-container {
     display: flex;
     justify-content: center;
@@ -15,7 +17,7 @@
     font-size: 6rem;
     font-weight: 700;
     margin: 0;
-    background: linear-gradient(135deg, #ead266 0%, #d68306 100%);
+    background: linear-gradient(135deg, #ead266 0%, var(--color-primary-gradient) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -24,12 +26,12 @@
 .error-title {
     font-size: 2rem;
     margin: 1rem 0;
-    color: #333;
+    color: var(--color-gray-dark);
 }
 
 .error-message {
     font-size: 1.1rem;
-    color: #666;
+    color: var(--color-gray-medium);
     margin: 1.5rem 0;
     line-height: 1.6;
 }
@@ -38,16 +40,16 @@
     display: inline-block;
     padding: 0.75rem 2rem;
     background: linear-gradient(135deg, #b3a920 0%, #d1972b 100%);
-    color: white;
+    color: var(--color-white);
     text-decoration: none;
-    border-radius: 8px;
+    border-radius: var(--radius-large);
     font-weight: 600;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
     margin-top: 1rem;
 }
 
 .btn-home:hover {
-    color: white;
+    color: var(--color-white);
     transform: translateY(-2px);
     box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
 }
