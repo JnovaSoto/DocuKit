@@ -27,7 +27,7 @@ export function generateTable(tag, attributes, row, dropdownRow, isFavorite = fa
         </button>
         </td>
         <td>
-        <button class="favorite-btn js-favorite-toggle" data-id="${tag.id}" data-favorited="${isFavorite}">
+        <button class="favorite-btn js-favorite-toggle ${isFavorite ? 'favorited' : ''}" data-id="${tag.id}" data-favorited="${isFavorite}">
             <span class="material-symbols-outlined icon_favorite">${heartIcon}</span>
         </button>
         </td>   

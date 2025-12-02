@@ -68,6 +68,18 @@ export async function init() {
         table.innerHTML = '';
       }
 
+      // Fetch user favorites once for both search paths
+      let userFavorites = [];
+      try {
+        const favResponse = await fetch(API.USERS.FAVORITES);
+        if (favResponse.ok) {
+          const favData = await favResponse.json();
+          userFavorites = favData.favorites || [];
+        }
+      } catch (err) {
+        console.log('Could not fetch favorites:', err);
+      }
+
       // 1. Search by Tag Name
       console.log(`Fetching tag by name: ${API.TAGS.BY_NAME(tagName)}`);
       const tagResponse = await fetch(API.TAGS.BY_NAME(tagName));
@@ -85,7 +97,7 @@ export async function init() {
         const allAttributes = await attributesResponse.json();
 
         if (table) {
-          renderTable(table, tags, allAttributes);
+          renderTable(table, tags, allAttributes, userFavorites);
         }
 
         showTemporaryAlert('success', 'Tags retrieved successfully');
@@ -119,7 +131,7 @@ export async function init() {
       const tagsArray = Array.isArray(tags) ? tags : [tags];
 
       if (table) {
-        renderTable(table, tagsArray, attributesFound);
+        renderTable(table, tagsArray, attributesFound, userFavorites);
       }
 
       showTemporaryAlert('success', 'Tag(s) and attribute(s) found');
