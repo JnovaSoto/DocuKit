@@ -14,6 +14,7 @@ import partialsRouter from './routes/partials.js';
 import tagsRoutes from './routes/tags.js';
 import usersRoutes from './routes/users.js';
 import attributesRoutes from './routes/attributes.js';
+import attributeMetadataRoutes from './routes/attributeMetadata.js';
 
 // ============================================================================
 // Configuration
@@ -71,6 +72,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/partials', partialsRouter);
 app.use('/tags', tagsRoutes);
 app.use('/attributes', attributesRoutes);
+app.use('/attribute-metadata', attributeMetadataRoutes);
 app.use('/users', usersRoutes);
 
 // Page Routes

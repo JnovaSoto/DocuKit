@@ -10,8 +10,8 @@ INSERT INTO tags (tagName, usability, content) VALUES
 ('input', 'User input element', 'Self-closing'),
 ('button', 'Clickable button', 'Inline'),
 ('iframe', 'Inline frame to embed external content', 'Inline'),
-('source', 'Multiple media sources for audio/video', 'Void');
-('style','Defines style information for a document','Raw text element')
+('source', 'Multiple media sources for audio/video', 'Void'),
+('style','Defines style information for a document','Raw text element');
 
 -- ATTRIBUTES
 -- IMG
@@ -89,3 +89,37 @@ INSERT INTO attributes (attribute, info, tagId) VALUES
 INSERT INTO attributes (attribute, info, tagId) VALUES
 ('src', 'Media source', 11),
 ('type', 'Media type', 11);
+
+-- ATTRIBUTE METADATA
+INSERT OR IGNORE INTO attribute_metadata (attributeName, generalDescription) VALUES
+('src', 'Specifies the URL or path to an external resource (image, script, iframe, etc.)'),
+('href', 'Specifies the URL of a linked resource or destination'),
+('alt', 'Provides alternative text for an element, primarily used for accessibility and when images cannot be displayed'),
+('class', 'Assigns one or more CSS class names to an element for styling and JavaScript manipulation'),
+('id', 'Provides a unique identifier for an element within the document'),
+('style', 'Applies inline CSS styles directly to an element'),
+('title', 'Provides advisory information about an element, typically displayed as a tooltip on hover'),
+('name', 'Assigns a name to an element, often used for form controls and anchors'),
+('value', 'Specifies the value of an input element or the content of certain form controls'),
+('type', 'Defines the type or behavior of an element (input type, button type, list type, etc.)'),
+('placeholder', 'Provides a hint or example text in an input field before the user enters a value'),
+('disabled', 'Disables an element, preventing user interaction'),
+('readonly', 'Makes an input field read-only, preventing modification but allowing selection'),
+('required', 'Indicates that an input field must be filled out before form submission'),
+('width', 'Specifies the width of an element in pixels or other units'),
+('height', 'Specifies the height of an element in pixels or other units'),
+('target', 'Specifies where to open a linked document (e.g., _blank, _self, _parent, _top)'),
+('rel', 'Defines the relationship between the current document and the linked resource'),
+('data-*', 'Custom data attributes that allow you to store extra information on HTML elements'),
+('aria-*', 'Accessibility attributes that provide additional information for assistive technologies'),
+('role', 'Defines the semantic role of an element for accessibility purposes'),
+('tabindex', 'Specifies the tab order of an element for keyboard navigation'),
+('action', 'Specifies where to send form data when a form is submitted'),
+('method', 'Specifies the HTTP method to use when submitting a form (GET or POST'),
+('for', 'Associates a label with a form control by referencing the control\'s id'),
+('colspan', 'Specifies the number of columns a table cell should span'),
+('rowspan', 'Specifies the number of rows a table cell should span'),
+('charset', 'Specifies the character encoding for the document or script'),
+('content', 'Provides the value associated with a meta element or the content of a template'),
+('lang', 'Specifies the language of the element\'s content'),
+('dir', 'Specifies the text direction (ltr for left-to-right, rtl for right-to-left)');

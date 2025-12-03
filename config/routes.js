@@ -28,6 +28,11 @@ export const ROUTES = {
         BY_TAG_ID: '/attributeTagId/:id',
         BY_NAME: '/attributeName/:name'
     },
+    ATTRIBUTE_METADATA: {
+        BASE: '/',
+        CREATE: '/attributeMetadataCreate',
+        BY_NAME: '/attributeMetadataName/:name'
+    },
     PARTIALS: {
         HEADER: '/header',
         FOOTER: '/footer'

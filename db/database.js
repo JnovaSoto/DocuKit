@@ -1,20 +1,5 @@
 // ============================================================================
 // Dependencies
-// ============================================================================
-import sqlite3 from 'sqlite3';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-// ============================================================================
-// Configuration
-// ============================================================================
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const DB_PATH = path.resolve(__dirname, 'database.sqlite');
-const DB_MODE = sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE;
-
-// ============================================================================
 // Database Connection
 // ============================================================================
 
@@ -79,6 +64,16 @@ const TABLES = {
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
       updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )
+  `,
+
+  attribute_metadata: `
+    CREATE TABLE IF NOT EXISTS attribute_metadata (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      attributeName TEXT NOT NULL UNIQUE,
+      generalDescription TEXT NOT NULL,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
   `
 };
 
@@ -119,10 +114,11 @@ const createTables = () => {
 };
 
 // Initialize tables on startup
-createTables().catch((err) => {
-  console.error('❌ Failed to initialize database tables:', err.message);
-  process.exit(1);
-});
+createTables()
+  .catch((err) => {
+    console.error('❌ Failed to initialize database:', err.message);
+    process.exit(1);
+  });
 
 // ============================================================================
 // Graceful Shutdown

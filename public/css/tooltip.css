@@ -1,0 +1,107 @@
+/* ============================================================================
+   Attribute Metadata Display
+   ============================================================================ */
+
+.attribute-metadata {
+  margin: 20px 0;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease-out;
+}
+
+.metadata-content h3 {
+  margin: 0 0 10px 0;
+  color: rgb(0, 0, 0);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.metadata-content h3 strong {
+  color: var(--accent-color);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.metadata-content p {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.95);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================================
+   Tag Tooltip
+   ============================================================================ */
+
+.tag-name-cell {
+  position: relative;
+  cursor: help;
+}
+
+.tag-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(10px);
+  color: black;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: nowrap;
+  max-width: 300px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 1000;
+}
+
+.tag-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.9);
+}
+
+.tag-name-cell:hover .tag-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-12px);
+}
+
+/* Handle long content */
+.tag-tooltip.multiline {
+  white-space: normal;
+  max-width: 400px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tag-tooltip {
+    max-width: 250px;
+    font-size: 0.85rem;
+  }
+
+  .tag-tooltip.multiline {
+    max-width: 300px;
+  }
+}

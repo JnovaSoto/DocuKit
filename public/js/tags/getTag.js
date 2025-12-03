@@ -31,11 +31,26 @@ export async function init() {
     }
 
     const tagName = input.value.trim();
+
+    // Special case: redirect to home if searching for "Tag"
+    if (tagName.toLowerCase() === 'tag') {
+      logger.navigation('Redirecting to home for "Tag" search');
+      const { changePage } = await import('../navigation.js');
+      changePage('/home');
+      return;
+    }
+
     logger.network(`Searching for tag: ${tagName}`);
 
     try {
       const table = document.querySelector('.tagTable');
       if (table) table.innerHTML = '';
+
+      // Remove any existing attribute metadata display
+      const existingMetadata = document.querySelector('.attribute-metadata');
+      if (existingMetadata) {
+        existingMetadata.remove();
+      }
 
       // Fetch user favorites (only if logged in)
       let userFavorites = [];
@@ -96,6 +111,22 @@ export async function init() {
 
       const tagsArray = Array.isArray(tags) ? tags : [tags];
 
+      // Try to fetch attribute metadata for general description
+      try {
+        logger.info(`Fetching metadata for attribute: ${tagName}`);
+        const metadataResponse = await fetch(API.ATTRIBUTE_METADATA.BY_NAME(tagName));
+        logger.info(`Metadata response status: ${metadataResponse.status}`);
+        if (metadataResponse.ok) {
+          const metadata = await metadataResponse.json();
+          logger.success('Metadata received:', metadata);
+          displayAttributeMetadata(metadata);
+        } else {
+          logger.warn(`Metadata not found for attribute: ${tagName}, status: ${metadataResponse.status}`);
+        }
+      } catch (err) {
+        logger.error('Error fetching metadata:', err);
+      }
+
       if (table) {
         await renderTable(table, tagsArray, attributesFound, userFavorites);
       }
@@ -107,4 +138,37 @@ export async function init() {
       showTemporaryAlert('alert', 'An unexpected error occurred');
     }
   });
+}
+
+/**
+ * Displays attribute metadata (general description) above the table
+ * @param {Object} metadata - Attribute metadata object
+ */
+function displayAttributeMetadata(metadata) {
+  logger.info('Displaying attribute metadata:', metadata);
+
+  // Remove any existing metadata display
+  const existingMetadata = document.querySelector('.attribute-metadata');
+  if (existingMetadata) {
+    existingMetadata.remove();
+  }
+
+  // Create metadata display element
+  const metadataDiv = document.createElement('div');
+  metadataDiv.className = 'attribute-metadata';
+  metadataDiv.innerHTML = `
+    <div class="metadata-content">
+      <h3>Attribute: <strong>${metadata.attributeName}</strong></h3>
+      <p>${metadata.generalDescription}</p>
+    </div>
+  `;
+
+  // Insert before the table
+  const table = document.querySelector('.tagTable');
+  if (table && table.parentElement) {
+    logger.success('Inserting metadata before table');
+    table.parentElement.insertBefore(metadataDiv, table);
+  } else {
+    logger.error('Could not find table or table parent');
+  }
 }

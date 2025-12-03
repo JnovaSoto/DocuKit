@@ -77,6 +77,11 @@ export const API = {
         BY_TAG_ID: (id) => `/attributes/attributeTagId/${id}`,
         BY_NAME: (name) => `/attributes/attributeName/${name}`
     },
+    ATTRIBUTE_METADATA: {
+        BASE: '/attribute-metadata',
+        CREATE: '/attribute-metadata/attributeMetadataCreate',
+        BY_NAME: (name) => `/attribute-metadata/attributeMetadataName/${name}`
+    },
     PARTIALS: {
         HEADER: '/partials/header',
         FOOTER: '/partials/footer'

@@ -50,8 +50,12 @@ export function generateTable(tag, attributes, row, dropdownRow, isFavorite = fa
     }
 
     // Build row HTML with only the columns that should be visible
+    // Add tooltip to tag name if content exists
     let rowHTML = `
-        <td><strong>${safeTagName}</strong></td>
+        <td class="tag-name-cell">
+            <strong>${safeTagName}</strong>
+            ${tag.content ? `<div class="tag-tooltip ${tag.content.length > 50 ? 'multiline' : ''}">${escapeHTML(tag.content)}</div>` : ''}
+        </td>
         <td>${safeUsability}</td>
         <td>
         <button class="dropdown-btn table-button">
