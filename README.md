@@ -1,30 +1,46 @@
-# 📘 SPA HTML Tags Explanation
+# 🎨 Docukit: Your HTML & CSS Documentation Forge
 
-**HTML Tags Explanation** is a modern web application designed to provide clear and interactive information about HTML tags—their usage, styles, and child elements. This Single Page Application (SPA) makes learning HTML **practical, visual, and engaging**.
+**Docukit** is a dynamic, interactive Single Page Application (SPA) designed to make learning and referencing **HTML tags** and their corresponding **CSS properties** engaging, visual, and fast. Go beyond static documentation and explore the core building blocks of the web in a functional context.
 
 ---
 
-## 🧩 Technologies Used
+## ✨ Key Features
 
-### Frontend
-- HTML5  
-- CSS3  
-- JavaScript  
-- Bootstrap 5  
-- Core UI
+* **Dual Documentation:** Access clear, concise explanations for **HTML tags** (usage, attributes, nesting rules) alongside their directly related **CSS properties** (syntax, values, and rendering effects).
+* **SPA Performance:** Experience a lightning-fast, seamless user experience without constant page reloads.
+* **Element Manager:** **Create, view, and delete** custom HTML element documentation dynamically within the app.
+* **Robust Stack:** Built on a reliable Node.js/Express backend and modern frontend tools.
+* **Responsive by Design:** A clean, responsive layout powered by **Bootstrap 5** and **Core UI**.
 
-### Backend
-- Node
-- Express  
-- EJS (Embedded JavaScript templates)  
-- Bcrypt
-- Validator
-- dotenv
-- Multer
+---
 
-### Database
-- SQLite3  
+## 🛠️ The Tech Stack
 
+Docukit utilizes a focused MERN-like stack approach for efficiency and performance.
+
+### 🌐 Frontend (The Visual Layer)
+
+| Category | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Structure** | HTML5 | Semantics and application layout. |
+| **Style** | CSS3, **Bootstrap 5**, **Core UI** | Modern, responsive styling and component library. |
+| **Interactivity** | JavaScript | Driving the dynamic, single-page experience. |
+
+### ⚙️ Backend (The Application Engine)
+
+| Technology | Role | Key Packages |
+| :--- | :--- | :--- |
+| **Runtime** | **Node.js** | Provides the JavaScript environment. |
+| **Framework** | **Express** | Fast, minimal web application framework. |
+| **Templating** | **EJS** | Rendering dynamic content for the views. |
+| **Security** | **Bcrypt**, **Validator** | Hashing passwords and input validation. |
+| **Utilities** | **dotenv**, **Multer** | Managing environment variables and file uploads. |
+
+### 💾 Database
+
+* **System:** **SQLite3**
+* **Rationale:** Chosen for its lightweight footprint and ease of setup, perfect for quick development and deployment.
+* **Script:** The project has a txt file where you can get an example of data to view the page.
 ---
 
 ## ✨ Features
