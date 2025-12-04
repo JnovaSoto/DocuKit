@@ -1,8 +1,8 @@
 {
-  "name": "html-tags-explanation",
+  "name": "DocuKit",
   "version": "1.0.0",
-  "description": "This page will contain usefull information about the tags of html, their uses, styles and his childs.",
-  "main": "index.js",
+  "description": "DocuKit is a comprehensive, feature-rich web application designed to serve as the definitive interactive reference guide for HTML tags and their associated metadata. Built on a secure and modern stack, it provides detailed explanations, attribute data, usage examples, and powerful user-centric features, making it an indispensable tool for developers and learners alike.",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
@@ -10,16 +10,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JnovaSoto/HTML-Tags-Explanation.git"
+    "url": "git+https://github.com/JnovaSoto/DocuKit.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "bugs": {
-    "url": "https://github.com/JnovaSoto/HTML-Tags-Explanation/issues"
+    "url": "https://github.com/JnovaSoto/DocuKit/issues"
   },
-  "homepage": "https://github.com/JnovaSoto/HTML-Tags-Explanation#readme",
+  "homepage": "https://github.com/JnovaSoto/DocuKit#readme",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",
