@@ -5,6 +5,7 @@
 /* ==========================================================================
    Base & Layout
    ========================================================================== */
+
 html {
     min-height: 100%;
     position: relative;
@@ -66,28 +67,6 @@ footer {
     text-align: center;
 }
 
-/* ==========================================================================
-   Navigation & Search
-   ========================================================================== */
-.search-form {
-    position: relative;
-    width: 250px;
-}
-
-.search-form .form-control {
-    height: 35px;
-    font-size: 0.9rem;
-    padding: 0 1rem;
-    border-radius: 20px;
-}
-
-.search-form .btn {
-    height: 35px;
-    font-size: 0.9rem;
-    padding: 0 1rem;
-    border-radius: 20px;
-    margin-left: 5px;
-}
 
 /* ==========================================================================
    Alerts

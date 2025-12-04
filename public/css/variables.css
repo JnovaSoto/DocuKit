@@ -2,14 +2,14 @@
    CSS Variables - Global Design Tokens
    ========================================================================== */
 :root {
-    /* Primary Colors */
+    /* Primary Colors HTML Tags*/
     --color-primary: #cca31e;
     --color-primary-dark: #b38f1a;
     --color-primary-light: #cea520;
     --color-primary-lighter: #eeca54;
     --color-primary-gradient: #d68306;
 
-    /* Secondary Colors */
+    /* Secondary Colors HTML Tags*/
     --color-secondary: #9b884a;
 
     /* Blue Colors (Edit) */

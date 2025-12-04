@@ -1,10 +1,11 @@
 /**
  * Header functionality.
- * Manages user session display, dropdown menu, and permission-based button states.
+ * Manages user session display, dropdown menu, permission-based button states, and theme switching.
  */
 
 import { checkSession } from '../tools/session.js';
 import logger from '../tools/logger.js';
+import { applyTheme, initTheme } from '../tools/themeSwitch.js';
 
 // Flag to prevent duplicate initialization
 let isInitialized = false;
@@ -22,6 +23,12 @@ export async function init() {
 
   logger.info('Header script initialized');
   isInitialized = true;
+
+  // Initialize theme system
+  initTheme();
+
+  // Set up theme switcher buttons
+  setupThemeSwitcher();
 
   try {
     const sessionData = await checkSession();
@@ -132,4 +139,36 @@ export async function init() {
   } catch (err) {
     logger.error('Error initializing header:', err);
   }
+}
+
+/**
+ * Sets up theme switcher functionality for header brand buttons
+ */
+function setupThemeSwitcher() {
+  // Get all header brand links
+  const headerBrands = document.querySelectorAll('.header-brand');
+
+  headerBrands.forEach(brand => {
+    brand.addEventListener('click', (e) => {
+      const href = brand.getAttribute('href');
+
+      // Apply theme based on which button was clicked
+      if (href === '/' || href === '/home') {
+        e.preventDefault();
+        applyTheme('html');
+        logger.info('Switched to HTML theme');
+        // Navigate to home if not already there
+        if (window.location.pathname !== '/' && window.location.pathname !== '/home') {
+          import('../navigation.js').then(mod => {
+            if (mod.changePage) mod.changePage('/home');
+          });
+        }
+      } else if (href === '/css') {
+        e.preventDefault();
+        applyTheme('css');
+        logger.info('Switched to CSS theme');
+        // For now, just apply the theme. You can add CSS properties page later
+      }
+    });
+  });
 }

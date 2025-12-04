@@ -207,6 +207,9 @@ function executePageScript() {
       import('/js/user/profile.js').then(mod => mod.init && mod.init());
       break;
     case ROUTES.FAVORITES:
+      import('/js/tags/edit.js').then(mod => mod.init && mod.init());
+      import('/js/tags/delete.js').then(mod => mod.init && mod.init());
+      import('/js/tags/favorites.js').then(mod => mod.init && mod.init());
       import('/js/user/favorites.js').then(mod => mod.init && mod.init());
       break;
   }
