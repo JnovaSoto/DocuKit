@@ -6,8 +6,35 @@ import { isAdminLevel1, isAuthenticated } from '../middleware/auth.js';
 import ROUTES from '../config/routes.js';
 import upload, { movePhotoToUserFolder } from '../config/multer.js';
 
+/**
+ * @typedef {import('../models/user.js').User} User
+ */
 const router = express.Router();
 
+/**
+ * Login a user.
+ */
+router.post(ROUTES.USERS.LOGIN, (req, res) => {
+  const { login, password } = req.body;
+  if (!login || !password) return res.status(400).json({ error: 'All the inputs have to be fulled' });
+
+  const sql = `SELECT * FROM users WHERE username = ? OR email = ?`;
+
+  db.get(sql, [login, login], async (err, user) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!user) return res.status(401).json({ error: 'User or password are incorrect' });
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(401).json({ error: 'User or password are incorrect' });
+
+    req.session.userId = user.id;
+    req.session.username = user.username;
+    req.session.admin = user.admin;
+    req.session.photo = user.photo;
+
+    res.json({ message: 'Successfully Login', userId: user.id, username: user.username, admin: user.admin, photo: user.photo });
+  });
+});
 /**
  * Create a new user account with photo upload support.
  */
@@ -59,28 +86,9 @@ router.post(ROUTES.USERS.SIGNUP, upload.single('photo'), async (req, res) => {
   }
 });
 
-router.post(ROUTES.USERS.LOGIN, (req, res) => {
-  const { login, password } = req.body;
-  if (!login || !password) return res.status(400).json({ error: 'All the inputs have to be fulled' });
-
-  const sql = `SELECT * FROM users WHERE username = ? OR email = ?`;
-
-  db.get(sql, [login, login], async (err, user) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!user) return res.status(401).json({ error: 'User or password are incorrect' });
-
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(401).json({ error: 'User or password are incorrect' });
-
-    req.session.userId = user.id;
-    req.session.username = user.username;
-    req.session.admin = user.admin;
-    req.session.photo = user.photo;
-
-    res.json({ message: 'Successfully Login', userId: user.id, username: user.username, admin: user.admin, photo: user.photo });
-  });
-});
-
+/**
+ * Logout a user.
+ */
 router.post(ROUTES.USERS.LOGOUT, (req, res) => {
   if (req.session) {
     req.session.destroy(err => {
@@ -93,6 +101,9 @@ router.post(ROUTES.USERS.LOGOUT, (req, res) => {
   }
 });
 
+/**
+ * Get the current user's data.
+ */
 router.get(ROUTES.USERS.ME, (req, res) => {
   if (!req.session.userId) return res.json({ loggedIn: false });
 
@@ -118,6 +129,9 @@ router.get(ROUTES.USERS.ME, (req, res) => {
   });
 });
 
+/**
+ * Get the current user's favorites.
+ */
 router.get(ROUTES.USERS.FAVORITES, isAuthenticated, (req, res) => {
   const userId = req.session.userId;
   const sql = `SELECT favorites FROM users WHERE id = ?`;
@@ -138,6 +152,9 @@ router.get(ROUTES.USERS.FAVORITES, isAuthenticated, (req, res) => {
   });
 });
 
+/**
+ * Add or remove a tag from the current user's favorites.
+ */
 router.post(ROUTES.USERS.FAVORITES, isAuthenticated, (req, res) => {
   const userId = req.session.userId;
   const { tagId } = req.body;
@@ -171,6 +188,9 @@ router.post(ROUTES.USERS.FAVORITES, isAuthenticated, (req, res) => {
   });
 });
 
+/**
+ * Remove a tag from the current user's favorites.
+ */
 router.delete(`${ROUTES.USERS.FAVORITES}/:tagId`, isAuthenticated, (req, res) => {
   const userId = req.session.userId;
   const tagId = parseInt(req.params.tagId, 10);
@@ -199,6 +219,9 @@ router.delete(`${ROUTES.USERS.FAVORITES}/:tagId`, isAuthenticated, (req, res) =>
   });
 });
 
+/**
+ * Get a user by ID.
+ */
 router.get(ROUTES.USERS.BY_ID, isAdminLevel1, (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: 'Invalid user ID' });

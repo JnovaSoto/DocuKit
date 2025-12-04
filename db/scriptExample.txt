@@ -1,5 +1,9 @@
+-- ADMIN
+INSERT OR IGNORE INTO users (username, email, password, admin, photo, favorites, createdAt, updatedAt) VALUES
+('userAdmin12345', 'userAdmin12345@gmail.com', '$2b$10$JmTs2qnmpOMwcAjt.RUhyurYfnmy1q5a6ssJ1FPwdEc6gsr/guC6S', 1,'/uploads/users/cat_default.webp', '[]', '2025-12-04 12:00:00', '2025-12-04 12:00:00');
+
 -- TAGS
-INSERT INTO tags (tagName, usability, content) VALUES
+INSERT OR IGNORE INTO tags (tagName, usability, content) VALUES
 ('img', 'Used to embed images', 'Self-closing'),
 ('a', 'Defines a hyperlink', 'Inline'),
 ('script', 'Embeds or references executable code', 'Inline'),
@@ -11,7 +15,7 @@ INSERT INTO tags (tagName, usability, content) VALUES
 ('button', 'Clickable button', 'Inline'),
 ('iframe', 'Inline frame to embed external content', 'Inline'),
 ('source', 'Multiple media sources for audio/video', 'Void'),
-('style','Defines style information for a document','Raw text element');
+('style','Defines style information for a document','Raw text element'),
 ('p', 'Used for paragraphs of text', 'Closing tag required'),
 ('h1', 'Defines the most important heading', 'Closing tag required'),
 ('h2', 'Defines a secondary heading', 'Closing tag required'),
@@ -39,7 +43,7 @@ INSERT INTO tags (tagName, usability, content) VALUES
 
 -- ATTRIBUTES
 -- Tag IMG (ID: 1)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('src', 'Image source URL', 1),
 ('alt', 'Alternative text', 1),
 ('width', 'Image width', 1),
@@ -47,27 +51,27 @@ INSERT INTO attributes (attribute, info, tagId) VALUES
 ('loading', 'Lazy loading behavior', 1);
 
 -- Tag A (ID: 2)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('href', 'URL the link points to', 2),
 ('target', 'Specifies where to open linked document', 2),
 ('rel', 'Relationship between current and linked document', 2),
 ('id', 'Unique identifier', 2);
 
 -- Tag SCRIPT (ID: 3)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('src', 'External script file URL', 3),
 ('type', 'Script type', 3),
 ('async', 'Load script asynchronously', 3),
 ('defer', 'Defer script execution', 3);
 
 -- Tag LINK (ID: 4)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('href', 'URL to external resource', 4),
 ('rel', 'Defines relation to document', 4),
 ('type', 'Specifies type of linked resource', 4);
 
 -- Tag VIDEO (ID: 5)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('src', 'Video source', 5),
 ('controls', 'Show video controls', 5),
 ('autoplay', 'Play automatically', 5),
@@ -75,21 +79,21 @@ INSERT INTO attributes (attribute, info, tagId) VALUES
 ('poster', 'Preview image', 5);
 
 -- Tag AUDIO (ID: 6)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('src', 'Audio source', 6),
 ('controls', 'Show audio controls', 6),
 ('autoplay', 'Play automatically', 6),
 ('loop', 'Loop audio', 6);
 
 -- Tag FORM (ID: 7)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('action', 'Form submission URL', 7),
 ('method', 'HTTP method', 7),
 ('autocomplete', 'Enable autofill', 7),
 ('id', 'Unique identifier', 7);
 
 -- Tag INPUT (ID: 8)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('type', 'Type of input control', 8),
 ('value', 'Initial value', 8),
 ('placeholder', 'Hint text', 8),
@@ -97,158 +101,158 @@ INSERT INTO attributes (attribute, info, tagId) VALUES
 ('required', 'Field must be filled', 8);
 
 -- Tag BUTTON (ID: 9)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('type', 'Button type', 9),
 ('disabled', 'Disable button', 9),
 ('id', 'Unique identifier', 9);
 
 -- Tag IFRAME (ID: 10)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('src', 'Source URL of embedded page', 10),
 ('width', 'Frame width', 10),
 ('height', 'Frame height', 10),
 ('loading', 'Lazy loading behavior', 10);
 
 -- Tag: SOURCE (ID: 11)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('src', 'Media source', 11),
 ('type', 'Media type', 11);
 
 -- Tag: STYLE (ID: 12)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('media', 'Specifies the media type or query (e.g., screen, print) for which the styles are intended', 12),
 ('type', 'Specifies the MIME type of the style sheet (default is text/css)', 12),
 ('nonce', 'A cryptographic nonce (number used once) to satisfy Content Security Policy (CSP) requirements', 12),
 ('title', 'Specifies an alternate style sheet set (used with linked style sheets)', 12);
 
 -- Tag: p (ID: 13)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('translate', 'Specifies whether the element''s content should be translated (yes/no)', 13),
 ('itemscope', 'Indicates that the element and its content is a microdata item', 13),
 ('itemtype', 'Specifies the vocabulary used to define the item properties', 13),
 ('hidden', 'Indicates that the element is not yet, or is no longer, relevant', 13);
 
 -- Tag: h1 (ID: 14)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('translate', 'Specifies whether the element''s content should be translated (yes/no)', 14),
 ('itemscope', 'Indicates that the element and its content is a microdata item', 14),
 ('itemprop', 'Specifies the property of a microdata item', 14),
 ('draggable', 'Specifies whether an element is draggable (true/false/auto)', 14);
 
 -- Tag: h2 (ID: 15)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('translate', 'Specifies whether the element''s content should be translated (yes/no)', 15),
 ('itemscope', 'Indicates that the element and its content is a microdata item', 15),
 ('itemtype', 'Specifies the vocabulary used to define the item properties', 15),
 ('spellcheck', 'Specifies whether the element should be spell-checked (true/false)', 15);
 
 -- Tag: div (ID: 16)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('itemscope', 'Indicates that the element and its content is a microdata item', 16),
 ('itemtype', 'Specifies the vocabulary used to define the item properties', 16),
 ('contenteditable', 'Specifies whether the content of the element is editable by the user', 16),
 ('draggable', 'Specifies whether an element is draggable (true/false/auto)', 16);
 
 -- Tag: span (ID: 17)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('itemprop', 'Specifies the property of a microdata item', 17),
 ('spellcheck', 'Specifies whether the element should be spell-checked (true/false)', 17),
 ('translate', 'Specifies whether the element''s content should be translated (yes/no)', 17),
 ('contenteditable', 'Specifies whether the content of the element is editable by the user', 17);
 
 -- Tag: ul (ID: 18)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('compact', 'Render the list smaller (DEPRECATED)', 18),
 ('itemscope', 'Indicates that the element and its content is a microdata item', 18),
 ('itemtype', 'Specifies the vocabulary used to define the item properties', 18),
 ('translate', 'Specifies whether the element''s content should be translated (yes/no)', 18);
 
 -- Tag: ol (ID: 19)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('start', 'The starting number of the first list item', 19),
 ('reversed', 'Indicates that the list''s items are in reverse order', 19),
 ('type', 'Specifies the kind of numbering/bullet point (1, a, A, i, I)', 19),
 ('compact', 'Render the list smaller (DEPRECATED)', 19);
 
 -- Tag: li (ID: 20)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('value', 'Specifies the number of the list item (for ordered lists)', 20),
 ('itemprop', 'Specifies the property of a microdata item', 20),
 ('translate', 'Specifies whether the element''s content should be translated (yes/no)', 20),
 ('draggable', 'Specifies whether an element is draggable (true/false/auto)', 20);
 
 -- Tag: table (ID: 21)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('summary', 'Alternative description of the table (DEPRECATED)', 21),
 ('rules', 'Specifies how the border inside the table should be drawn (all, groups, rows, cols, none) (DEPRECATED)', 21),
 ('border', 'Defines the width of the border around the table (DEPRECATED)', 21),
 ('frame', 'Specifies which sides of the table frame should have borders (void, above, below, hsides, lhs, rhs, vsides, box, border) (DEPRECATED)', 21);
 
 -- Tag: tr (ID: 22)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('align', 'Horizontal alignment of the content in the row (DEPRECATED)', 22),
 ('valign', 'Vertical alignment of the content in the row (DEPRECATED)', 22),
 ('bgcolor', 'Background color of the row (DEPRECATED)', 22),
 ('height', 'Height of the row (DEPRECATED)', 22);
 
 -- Tag: td (ID: 23)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('colspan', 'Number of columns a cell should span', 23),
 ('rowspan', 'Number of rows a cell should span', 23),
 ('headers', 'List of ids of header cells relevant to the cell', 23),
 ('abbr', 'Shortened text description of the content of the cell (DEPRECATED)', 23);
 
 -- Tag: th (ID: 24)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('scope', 'Defines the cells that the header cell relates to (col, row, colgroup, rowgroup)', 24),
 ('abbr', 'Shortened text description of the content of the header cell', 24),
 ('headers', 'List of ids of header cells relevant to the cell', 24),
 ('sorted', 'Indicates the direction of sorting applied to the column (DEPRECATED)', 24);
 
 -- Tag: header (ID: 25)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('itemscope', 'Indicates that the element and its content is a microdata item', 25),
 ('itemtype', 'Specifies the vocabulary used to define the item properties', 25),
 ('translate', 'Specifies whether the element''s content should be translated (yes/no)', 25),
 ('hidden', 'Indicates that the element is not yet, or is no longer, relevant', 25);
 
 -- Tag: footer (ID: 26)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('itemscope', 'Indicates that the element and its content is a microdata item', 26),
 ('itemtype', 'Specifies the vocabulary used to define the item properties', 26),
 ('translate', 'Specifies whether the element''s content should be translated (yes/no)', 26),
 ('hidden', 'Indicates that the element is not yet, or is no longer, relevant', 26);
 
 -- Tag: nav (ID: 27)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('itemscope', 'Indicates that the element and its content is a microdata item', 27),
 ('itemtype', 'Specifies the vocabulary used to define the item properties', 27),
 ('translate', 'Specifies whether the element''s content should be translated (yes/no)', 27),
 ('hidden', 'Indicates that the element is not yet, or is no longer, relevant', 27);
 
 -- Tag: main (ID: 28)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('translate', 'Specifies whether the element''s content should be translated (yes/no)', 28),
 ('itemscope', 'Indicates that the element and its content is a microdata item', 28),
 ('itemtype', 'Specifies the vocabulary used to define the item properties', 28),
 ('hidden', 'Indicates that the element is not yet, or is no longer, relevant', 28);
 
 -- Tag: section (ID: 29)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('translate', 'Specifies whether the element''s content should be translated (yes/no)', 29),
 ('itemscope', 'Indicates that the element and its content is a microdata item', 29),
 ('itemtype', 'Specifies the vocabulary used to define the item properties', 29),
 ('contenteditable', 'Specifies whether the content of the element is editable by the user', 29);
 
 -- Tag: article (ID: 30)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('translate', 'Specifies whether the element''s content should be translated (yes/no)', 30),
 ('itemscope', 'Indicates that the element and its content is a microdata item', 30),
 ('itemtype', 'Specifies the vocabulary used to define the item properties', 30),
 ('contenteditable', 'Specifies whether the content of the element is editable by the user', 30);
 
 -- Tag: aside (ID: 31)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('translate', 'Specifies whether the element''s content should be translated (yes/no)', 31),
 ('itemscope', 'Indicates that the element and its content is a microdata item', 31),
 ('itemtype', 'Specifies the vocabulary used to define the item properties', 31),
@@ -256,35 +260,35 @@ INSERT INTO attributes (attribute, info, tagId) VALUES
 
 -- Tag: meta (ID: 32)
 -- Note: 'name' and 'content' are already in the existing metadata list, but are essential here.
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('charset', 'Character encoding for the document', 32),
 ('content', 'Value associated with the name or http-equiv attribute', 32),
 ('name', 'Name of the metadata (e.g., description, keywords, viewport)', 32),
 ('http-equiv', 'Provides a pragma directive (e.g., refresh)', 32);
 
 -- Tag: hr (ID: 33)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('align', 'Horizontal alignment of the rule (DEPRECATED)', 33),
 ('size', 'Height of the rule (DEPRECATED)', 33),
 ('noshade', 'Indicates that the rule should render without shading (DEPRECATED)', 33),
 ('color', 'Specifies the color of the rule (DEPRECATED)', 33);
 
 -- Tag: br (ID: 34)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('clear', 'Indicates where the next line should start after the break (DEPRECATED)', 34),
 ('translate', 'Specifies whether the element''s content should be translated (yes/no)', 34),
 ('itemprop', 'Specifies the property of a microdata item', 34),
 ('hidden', 'Indicates that the element is not yet, or is no longer, relevant', 34);
 
 -- Tag: address (ID: 35)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('translate', 'Specifies whether the element''s content should be translated (yes/no)', 35),
 ('itemscope', 'Indicates that the element and its content is a microdata item', 35),
 ('itemtype', 'Specifies the vocabulary used to define the item properties', 35),
 ('hidden', 'Indicates that the element is not yet, or is no longer, relevant', 35);
 
 -- Tag: abbr (ID: 36)
-INSERT INTO attributes (attribute, info, tagId) VALUES
+INSERT OR IGNORE INTO attributes (attribute, info, tagId) VALUES
 ('title', 'Full expansion of the abbreviation', 36),
 ('translate', 'Specifies whether the element''s content should be translated (yes/no)', 36),
 ('itemscope', 'Indicates that the element and its content is a microdata item', 36),
@@ -352,7 +356,7 @@ INSERT OR IGNORE INTO attribute_metadata (attributeName, generalDescription) VAL
 ('size', 'Height of the horizontal rule (<hr>) (DEPRECATED).'),
 ('noshade', 'Indicates that the horizontal rule (<hr>) should render without shading (DEPRECATED).'),
 ('color', 'Specifies the color of the horizontal rule (<hr>) (DEPRECATED).'),
-('clear', 'Indicates where the next line should start after the break (DEPRECATED for <br>).');
+('clear', 'Indicates where the next line should start after the break (DEPRECATED for <br>).'),
 ('nonce', 'A cryptographic nonce used to bypass Content Security Policy (CSP) for inline content.'),
 ('media', 'Accepts a valid media query indicating when the style sheet should be applied.'),
 ('loading', 'Defines how the browser should load the resource (e.g., lazy or eager).'),

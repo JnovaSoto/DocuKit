@@ -107,6 +107,12 @@ DocuKit/
     NODE_ENV=development
     ```
 
+    Then copy and execute the scriptExample.txt Script to create the database. (Only for the first time)
+
+    ```bash
+    npm run create-db
+    ```
+
 4. **Start the application:**
 
     ```bash
