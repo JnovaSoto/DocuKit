@@ -59,6 +59,13 @@ footer {
     cursor: pointer;
 }
 
+.title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--color-gray-dark);
+    text-align: center;
+}
+
 /* ==========================================================================
    Navigation & Search
    ========================================================================== */

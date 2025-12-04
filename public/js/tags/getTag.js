@@ -40,6 +40,16 @@ export async function init() {
       return;
     }
 
+    // Always navigate to home first before performing search
+    const currentPath = window.location.pathname;
+    if (currentPath !== '/home' && currentPath !== '/') {
+      logger.navigation('Redirecting to home before tag search');
+      const { changePage } = await import('../navigation.js');
+      await changePage('/home');
+      // Wait for navigation to complete
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+
     logger.network(`Searching for tag: ${tagName}`);
 
     try {
@@ -81,6 +91,21 @@ export async function init() {
         if (!attributesResponse.ok) throw new Error('Error fetching attributes list');
 
         const allAttributes = await attributesResponse.json();
+
+        // Try to fetch attribute metadata (in case the tag name is also an attribute name)
+        try {
+          logger.info(`Fetching metadata for possible attribute: ${tagName}`);
+          const metadataResponse = await fetch(API.ATTRIBUTE_METADATA.BY_NAME(tagName));
+          if (metadataResponse.ok) {
+            const metadata = await metadataResponse.json();
+            logger.success('Metadata received:', metadata);
+            displayAttributeMetadata(metadata);
+          } else {
+            logger.debug(`No metadata found for: ${tagName}`);
+          }
+        } catch (err) {
+          logger.debug('No metadata available:', err);
+        }
 
         if (table) {
           await renderTable(table, tags, allAttributes, userFavorites);
