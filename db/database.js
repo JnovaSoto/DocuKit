@@ -1,5 +1,20 @@
 // ============================================================================
 // Dependencies
+// ============================================================================
+import sqlite3 from 'sqlite3';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// ============================================================================
+// Configuration
+// ============================================================================
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const DB_PATH = path.resolve(__dirname, 'database.sqlite');
+const DB_MODE = sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE;
+
+// ============================================================================
 // Database Connection
 // ============================================================================
 
