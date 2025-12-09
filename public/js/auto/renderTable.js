@@ -3,9 +3,10 @@ import { dropdown } from './dropdownAtt.js';
 import { checkSession } from '../tools/session.js';
 
 /**
- * Renders tags table with dynamic columns based on user permissions.
+ * Renders table with dynamic columns based on user permissions.
+ * Works for both tags and properties.
  */
-export async function renderTable(table, tags, attributes, userFavorites = []) {
+export async function renderTable(table, items, attributes, userFavorites = []) {
     if (!table) return;
 
     let userPermissions = { loggedIn: false, adminLevel: null };
@@ -21,6 +22,13 @@ export async function renderTable(table, tags, attributes, userFavorites = []) {
         // Treat as guest if session check fails
     }
 
+    // Detect if we're working with tags or properties
+    const isProperty = items.length > 0 && items[0].hasOwnProperty('propertyName');
+    const itemNameKey = isProperty ? 'propertyName' : 'tagName';
+    const attributeIdKey = isProperty ? 'propertyId' : 'tagId';
+    const headerLabel = isProperty ? 'Properties' : 'Tags';
+    const dropdownLabel = isProperty ? 'CSS inside' : 'Tags inside';
+
     const header = table.querySelector('tr');
     table.innerHTML = '';
 
@@ -30,7 +38,7 @@ export async function renderTable(table, tags, attributes, userFavorites = []) {
         let headerHTML = `
             <thead>
               <tr>
-                <th><h3>Tags</h3></th>
+                <th><h3>${headerLabel}</h3></th>
                 <th><h3>Usability</h3></th>
                 <th><h3>Attributes</h3></th>`;
 
@@ -49,15 +57,15 @@ export async function renderTable(table, tags, attributes, userFavorites = []) {
         table.innerHTML = headerHTML;
     }
 
-    tags.forEach(tag => {
+    items.forEach(item => {
         const row = document.createElement('tr');
         const dropdownRow = document.createElement('tr');
         dropdownRow.classList.add('dropdown-row');
         dropdownRow.style.display = 'none';
 
-        const tagAttributes = attributes.filter(att => Number(att.tagId) === Number(tag.id));
-        const isFavorite = userFavorites.includes(Number(tag.id));
-        const filledRows = generateTable(tag, tagAttributes, row, dropdownRow, isFavorite, userPermissions);
+        const itemAttributes = attributes.filter(att => Number(att[attributeIdKey]) === Number(item.id));
+        const isFavorite = userFavorites.includes(Number(item.id));
+        const filledRows = generateTable(item, itemAttributes, row, dropdownRow, isFavorite, userPermissions, itemNameKey, dropdownLabel);
 
         table.appendChild(filledRows.row);
         table.appendChild(filledRows.dropdownRow);

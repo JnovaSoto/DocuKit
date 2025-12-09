@@ -1,19 +1,21 @@
 import { escapeHTML } from '../tools/escapeHTML.js';
 
 /**
- * Generates table rows for a tag with its attributes.
- * @param {Object} tag - Tag object
- * @param {Array} attributes - Array of attribute objects for this tag
+ * Generates table rows for an item (tag or property) with its attributes.
+ * @param {Object} item - Item object (tag or property)
+ * @param {Array} attributes - Array of attribute objects for this item
  * @param {HTMLElement} row - Main row element
  * @param {HTMLElement} dropdownRow - Dropdown row element
- * @param {boolean} isFavorite - Whether this tag is in user's favorites
+ * @param {boolean} isFavorite - Whether this item is in user's favorites
  * @param {Object} userPermissions - User permissions object {loggedIn: boolean, adminLevel: number}
+ * @param {string} itemNameKey - Key to access item name ('tagName' or 'propertyName')
+ * @param {string} dropdownLabel - Label for dropdown button ('Tags inside' or 'CSS inside')
  * @returns {Object} Object containing row and dropdownRow elements
  */
-export function generateTable(tag, attributes, row, dropdownRow, isFavorite = false, userPermissions = { loggedIn: false, adminLevel: null }) {
+export function generateTable(item, attributes, row, dropdownRow, isFavorite = false, userPermissions = { loggedIn: false, adminLevel: null }, itemNameKey = 'tagName', dropdownLabel = 'Tags inside') {
 
-    const safeTagName = tag && tag.tagName ? escapeHTML(tag.tagName) : '';
-    const safeUsability = tag && tag.usability ? escapeHTML(tag.usability) : '';
+    const safeItemName = item && item[itemNameKey] ? escapeHTML(item[itemNameKey]) : '';
+    const safeUsability = item && item.usability ? escapeHTML(item.usability) : '';
 
     // Determine heart icon style based on favorite status
     const heartIcon = isFavorite ? 'favorite' : 'favorite_border';
@@ -30,36 +32,36 @@ export function generateTable(tag, attributes, row, dropdownRow, isFavorite = fa
 
     if (showFavorite) {
         favoriteButtonHTML = `
-        <button class="favorite-btn js-favorite-toggle ${isFavorite ? 'favorited' : ''}" data-id="${tag.id}" data-favorited="${isFavorite}">
+        <button class="favorite-btn js-favorite-toggle ${isFavorite ? 'favorited' : ''}" data-id="${item.id}" data-favorited="${isFavorite}">
             <span class="material-symbols-outlined icon_favorite">${heartIcon}</span>
         </button>`;
     }
 
     if (showEdit) {
         editButtonHTML = `
-        <button class="edit-btn edit" id="btn-edit-tags" data-id="${tag.id}">
+        <button class="edit-btn edit" id="btn-edit-tags" data-id="${item.id}">
             <span class="material-symbols-outlined icon_edit">edit</span>
         </button>`;
     }
 
     if (showDelete) {
         deleteButtonHTML = `
-        <button class="delete-btn delete" id="btn-delete-tags" data-id="${tag.id}">
+        <button class="delete-btn delete" id="btn-delete-tags" data-id="${item.id}">
             <span class="material-symbols-outlined icon_delete">delete</span>
         </button>`;
     }
 
     // Build row HTML with only the columns that should be visible
-    // Add tooltip to tag name if content exists
+    // Add tooltip to item name if content exists
     let rowHTML = `
         <td class="tag-name-cell">
-            <strong>${safeTagName}</strong>
-            ${tag.content ? `<div class="tag-tooltip ${tag.content.length > 50 ? 'multiline' : ''}">${escapeHTML(tag.content)}</div>` : ''}
+            <strong>${safeItemName}</strong>
+            ${item.content ? `<div class="tag-tooltip ${item.content.length > 50 ? 'multiline' : ''}">${escapeHTML(item.content)}</div>` : ''}
         </td>
         <td>${safeUsability}</td>
         <td>
         <button class="dropdown-btn table-button">
-            <strong>Tags inside</strong>
+            <strong>${dropdownLabel}</strong>
             <span class="material-symbols-outlined arrow">arrow_drop_down</span>
         </button>
         </td>`;
