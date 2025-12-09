@@ -36,13 +36,13 @@ export function init(logOutButton) {
                 showTemporaryAlert('success', SUCCESS_MESSAGES.LOGOUT);
             }
 
-            // Redirect to home page
-            window.location.href = '/home';
+            // Stay on current page after logout
+            window.location.reload();
 
         } catch (error) {
             logger.error('Logout failed:', error);
-            // Still redirect even if logout request fails
-            window.location.href = '/home';
+            // Still reload page even if logout request fails
+            window.location.reload();
         }
     });
 }

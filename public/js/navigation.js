@@ -91,6 +91,8 @@ function initNavigation() {
     }
     if (e.target.matches('#btn-log-in')) {
       e.preventDefault();
+      // Save current path to return after login
+      sessionStorage.setItem('returnPath', window.location.pathname);
       changePage(ROUTES.LOGIN);
     }
     if (e.target.matches('#btn-go-profile')) {

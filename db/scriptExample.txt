@@ -386,23 +386,97 @@ INSERT OR IGNORE INTO properties (propertyName, usability, content) VALUES
 ('justify-content', 'Aligns flexible items along the main axis', 'Keywords (center, space-between)'), -- ID: 14
 ('opacity', 'Defines the transparency of an element', 'Number between 0.0 and 1.0');                         -- ID: 15
 
--- 2. PROPERTY ATTRIBUTES (Analogy to ATTRIBUTES)
+-- 2. ATRIBUTOS DE PROPIEDAD (Valores específicos para cada PropertyId)
+
+-- Propiedad: color (ID: 1)
 INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
-('color', 'Color value (name, hex, RGB, etc.)', 1),
-('font-size', 'Length value (px, em, rem, %)', 2),
-('background-color', 'Color value', 3),
-('margin', 'Length values or auto', 4),
-('padding', 'Length or percentage values', 5),
-('display', 'Keywords (block, inline, flex)', 6),
-('width', 'Length or percentage values', 7),
-('height', 'Length or percentage values', 8),
-('border', 'Shorthand: width, style, color', 9),
-('text-align', 'Keywords (left, center, right)', 10),
-('position', 'Keywords (static, relative, absolute)', 11),
-('z-index', 'Integer number', 12),
-('flex-direction', 'Keywords (row, column)', 13),
-('justify-content', 'Keywords (center, space-between)', 14),
-('opacity', 'Number between 0.0 and 1.0', 15);
+('red', 'Valor de color usando un nombre predefinido', 1),
+('#FF0000', 'Rojo puro en formato hexadecimal', 1),
+('rgb(255, 0, 0)', 'Rojo puro en formato RGB', 1),
+('transparent', 'Define el color como completamente transparente', 1);
+
+-- Propiedad: font-size (ID: 2)
+INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
+('16px', 'Tamaño de fuente de 16 píxeles (valor absoluto)', 2),
+('1.2em', 'Tamaño relativo a la fuente del elemento padre', 2),
+('small', 'Tamaño de fuente predefinido (palabra clave)', 2),
+('120%', 'Tamaño relativo al tamaño de fuente del padre (porcentaje)', 2);
+
+-- Propiedad: background-color (ID: 3)
+INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
+('blue', 'Color azul usando nombre', 3),
+('rgba(0, 0, 255, 0.5)', 'Azul con 50% de opacidad (RGBA)', 3),
+('initial', 'Establece la propiedad a su valor por defecto', 3);
+
+-- Propiedad: margin (ID: 4)
+INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
+('10px', 'Margen de 10px en los cuatro lados', 4),
+('20px 5px', '20px vertical, 5px horizontal (shorthand)', 4),
+('auto', 'Permite que el navegador calcule el margen (uso común para centrar)', 4);
+
+-- Propiedad: padding (ID: 5)
+INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
+('1rem', 'Relleno de 1 unidad relativa a la fuente raíz', 5),
+('5%', 'Relleno del 5% del ancho del elemento padre', 5);
+
+-- Propiedad: display (ID: 6)
+INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
+('block', 'El elemento ocupa su propia línea (ej: <div>)', 6),
+('inline', 'El elemento solo ocupa el ancho necesario (ej: <span>)', 6),
+('flex', 'Establece un contexto de formato flexible', 6),
+('none', 'Oculta el elemento por completo', 6);
+
+-- Propiedad: width (ID: 7)
+INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
+('50%', 'El 50% del ancho del contenedor padre', 7),
+('300px', 'Ancho fijo de 300 píxeles', 7);
+
+-- Propiedad: height (ID: 8)
+INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
+('100vh', '100% de la altura de la ventana (viewport height)', 8),
+('auto', 'Altura determinada automáticamente por el contenido', 8);
+
+-- Propiedad: border (ID: 9)
+INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
+('1px solid black', 'Borde de 1px, línea sólida, color negro (shorthand)', 9),
+('none', 'No muestra ningún borde', 9);
+
+-- Propiedad: text-align (ID: 10)
+INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
+('left', 'Alinea el texto a la izquierda (valor por defecto)', 10),
+('center', 'Alinea el texto al centro', 10),
+('justify', 'Justifica el texto para cubrir todo el ancho', 10);
+
+-- Propiedad: position (ID: 11)
+INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
+('static', 'Posicionamiento normal (valor por defecto)', 11),
+('relative', 'Posicionamiento relativo a su posición normal', 11),
+('absolute', 'Posicionamiento relativo al ancestro posicionado más cercano', 11),
+('fixed', 'Posicionamiento relativo a la ventana del navegador', 11);
+
+-- Propiedad: z-index (ID: 12)
+INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
+('100', 'Un número entero positivo para apilar el elemento en la parte superior', 12),
+('-1', 'Un número entero negativo para colocar el elemento detrás del contenido normal', 12),
+('auto', 'El orden de apilamiento lo define el apilamiento del padre', 12);
+
+-- Propiedad: flex-direction (ID: 13)
+INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
+('row', 'Eje principal horizontal (izquierda a derecha)', 13),
+('column', 'Eje principal vertical (arriba a abajo)', 13),
+('row-reverse', 'Eje principal horizontal (derecha a izquierda)', 13);
+
+-- Propiedad: justify-content (ID: 14)
+INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
+('flex-start', 'Los ítems se agrupan al inicio del eje principal', 14),
+('space-between', 'Distribuye los ítems uniformemente con espacio entre ellos', 14),
+('center', 'Centra los ítems en el eje principal', 14);
+
+-- Propiedad: opacity (ID: 15)
+INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
+('1.0', 'Totalmente opaco', 15),
+('0.5', '50% de transparencia', 15),
+('0', 'Completamente transparente (invisible)', 15);
 
 -- 3. ATTRIBUTE METADATA (Analogy to ATTRIBUTE_METADATA)
 INSERT OR IGNORE INTO attribute_metadata (attributeName, generalDescription) VALUES

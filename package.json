@@ -1,5 +1,5 @@
 {
-  "name": "DocuKit",
+  "name": "docukit",
   "version": "1.0.0",
   "description": "DocuKit is a comprehensive, feature-rich web application designed to serve as the definitive interactive reference guide for HTML tags and their associated metadata. Built on a secure and modern stack, it provides detailed explanations, attribute data, usage examples, and powerful user-centric features, making it an indispensable tool for developers and learners alike.",
   "main": "app.js",

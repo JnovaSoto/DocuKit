@@ -87,8 +87,10 @@ export async function init() {
       document.getElementById('login-input').value = '';
       document.getElementById('password-input').value = '';
 
-      // Redirect to home page
-      window.location.href = '/home';
+      // Redirect to the page user was on before login, or home if none saved
+      const returnPath = sessionStorage.getItem('returnPath') || '/home';
+      sessionStorage.removeItem('returnPath'); // Clear after use
+      window.location.href = returnPath;
 
     } catch (error) {
       // Handle fetch/network errors
