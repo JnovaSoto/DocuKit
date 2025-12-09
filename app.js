@@ -15,6 +15,8 @@ import tagsRoutes from './routes/tags.js';
 import usersRoutes from './routes/users.js';
 import attributesRoutes from './routes/attributes.js';
 import attributeMetadataRoutes from './routes/attributeMetadata.js';
+import propertiesRoutes from './routes/properties.js';
+import propertyAttributesRoutes from './routes/propertyAttributes.js';
 
 // ============================================================================
 // Configuration
@@ -60,24 +62,28 @@ app.use(session({
   }
 }));
 
-// Static files middleware
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 // ============================================================================
-// Routes
+// API Routes (must come before static files)
 // ============================================================================
 
-// API Routes
 app.use('/partials', partialsRouter);
 app.use('/tags', tagsRoutes);
 app.use('/attributes', attributesRoutes);
 app.use('/attribute-metadata', attributeMetadataRoutes);
+app.use('/properties', propertiesRoutes);
+app.use('/property-attributes', propertyAttributesRoutes);
 app.use('/users', usersRoutes);
 
-// Page Routes
+// ============================================================================
+// Page Routes (must come before static files to avoid conflicts)
+// ============================================================================
+
 app.get(['/', '/home'], (req, res) => {
   res.render('home', { layout: 'layout', title: 'Home' });
+});
+
+app.get('/css-properties', (req, res) => {
+  res.render('css', { layout: 'layout', title: 'CSS Properties' });
 });
 
 app.get('/create', requireAuth, (req, res) => {
@@ -103,6 +109,10 @@ app.get('/profile', requireAuth, (req, res) => {
 app.get('/favorites', requireAuth, (req, res) => {
   res.render('favorites', { layout: 'layout', title: 'Favorites' });
 });
+
+// Static files middleware (comes last to not interfere with routes)
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ============================================================================
 // Error Handling Middleware

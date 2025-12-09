@@ -150,24 +150,24 @@ function setupThemeSwitcher() {
 
   headerBrands.forEach(brand => {
     brand.addEventListener('click', (e) => {
+      e.preventDefault(); // Always prevent default navigation
       const href = brand.getAttribute('href');
 
-      // Apply theme based on which button was clicked
+      // Apply theme and navigate based on which button was clicked
       if (href === '/' || href === '/home') {
-        e.preventDefault();
         applyTheme('html');
         logger.info('Switched to HTML theme');
-        // Navigate to home if not already there
-        if (window.location.pathname !== '/' && window.location.pathname !== '/home') {
-          import('../navigation.js').then(mod => {
-            if (mod.changePage) mod.changePage('/home');
-          });
-        }
-      } else if (href === '/css') {
-        e.preventDefault();
+        // Navigate to home page
+        import('../navigation.js').then(mod => {
+          if (mod.changePage) mod.changePage('/home');
+        });
+      } else if (href === '/css' || href === '/css-properties') {
         applyTheme('css');
         logger.info('Switched to CSS theme');
-        // For now, just apply the theme. You can add CSS properties page later
+        // Navigate to CSS properties page
+        import('../navigation.js').then(mod => {
+          if (mod.changePage) mod.changePage('/css-properties');
+        });
       }
     });
   });

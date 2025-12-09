@@ -368,3 +368,57 @@ INSERT OR IGNORE INTO attribute_metadata (attributeName, generalDescription) VAL
 ('poster', 'An image URL to show while the video is downloading or until the user hits play.'),
 ('autocomplete', 'Specifies whether a form or input field should have autofill enabled.');
 
+-- 1. PROPERTIES (Analogy to TAGS)
+INSERT OR IGNORE INTO properties (propertyName, usability, content) VALUES
+('color', 'Defines the color of the text', 'Color value (name, hex, RGB, etc.)'),             -- ID: 1
+('font-size', 'Defines the size of the font', 'Length value (px, em, rem, %)'),                    -- ID: 2
+('background-color', 'Defines the background color of an element', 'Color value'),                       -- ID: 3
+('margin', 'Defines the outer space of an element', 'Length values or auto'),                    -- ID: 4
+('padding', 'Defines the inner space (padding) of an element', 'Length or percentage values'),             -- ID: 5
+('display', 'Defines how an element behaves in the layout', 'Keywords (block, inline, flex)'), -- ID: 6
+('width', 'Defines the width of an element', 'Length or percentage values'),                         -- ID: 7
+('height', 'Defines the height of an element', 'Length or percentage values'),                       -- ID: 8
+('border', 'Defines a border around an element', 'Shorthand: width, style, color'),                -- ID: 9
+('text-align', 'Defines the horizontal alignment of text', 'Keywords (left, center, right)'),     -- ID: 10
+('position', 'Defines the type of positioning used', 'Keywords (static, relative, absolute)'), -- ID: 11
+('z-index', 'Defines the stacking order of an element', 'Integer number'),                            -- ID: 12
+('flex-direction', 'Defines the direction of items in a flex container', 'Keywords (row, column)'), -- ID: 13
+('justify-content', 'Aligns flexible items along the main axis', 'Keywords (center, space-between)'), -- ID: 14
+('opacity', 'Defines the transparency of an element', 'Number between 0.0 and 1.0');                         -- ID: 15
+
+-- 2. PROPERTY ATTRIBUTES (Analogy to ATTRIBUTES)
+INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
+('color', 'Color value (name, hex, RGB, etc.)', 1),
+('font-size', 'Length value (px, em, rem, %)', 2),
+('background-color', 'Color value', 3),
+('margin', 'Length values or auto', 4),
+('padding', 'Length or percentage values', 5),
+('display', 'Keywords (block, inline, flex)', 6),
+('width', 'Length or percentage values', 7),
+('height', 'Length or percentage values', 8),
+('border', 'Shorthand: width, style, color', 9),
+('text-align', 'Keywords (left, center, right)', 10),
+('position', 'Keywords (static, relative, absolute)', 11),
+('z-index', 'Integer number', 12),
+('flex-direction', 'Keywords (row, column)', 13),
+('justify-content', 'Keywords (center, space-between)', 14),
+('opacity', 'Number between 0.0 and 1.0', 15);
+
+-- 3. ATTRIBUTE METADATA (Analogy to ATTRIBUTE_METADATA)
+INSERT OR IGNORE INTO attribute_metadata (attributeName, generalDescription) VALUES
+('colorName', 'Defines a color using its predefined name (e.g., "red", "green")'),
+('hexColor', 'Defines a color using the hexadecimal format (#RRGGBB or #RGB)'),
+('rgbColor', 'Defines a color using red, green, and blue values (rgb(r, g, b))'),
+('lengthPx', 'Specifies a fixed length in pixels (px)'),
+('lengthEm', 'Specifies a length relative to the element''s font size (em)'),
+('auto', 'Allows the browser to determine the appropriate value (commonly used for centering)'),
+('block', 'Display value: the element takes up its own line and the full available width'),
+('inline', 'Display value: the element only takes up the necessary width and does not force line breaks'),
+('flex', 'Display value: establishes a flexible container (Flexbox)'),
+('absolute', 'Position value: Positioning relative to the nearest positioned ancestor'),
+('row', 'Flex-direction value: Items are laid out horizontally'),
+('column', 'Flex-direction value: Items are laid out vertically'),
+('center', 'Alignment value: Items are grouped in the center of the container'),
+('opacityValue', 'Numeric value between 0.0 (transparent) and 1.0 (opaque)');
+
+

@@ -89,6 +89,38 @@ const TABLES = {
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
       updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )
+  `,
+
+  properties: `
+    CREATE TABLE IF NOT EXISTS properties (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      propertyName TEXT NOT NULL UNIQUE,
+      usability TEXT,
+      content TEXT,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `,
+
+  property_attributes: `
+    CREATE TABLE IF NOT EXISTS property_attributes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      attribute TEXT NOT NULL,
+      info TEXT,
+      propertyId INTEGER NOT NULL,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (propertyId) REFERENCES properties(id) ON DELETE CASCADE
+    )
+  `,
+  attribute_metadata: `
+    CREATE TABLE IF NOT EXISTS attribute_metadata (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      attributeName TEXT NOT NULL UNIQUE,
+      generalDescription TEXT NOT NULL,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
   `
 };
 

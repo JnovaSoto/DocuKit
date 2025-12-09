@@ -33,6 +33,21 @@ export const ROUTES = {
         CREATE: '/attributeMetadataCreate',
         BY_NAME: '/attributeMetadataName/:name'
     },
+    PROPERTIES: {
+        BASE: '/',
+        CREATE: '/propertyCreate',
+        BY_ID: '/propertyId/:id',
+        BY_IDS: '/propertyIds/:ids',
+        BY_NAME: '/propertyName/:name',
+        UPDATE: '/propertyUpdate/:id',
+        DELETE: '/propertyDelete/:id'
+    },
+    PROPERTY_ATTRIBUTES: {
+        BASE: '/',
+        CREATE: '/propertyAttributeCreate',
+        BY_PROPERTY_ID: '/propertyAttributePropertyId/:id',
+        BY_NAME: '/propertyAttributeName/:name'
+    },
     PARTIALS: {
         HEADER: '/header',
         FOOTER: '/footer'

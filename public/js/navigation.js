@@ -191,6 +191,13 @@ function executePageScript() {
       import('/js/tags/delete.js').then(mod => mod.init && mod.init());
       import('/js/tags/favorites.js').then(mod => mod.init && mod.init());
       break;
+    case ROUTES.CSS:
+    case '/css-properties':
+      import('/js/main/css.js').then(mod => mod.init && mod.init());
+      import('/js/tags/edit.js').then(mod => mod.init && mod.init());
+      import('/js/tags/delete.js').then(mod => mod.init && mod.init());
+      import('/js/tags/favorites.js').then(mod => mod.init && mod.init());
+      break;
     case ROUTES.CREATE:
       import('/js/tags/create.js').then(mod => mod.init && mod.init());
       break;

@@ -82,6 +82,21 @@ export const API = {
         CREATE: '/attribute-metadata/attributeMetadataCreate',
         BY_NAME: (name) => `/attribute-metadata/attributeMetadataName/${name}`
     },
+    PROPERTIES: {
+        BASE: '/properties',
+        CREATE: '/properties/propertyCreate',
+        BY_ID: (id) => `/properties/propertyId/${id}`,
+        BY_IDS: (ids) => `/properties/propertyIds/${ids}`,
+        BY_NAME: (name) => `/properties/propertyName/${name}`,
+        UPDATE: (id) => `/properties/propertyUpdate/${id}`,
+        DELETE: (id) => `/properties/propertyDelete/${id}`
+    },
+    PROPERTY_ATTRIBUTES: {
+        BASE: '/property-attributes',
+        CREATE: '/property-attributes/propertyAttributeCreate',
+        BY_PROPERTY_ID: (id) => `/property-attributes/propertyAttributePropertyId/${id}`,
+        BY_NAME: (name) => `/property-attributes/propertyAttributeName/${name}`
+    },
     PARTIALS: {
         HEADER: '/partials/header',
         FOOTER: '/partials/footer'
@@ -141,6 +156,7 @@ export const ALERT_IDS = {
  */
 export const ROUTES = {
     HOME: '/home',
+    CSS: '/css-properties',
     CREATE: '/create',
     EDIT: '/edit',
     LOGIN: '/logIn',
