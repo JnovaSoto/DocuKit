@@ -107,7 +107,7 @@ router.post(ROUTES.USERS.LOGOUT, (req, res) => {
 router.get(ROUTES.USERS.ME, (req, res) => {
   if (!req.session.userId) return res.json({ loggedIn: false });
 
-  const sql = `SELECT id, username, email, admin, photo, favorites FROM users WHERE id = ?`;
+  const sql = `SELECT id, username, email, admin, photo, favorites, favoritesCss FROM users WHERE id = ?`;
 
   db.get(sql, [req.session.userId], (err, user) => {
     if (err) return res.status(500).json({ error: 'Failed to fetch user data' });
@@ -124,7 +124,8 @@ router.get(ROUTES.USERS.ME, (req, res) => {
       email: user.email,
       admin: user.admin,
       photo: user.photo,
-      favorites: user.favorites
+      favorites: user.favorites,
+      favoritesCss: user.favoritesCss
     });
   });
 });
@@ -231,6 +232,96 @@ router.get(ROUTES.USERS.BY_ID, isAdminLevel1, (req, res) => {
     if (err) return res.status(500).json({ error: err.message });
     if (!row) return res.status(404).json({ error: 'User not found' });
     res.json(row);
+  });
+});
+
+/**
+ * Get the current user's CSS property favorites.
+ */
+router.get(ROUTES.USERS.FAVORITES_CSS, isAuthenticated, (req, res) => {
+  const userId = req.session.userId;
+  const sql = `SELECT favoritesCss FROM users WHERE id = ?`;
+
+  db.get(sql, userId, (err, row) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!row) return res.status(404).json({ error: 'User not found' });
+    if (!row.favoritesCss) return res.json({ favorites: [] });
+
+    let favorites = [];
+    try {
+      favorites = row.favoritesCss ? JSON.parse(row.favoritesCss) : [];
+    } catch (parseErr) {
+      favorites = [];
+    }
+
+    res.json({ favorites });
+  });
+});
+
+/**
+ * Add a CSS property to the current user's favorites.
+ */
+router.post(ROUTES.USERS.FAVORITES_CSS, isAuthenticated, (req, res) => {
+  const userId = req.session.userId;
+  const { propertyId } = req.body;
+
+  if (!propertyId) return res.status(400).json({ error: 'Property ID is required' });
+
+  const selectSql = `SELECT favoritesCss FROM users WHERE id = ?`;
+  db.get(selectSql, [userId], (err, row) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!row) return res.status(404).json({ error: 'User not found' });
+
+    let favorites = [];
+    try {
+      favorites = row.favoritesCss ? JSON.parse(row.favoritesCss) : [];
+    } catch (parseErr) {
+      favorites = [];
+    }
+
+    const propertyIdNum = parseInt(propertyId, 10);
+    if (isNaN(propertyIdNum)) return res.status(400).json({ error: 'Invalid property ID' });
+
+    if (!favorites.includes(propertyIdNum)) {
+      favorites.push(propertyIdNum);
+    }
+
+    const updateSql = `UPDATE users SET favoritesCss = ? WHERE id = ?`;
+    db.run(updateSql, [JSON.stringify(favorites), userId], function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: 'Property added to favorites', favorites });
+    });
+  });
+});
+
+/**
+ * Remove a CSS property from the current user's favorites.
+ */
+router.delete(`${ROUTES.USERS.FAVORITES_CSS}/:propertyId`, isAuthenticated, (req, res) => {
+  const userId = req.session.userId;
+  const propertyId = parseInt(req.params.propertyId, 10);
+
+  if (isNaN(propertyId)) return res.status(400).json({ error: 'Invalid property ID' });
+
+  const selectSql = `SELECT favoritesCss FROM users WHERE id = ?`;
+  db.get(selectSql, [userId], (err, row) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!row) return res.status(404).json({ error: 'User not found' });
+
+    let favorites = [];
+    try {
+      favorites = row.favoritesCss ? JSON.parse(row.favoritesCss) : [];
+    } catch (parseErr) {
+      favorites = [];
+    }
+
+    favorites = favorites.filter(id => id !== propertyId);
+
+    const updateSql = `UPDATE users SET favoritesCss = ? WHERE id = ?`;
+    db.run(updateSql, [JSON.stringify(favorites), userId], function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: 'Property removed from favorites', favorites });
+    });
   });
 });
 

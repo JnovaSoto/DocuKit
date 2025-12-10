@@ -11,7 +11,8 @@ export const ROUTES = {
         LOGOUT: '/logout',
         SIGNUP: '/user',
         BY_ID: '/userbyid/:id',
-        FAVORITES: '/favorites'
+        FAVORITES: '/favorites',
+        FAVORITES_CSS: '/favorites-css'
     },
     TAGS: {
         BASE: '/',

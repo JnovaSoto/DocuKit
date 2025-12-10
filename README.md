@@ -82,22 +82,28 @@ DocuKit/
     ├── partials/       # Reusable UI components (header, footer)
     └── ...             # Page templates (home, login, profile, etc.)
 ```
-## ⚡ Installation & Setup
+## ⚡ Installation & Setup Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 
-1. **Clone the repository:**
+1. **Excecute this in the powershell if the commands are not working**
+
+    ```bash
+    Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+    ```
+
+2. **Clone the repository:**
 
     ```bash
     git clone https://github.com/JnovaSoto/DocuKit.git
     cd DocuKit
     ```
 
-2. **Install dependencies:**
+3. **Install dependencies:**
 
     ```bash
     npm install
     ```
 
-3. **Configure Environment:**
+4. **Configure Environment:**
 
     Create a `.env` file in the root directory and add your session secret:
 
@@ -113,13 +119,13 @@ DocuKit/
     npm run create-db
     ```
 
-4. **Start the application:**
+5. **Start the application:**
 
     ```bash
     npm start
     ```
 
-5. **Access the app:**
+6. **Access the app:**
 
     Open your browser and navigate to `http://localhost:3000`.
 

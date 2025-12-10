@@ -1,6 +1,6 @@
 /**
- * Favorites functionality.
- * Handles adding/removing tags from user favorites.
+ * Favorites functionality for CSS properties.
+ * Handles adding/removing CSS properties from user favorites.
  */
 
 import { showTemporaryAlert } from '../tools/alerts.js';
@@ -9,45 +9,45 @@ import { requireLogin } from '../tools/session.js';
 import { API } from '../config/constants.js';
 import logger from '../tools/logger.js';
 
-logger.info('Favorites module loaded');
+logger.info('CSS Property Favorites module loaded');
 
 // Flag to prevent duplicate initialization
 let isFavoriteListenerAttached = false;
 
 /**
- * Initializes the favorites functionality.
+ * Initializes the CSS property favorites functionality.
  * Called by navigation.js on page load/navigation.
  */
 export async function init() {
-    logger.info('Favorites init() called');
+    logger.info('CSS Property Favorites init() called');
 
     // Attach the global "Favorite" button listener ONCE
     if (!isFavoriteListenerAttached) {
-        logger.info('Attaching favorite button listener');
+        logger.info('Attaching CSS property favorite button listener');
         isFavoriteListenerAttached = true;
 
         document.body.addEventListener('click', async (event) => {
 
-            logger.info('Favorite button clicked');
+            logger.info('CSS Property Favorite button clicked');
 
             const favoriteBtn = event.target.closest('.favorite-btn');
             if (!favoriteBtn) return;
 
-            // Only handle tag favorites (not property favorites)
-            // Check if we're NOT on the CSS properties page
+            // Only handle property favorites (not tag favorites)
+            // Check if we're on the CSS properties page
             const isPropertyPage = window.location.pathname === '/css-properties' ||
                 document.querySelector('.propertyTable') !== null;
 
-            if (isPropertyPage) return;
+            if (!isPropertyPage) return;
 
             // Prevent default behavior
             event.preventDefault();
             event.stopPropagation();
 
-            const tagId = favoriteBtn.dataset.id;
+            const propertyId = favoriteBtn.dataset.id;
             const isFavorited = favoriteBtn.dataset.favorited === 'true';
 
-            if (!tagId) {
+            if (!propertyId) {
                 logger.warn('Favorite button missing data-id attribute');
                 return;
             }
@@ -60,26 +60,26 @@ export async function init() {
 
             // Toggle favorite status
             if (isFavorited) {
-                await removeFavorite(tagId, favoriteBtn);
+                await removeFavorite(propertyId, favoriteBtn);
             } else {
-                await addFavorite(tagId, favoriteBtn);
+                await addFavorite(propertyId, favoriteBtn);
             }
         });
     }
 }
 
 /**
- * Adds a tag to user's favorites.
- * @param {string} tagId - Tag ID to add
+ * Adds a CSS property to user's favorites.
+ * @param {string} propertyId - Property ID to add
  * @param {HTMLElement} button - The favorite button element
  */
-async function addFavorite(tagId, button) {
+async function addFavorite(propertyId, button) {
     try {
-        const response = await fetch(API.USERS.FAVORITES, {
+        const response = await fetch(API.USERS.FAVORITES_CSS, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({ tagId })
+            body: JSON.stringify({ propertyId })
         });
 
         if (await handleResponseError(response)) return;
@@ -91,22 +91,22 @@ async function addFavorite(tagId, button) {
         button.dataset.favorited = 'true';
 
         showTemporaryAlert('success', 'Added to favorites');
-        logger.success('Tag added to favorites:', tagId);
+        logger.success('CSS Property added to favorites:', propertyId);
 
     } catch (error) {
-        logger.error('Error adding favorite:', error);
+        logger.error('Error adding CSS property favorite:', error);
         showTemporaryAlert('alert', 'Failed to add favorite');
     }
 }
 
 /**
- * Removes a tag from user's favorites.
- * @param {string} tagId - Tag ID to remove
+ * Removes a CSS property from user's favorites.
+ * @param {string} propertyId - Property ID to remove
  * @param {HTMLElement} button - The favorite button element
  */
-async function removeFavorite(tagId, button) {
+async function removeFavorite(propertyId, button) {
     try {
-        const response = await fetch(API.USERS.DELETE_FAVORITE(tagId), {
+        const response = await fetch(API.USERS.DELETE_FAVORITE_CSS(propertyId), {
             method: 'DELETE',
             credentials: 'include'
         });
@@ -120,10 +120,10 @@ async function removeFavorite(tagId, button) {
         button.dataset.favorited = 'false';
 
         showTemporaryAlert('success', 'Removed from favorites');
-        logger.success('Tag removed from favorites:', tagId);
+        logger.success('CSS Property removed from favorites:', propertyId);
 
     } catch (error) {
-        logger.error('Error removing favorite:', error);
+        logger.error('Error removing CSS property favorite:', error);
         showTemporaryAlert('alert', 'Failed to remove favorite');
     }
 }

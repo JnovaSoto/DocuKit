@@ -76,6 +76,7 @@ const TABLES = {
       admin INTEGER DEFAULT 0,
       photo TEXT DEFAULT '/uploads/users/cat_default.webp',
       favorites TEXT DEFAULT '[]',
+      favoritesCss TEXT DEFAULT '[]',
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
       updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )

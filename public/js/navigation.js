@@ -4,7 +4,9 @@
  */
 
 import logger from './tools/logger.js';
+
 import { API, ROUTES } from './config/constants.js';
+import { applyTheme } from './tools/themeSwitch.js';
 
 /**
  * Initializes the SPA navigation system on page load.
@@ -188,6 +190,8 @@ function executePageScript() {
   switch (path) {
     case '/':
     case ROUTES.HOME:
+      // Force HTML theme on home page
+      applyTheme('html');
       import('/js/main/home.js').then(mod => mod.init && mod.init());
       import('/js/tags/edit.js').then(mod => mod.init && mod.init());
       import('/js/tags/delete.js').then(mod => mod.init && mod.init());
@@ -195,10 +199,12 @@ function executePageScript() {
       break;
     case ROUTES.CSS:
     case '/css-properties':
+      // Force CSS theme on CSS properties page
+      applyTheme('css');
       import('/js/main/css.js').then(mod => mod.init && mod.init());
-      import('/js/tags/edit.js').then(mod => mod.init && mod.init());
-      import('/js/tags/delete.js').then(mod => mod.init && mod.init());
-      import('/js/tags/favorites.js').then(mod => mod.init && mod.init());
+      import('/js/properties/edit.js').then(mod => mod.init && mod.init());
+      import('/js/properties/delete.js').then(mod => mod.init && mod.init());
+      import('/js/properties/favorites.js').then(mod => mod.init && mod.init());
       break;
     case ROUTES.CREATE:
       import('/js/tags/create.js').then(mod => mod.init && mod.init());

@@ -60,7 +60,9 @@ export const API = {
         SIGNUP: '/users/user',
         BY_ID: (id) => `/users/userbyid/${id}`,
         FAVORITES: '/users/favorites',
-        DELETE_FAVORITE: (tagId) => `/users/favorites/${tagId}`
+        DELETE_FAVORITE: (tagId) => `/users/favorites/${tagId}`,
+        FAVORITES_CSS: '/users/favorites-css',
+        DELETE_FAVORITE_CSS: (propertyId) => `/users/favorites-css/${propertyId}`
     },
     TAGS: {
         BASE: '/tags',

@@ -39,12 +39,12 @@ export async function init() {
     }
 
     /**
-     * Fetches user's favorite properties.
+     * Fetches user's favorite CSS properties.
      * @returns {Promise<Array>} Array of favorite property IDs
      */
     async function getUserFavorites() {
         try {
-            const response = await fetch(API.USERS.FAVORITES, {
+            const response = await fetch(API.USERS.FAVORITES_CSS, {
                 credentials: 'include'
             });
             if (!response.ok) {
@@ -54,7 +54,7 @@ export async function init() {
             const data = await response.json();
             return data.favorites || [];
         } catch (error) {
-            logger.warn('Could not fetch favorites:', error);
+            logger.warn('Could not fetch CSS property favorites:', error);
             return [];
         }
     }
