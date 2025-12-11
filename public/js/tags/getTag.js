@@ -19,6 +19,12 @@ export async function init() {
     const formGetTag = event.target.closest('#getTag');
     if (!formGetTag) return;
 
+    // Do nothing if we are on the CSS properties page (let getProperty.js handle it)
+    const currentPath = window.location.pathname;
+    if (currentPath === '/css' || currentPath === '/css-properties') {
+      return;
+    }
+
     event.preventDefault();
 
     const error = document.getElementById('error');
@@ -41,7 +47,8 @@ export async function init() {
     }
 
     // Always navigate to home first before performing search
-    const currentPath = window.location.pathname;
+    // Always navigate to home first before performing search
+    // const currentPath = window.location.pathname; // Already declared above
     if (currentPath !== '/home' && currentPath !== '/') {
       logger.navigation('Redirecting to home before tag search');
       const { changePage } = await import('../navigation.js');

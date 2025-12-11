@@ -6,7 +6,7 @@
 import logger from './tools/logger.js';
 
 import { API, ROUTES } from './config/constants.js';
-import { applyTheme } from './tools/themeSwitch.js';
+import { applyTheme, getCurrentTheme } from './tools/themeSwitch.js';
 
 /**
  * Initializes the SPA navigation system on page load.
@@ -43,6 +43,7 @@ async function loadHeaderAndFooter() {
       // Initialize header scripts AFTER insertion
       import('/js/main/header.js').then(mod => mod.init && mod.init());
       import('/js/tags/getTag.js').then(mod => mod.init && mod.init());
+      import('/js/properties/getProperty.js').then(mod => mod.init && mod.init());
 
     } catch (err) {
       logger.error('Error loading header:', err);
@@ -79,9 +80,12 @@ function initNavigation() {
     // Note: #btn-edit-tags is NOT handled here - it's handled by edit.js
     // to ensure the tag ID is saved to sessionStorage before navigation
 
-    if (e.target.matches('#btn-go-create')) {
+    if (e.target.matches('#btn-go-create') || e.target.matches('#btn-create-tags')) {
       e.preventDefault();
-      changePage(ROUTES.CREATE);
+      // Only navigate if not disabled (though disabled attribute usually prevents click, standard a tags not always)
+      if (!e.target.classList.contains('disabled')) {
+        changePage(ROUTES.CREATE);
+      }
     }
     if (e.target.matches('#btn-go-home')) {
       e.preventDefault();
@@ -187,11 +191,25 @@ function executePageScript() {
   const path = window.location.pathname;
   logger.debug(`Executing scripts for path: ${path}`);
 
+  // Helper to update header button text based on theme
+  const updateHeaderButton = () => {
+    const btnCreate = document.getElementById('btn-create-tags');
+    if (btnCreate) {
+      const currentTheme = getCurrentTheme();
+      if (currentTheme === 'css') {
+        btnCreate.textContent = 'Create property';
+      } else {
+        btnCreate.textContent = 'Create tags';
+      }
+    }
+  };
+
   switch (path) {
     case '/':
     case ROUTES.HOME:
       // Force HTML theme on home page
       applyTheme('html');
+      updateHeaderButton();
       import('/js/main/home.js').then(mod => mod.init && mod.init());
       import('/js/tags/edit.js').then(mod => mod.init && mod.init());
       import('/js/tags/delete.js').then(mod => mod.init && mod.init());
@@ -201,13 +219,19 @@ function executePageScript() {
     case '/css-properties':
       // Force CSS theme on CSS properties page
       applyTheme('css');
+      updateHeaderButton();
       import('/js/main/css.js').then(mod => mod.init && mod.init());
       import('/js/properties/edit.js').then(mod => mod.init && mod.init());
       import('/js/properties/delete.js').then(mod => mod.init && mod.init());
       import('/js/properties/favorites.js').then(mod => mod.init && mod.init());
       break;
     case ROUTES.CREATE:
-      import('/js/tags/create.js').then(mod => mod.init && mod.init());
+      updateHeaderButton();
+      if (getCurrentTheme() === 'css') {
+        import('/js/properties/create.js').then(mod => mod.init && mod.init());
+      } else {
+        import('/js/tags/create.js').then(mod => mod.init && mod.init());
+      }
       break;
     case ROUTES.EDIT:
       import('/js/tags/edit.js').then(mod => mod.init && mod.init());
@@ -222,8 +246,11 @@ function executePageScript() {
       import('/js/user/profile.js').then(mod => mod.init && mod.init());
       break;
     case ROUTES.FAVORITES:
+      updateHeaderButton();
       import('/js/tags/edit.js').then(mod => mod.init && mod.init());
       import('/js/tags/delete.js').then(mod => mod.init && mod.init());
+      import('/js/properties/edit.js').then(mod => mod.init && mod.init());
+      import('/js/properties/delete.js').then(mod => mod.init && mod.init());
       import('/js/tags/favorites.js').then(mod => mod.init && mod.init());
       import('/js/user/favorites.js').then(mod => mod.init && mod.init());
       break;

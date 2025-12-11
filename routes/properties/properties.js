@@ -1,10 +1,13 @@
 import express from 'express';
-import db from '../db/database.js';
-import { isAuthenticated, isAdminLevel1 } from '../middleware/auth.js';
-import ROUTES from '../config/routes.js';
+import db from '../../db/database.js';
+import { isAuthenticated, isAdminLevel1 } from '../../middleware/auth.js';
+import ROUTES from '../../config/routes.js';
 
 const router = express.Router();
 
+/**
+ * Get all properties.
+ */
 router.get(ROUTES.PROPERTIES.BASE, (req, res) => {
     const sql = `SELECT * FROM properties`;
     db.all(sql, [], (err, rows) => {
@@ -13,17 +16,28 @@ router.get(ROUTES.PROPERTIES.BASE, (req, res) => {
     });
 });
 
+/**
+ * Create a new property.
+ */
 router.post(ROUTES.PROPERTIES.CREATE, isAuthenticated, (req, res) => {
-    const { propertyName, usability } = req.body;
+    const { propertyName, usability, content } = req.body;
     if (!propertyName || !usability) return res.status(400).json({ error: 'Missing fields' });
 
-    const sql = `INSERT INTO properties (propertyName, usability) VALUES (?, ?)`;
-    db.run(sql, [propertyName, usability], function (err) {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(201).json({ id: this.lastID, propertyName, usability });
+    const sql = `INSERT INTO properties (propertyName, usability, content) VALUES (?, ?, ?)`;
+    db.run(sql, [propertyName, usability, content || ''], function (err) {
+        if (err) {
+            if (err.message.includes('UNIQUE constraint failed')) {
+                return res.status(409).json({ error: 'Property name already exists' });
+            }
+            return res.status(500).json({ error: err.message });
+        }
+        res.status(201).json({ id: this.lastID, propertyName, usability, content });
     });
 });
 
+/**
+ * Get a property by ID.
+ */
 router.get(ROUTES.PROPERTIES.BY_ID, (req, res) => {
     const id = req.params.id;
     const sql = `SELECT * FROM properties WHERE id = ?`;
@@ -35,6 +49,9 @@ router.get(ROUTES.PROPERTIES.BY_ID, (req, res) => {
     });
 });
 
+/**
+ * Get properties by IDs.
+ */
 router.get(ROUTES.PROPERTIES.BY_IDS, (req, res) => {
     const idsParam = req.params.ids;
     if (!idsParam) return res.status(400).json({ error: 'No IDs received' });
@@ -50,6 +67,9 @@ router.get(ROUTES.PROPERTIES.BY_IDS, (req, res) => {
     });
 });
 
+/**
+ * Get properties by name.
+ */
 router.get(ROUTES.PROPERTIES.BY_NAME, (req, res) => {
     const propertyName = req.params.name;
     const sql = `SELECT * FROM properties WHERE propertyName = ?`;

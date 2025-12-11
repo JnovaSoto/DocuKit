@@ -34,11 +34,8 @@ export async function init() {
             if (!favoriteBtn) return;
 
             // Only handle tag favorites (not property favorites)
-            // Check if we're NOT on the CSS properties page
-            const isPropertyPage = window.location.pathname === '/css-properties' ||
-                document.querySelector('.propertyTable') !== null;
-
-            if (isPropertyPage) return;
+            const type = favoriteBtn.dataset.type;
+            if (type && type !== 'tag') return;
 
             // Prevent default behavior
             event.preventDefault();

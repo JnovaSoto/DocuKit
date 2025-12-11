@@ -1,0 +1,26 @@
+@import url('./variables.css');
+
+/* ==========================================================================
+   Input Icons & Wrappers
+   ========================================================================== */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.input-wrapper input,
+.input-wrapper textarea {
+    padding-left: 2.8rem !important;
+}
+
+.input-wrapper .material-symbols-outlined {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-gray-light);
+    pointer-events: none;
+    font-size: 1.2rem;
+}

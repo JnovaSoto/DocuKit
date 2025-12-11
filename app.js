@@ -10,13 +10,23 @@ import { fileURLToPath } from 'url';
 import { requireAuth } from './middleware/auth.js';
 
 // Route imports
+
+// Tag routes
+import tagsRoutes from './routes/tags/tags.js';
+
+// Attribute routes
+import attributesRoutes from './routes/tags/attributes.js';
+import attributeMetadataRoutes from './routes/tags/attributeMetadata.js';
+
+// Property routes
+import propertiesRoutes from './routes/properties/properties.js';
+import propertyAttributesRoutes from './routes/properties/propertyAttributes.js';
+
+// Partial routes
 import partialsRouter from './routes/partials.js';
-import tagsRoutes from './routes/tags.js';
+
+// User routes
 import usersRoutes from './routes/users.js';
-import attributesRoutes from './routes/attributes.js';
-import attributeMetadataRoutes from './routes/attributeMetadata.js';
-import propertiesRoutes from './routes/properties.js';
-import propertyAttributesRoutes from './routes/propertyAttributes.js';
 
 // ============================================================================
 // Configuration

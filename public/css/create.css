@@ -18,7 +18,8 @@ label {
 }
 
 input[type=text],
-select {
+select,
+textarea {
   width: 100%;
   padding: 12px;
   margin: 8px 0;
@@ -26,6 +27,11 @@ select {
   border: var(--border-light);
   border-radius: var(--radius-small);
   box-sizing: border-box;
+  font-family: inherit;
+}
+
+textarea {
+  resize: vertical;
 }
 
 #toggle-password-icon,

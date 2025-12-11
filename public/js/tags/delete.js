@@ -38,6 +38,11 @@ export async function init() {
 
         // Take the id provided through the button's data attributes
         const id = deleteBtn.dataset.id;
+        const type = deleteBtn.dataset.type;
+
+        // Only handle tag deletions
+        if (type && type !== 'tag') return;
+
         if (!id) {
             logger.warn('Delete button missing data-id attribute');
             return;

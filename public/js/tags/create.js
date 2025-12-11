@@ -8,6 +8,7 @@ import { handleResponseError } from '../tools/caseState.js';
 import { requireLogin } from '../tools/session.js';
 import { API, SUCCESS_MESSAGES } from '../config/constants.js';
 import logger from '../tools/logger.js';
+import { generateAttributeBlock } from '../auto/attributeBlock.js';
 
 // Flag to prevent duplicate initialization
 let isInitialized = false;
@@ -36,22 +37,17 @@ export function init() {
     return;
   }
 
+  // Ensure labels are for Tags
+  updateLabels();
+
   // Add attribute block dynamically
   addAttributeBtn.addEventListener('click', () => {
-    const newAttribute = document.createElement('div');
-    newAttribute.classList.add('attributeBlock');
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = generateAttributeBlock('tag', true);
+    const newAttribute = tempDiv.firstElementChild;
 
-    newAttribute.innerHTML = `
-      <label>Attribute of the Tag <span class="req">*</span></label>
-      <input type="text" name="attributeName[]" placeholder="Attribute Name" required>
-      <input type="text" name="attributeInfo[]" placeholder="Attribute Info" required>
-      <button type="button" class="removeBtn">Remove</button>
-    `;
-
-    // Inject the HTML element created
     attributesContainer.appendChild(newAttribute);
 
-    // Remove function
     newAttribute.querySelector('.removeBtn').addEventListener('click', () => {
       newAttribute.remove();
     });
@@ -71,6 +67,7 @@ export function init() {
     // Get latest form values
     const tagName = document.getElementById('tagName').value;
     const usability = document.getElementById('usability').value;
+    const content = document.getElementById('content').value;
 
     // Get all attributes from inputs
     const attributeNames = Array.from(document.getElementsByName('attributeName[]')).map(input => input.value);
@@ -82,7 +79,7 @@ export function init() {
     }));
 
     // Make the body for the database request for the tag
-    const tagBody = { tagName, usability };
+    const tagBody = { tagName, usability, content };
 
     try {
       logger.network('Creating new tag');
@@ -90,7 +87,9 @@ export function init() {
       // Create the tag first
       const tagResponse = await fetch(API.TAGS.CREATE, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(tagBody)
       });
 
@@ -108,7 +107,9 @@ export function init() {
       const attributesBody = { tagId, attributes };
       const attributesResponse = await fetch(API.ATTRIBUTES.CREATE, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(attributesBody)
       });
 
@@ -121,15 +122,25 @@ export function init() {
 
       // Reset form for next input
       form.reset();
-      attributesContainer.innerHTML = `
-        <label>Attribute of the Tag <span class="req">*</span></label>
-        <input type="text" name="attributeName[]" placeholder="Attribute Name" required>
-        <input type="text" name="attributeInfo[]" placeholder="Attribute Info" required>
-      `;
+      attributesContainer.innerHTML = generateAttributeBlock('tag', false);
 
     } catch (error) {
       logger.error('Tag creation failed:', error);
       showTemporaryAlert('alert', 'Something went wrong');
     }
   });
+}
+
+function updateLabels() {
+  const nameLabel = document.querySelector('label[for="tagName"]');
+  if (nameLabel) nameLabel.innerHTML = 'Tag Name <span class="req">*</span>';
+
+  const useLabel = document.querySelector('label[for="usability"]');
+  if (useLabel) useLabel.innerHTML = 'Usability of the Tag <span class="req">*</span>';
+
+  const attributesContainer = document.getElementById('attributesContainer');
+  if (attributesContainer) {
+    // Reset to initial single block without remove button
+    attributesContainer.innerHTML = generateAttributeBlock('tag', false);
+  }
 }

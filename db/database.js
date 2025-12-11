@@ -113,15 +113,6 @@ const TABLES = {
       updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (propertyId) REFERENCES properties(id) ON DELETE CASCADE
     )
-  `,
-  attribute_metadata: `
-    CREATE TABLE IF NOT EXISTS attribute_metadata (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      attributeName TEXT NOT NULL UNIQUE,
-      generalDescription TEXT NOT NULL,
-      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
   `
 };
 

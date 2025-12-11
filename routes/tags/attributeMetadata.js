@@ -1,7 +1,7 @@
 import express from 'express';
-import db from '../db/database.js';
-import { isAdminLevel1 } from '../middleware/auth.js';
-import ROUTES from '../config/routes.js';
+import db from '../../db/database.js';
+import { isAdminLevel1 } from '../../middleware/auth.js';
+import ROUTES from '../../config/routes.js';
 
 const router = express.Router();
 

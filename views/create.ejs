@@ -4,14 +4,20 @@
 
     <label for="tagName">Tag Name <span class="req">*</span></label>
     <div class="input-wrapper">
-        <span class="material-symbols-outlined">label</span>
-        <input type="text" name="tagName" placeholder="Name" id="tagName" required>
+      <span class="material-symbols-outlined">label</span>
+      <input type="text" name="tagName" placeholder="Name" id="tagName" required>
     </div>
 
     <label for="usability">Usability of the Tag <span class="req">*</span></label>
     <div class="input-wrapper">
-        <span class="material-symbols-outlined">info</span>
-        <input type="text" name="usability" placeholder="Usability" id="usability" required>
+      <span class="material-symbols-outlined">info</span>
+      <input type="text" name="usability" placeholder="Usability" id="usability" required>
+    </div>
+
+    <label for="content">General Content</label>
+    <div class="input-wrapper">
+      <span class="material-symbols-outlined">article</span>
+      <textarea name="content" id="content" placeholder="General description or content (optional)"></textarea>
     </div>
 
     <div id="attributesContainer">
@@ -19,14 +25,14 @@
       <div class="attributeBlock">
 
         <label>Atribute of the Tag <span class="req">*</span></label>
-        
+
         <div class="input-wrapper">
-            <span class="material-symbols-outlined">edit_attributes</span>
-            <input type="text" name="attributeName[]" placeholder="Attribute Name" required>
+          <span class="material-symbols-outlined">edit_attributes</span>
+          <input type="text" name="attributeName[]" placeholder="Attribute Name" required>
         </div>
         <div class="input-wrapper">
-            <span class="material-symbols-outlined">description</span>
-            <input type="text" name="attributeInfo[]" placeholder="Attribute Info" required>
+          <span class="material-symbols-outlined">description</span>
+          <input type="text" name="attributeInfo[]" placeholder="Attribute Info" required>
         </div>
 
       </div>
@@ -39,6 +45,6 @@
 
   </form>
 
-  <button id="btn-go-home">Volver a Home</button> 
+  <button id="btn-go-home">Volver a Home</button>
 
 </div>

@@ -25,6 +25,9 @@ export function generateTable(item, attributes, row, dropdownRow, isFavorite = f
     const showEdit = userPermissions.loggedIn && userPermissions.adminLevel === 1;
     const showDelete = userPermissions.loggedIn && userPermissions.adminLevel === 1;
 
+    // Determine type for buttons
+    const type = itemNameKey === 'propertyName' ? 'property' : 'tag';
+
     // Build action buttons HTML
     let favoriteButtonHTML = '';
     let editButtonHTML = '';
@@ -32,21 +35,21 @@ export function generateTable(item, attributes, row, dropdownRow, isFavorite = f
 
     if (showFavorite) {
         favoriteButtonHTML = `
-        <button class="favorite-btn js-favorite-toggle ${isFavorite ? 'favorited' : ''}" data-id="${item.id}" data-favorited="${isFavorite}">
+        <button class="favorite-btn js-favorite-toggle ${isFavorite ? 'favorited' : ''}" data-id="${item.id}" data-favorited="${isFavorite}" data-type="${type}">
             <span class="material-symbols-outlined icon_favorite">${heartIcon}</span>
         </button>`;
     }
 
     if (showEdit) {
         editButtonHTML = `
-        <button class="edit-btn edit" id="btn-edit-tags" data-id="${item.id}">
+        <button class="edit-btn edit" data-id="${item.id}" data-type="${type}">
             <span class="material-symbols-outlined icon_edit">edit</span>
         </button>`;
     }
 
     if (showDelete) {
         deleteButtonHTML = `
-        <button class="delete-btn delete" id="btn-delete-tags" data-id="${item.id}">
+        <button class="delete-btn delete" data-id="${item.id}" data-type="${type}">
             <span class="material-symbols-outlined icon_delete">delete</span>
         </button>`;
     }

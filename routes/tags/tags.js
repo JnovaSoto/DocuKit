@@ -1,7 +1,7 @@
 import express from 'express';
-import db from '../db/database.js';
-import { isAuthenticated, isAdminLevel1 } from '../middleware/auth.js';
-import ROUTES from '../config/routes.js';
+import db from '../../db/database.js';
+import { isAuthenticated, isAdminLevel1 } from '../../middleware/auth.js';
+import ROUTES from '../../config/routes.js';
 
 const router = express.Router();
 
@@ -14,13 +14,13 @@ router.get(ROUTES.TAGS.BASE, (req, res) => {
 });
 
 router.post(ROUTES.TAGS.CREATE, isAuthenticated, (req, res) => {
-  const { tagName, usability } = req.body;
+  const { tagName, usability, content } = req.body;
   if (!tagName || !usability) return res.status(400).json({ error: 'Missing fields' });
 
-  const sql = `INSERT INTO tags (tagName, usability) VALUES (?, ?)`;
-  db.run(sql, [tagName, usability], function (err) {
+  const sql = `INSERT INTO tags (tagName, usability, content) VALUES (?, ?, ?)`;
+  db.run(sql, [tagName, usability, content || ''], function (err) {
     if (err) return res.status(500).json({ error: err.message });
-    res.status(201).json({ id: this.lastID, tagName, usability });
+    res.status(201).json({ id: this.lastID, tagName, usability, content });
   });
 });
 
