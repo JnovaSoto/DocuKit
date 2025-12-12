@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { requireAuth } from './middleware/auth.js';
+import { initDatabase } from './db/database.js';
 
 // Route imports
 
@@ -236,7 +237,18 @@ app.use((err, req, res, next) => {
 // ============================================================================
 // Server Initialization
 // ============================================================================
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📦 Environment: ${NODE_ENV}`);
-});
+
+// Ensure DB is connected/initialized before starting the server
+initDatabase()
+  .then(() => {
+    // Only start listening for requests after the database is ready
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+      console.log(`📦 Environment: ${NODE_ENV}`);
+    });
+  })
+  .catch((err) => {
+    // If database connection fails, log error and exit process
+    console.error('🛑 FATAL ERROR: Database initialization failed.', err);
+    process.exit(1);
+  });

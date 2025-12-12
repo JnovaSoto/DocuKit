@@ -1,10 +1,10 @@
-import db from '../../db/database.js';
+import { all, run, get } from '../../db/database.js';
 
 const propertyService = {
     getAllProperties: () => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM properties`;
-            db.all(sql, [], (err, rows) => {
+            all(sql, [], (err, rows) => {
                 if (err) reject(err);
                 resolve(rows);
             });
@@ -14,7 +14,7 @@ const propertyService = {
     createProperty: (propertyName, usability, content) => {
         return new Promise((resolve, reject) => {
             const sql = `INSERT INTO properties (propertyName, usability, content) VALUES (?, ?, ?)`;
-            db.run(sql, [propertyName, usability, content || ''], function (err) {
+            run(sql, [propertyName, usability, content || ''], function (err) {
                 if (err) return reject(err);
                 resolve(this.lastID);
             });
@@ -24,7 +24,7 @@ const propertyService = {
     getPropertyById: (id) => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM properties WHERE id = ?`;
-            db.get(sql, [id], (err, row) => {
+            get(sql, [id], (err, row) => {
                 if (err) reject(err);
                 resolve(row);
             });
@@ -36,7 +36,7 @@ const propertyService = {
             const placeholders = ids.map(() => '?').join(',');
             const sqlProperty = `SELECT * FROM properties WHERE id IN (${placeholders})`;
 
-            db.all(sqlProperty, ids, (err, propertyRows) => {
+            all(sqlProperty, ids, (err, propertyRows) => {
                 if (err) reject(err);
                 resolve(propertyRows);
             });
@@ -46,7 +46,7 @@ const propertyService = {
     getPropertyByName: (propertyName) => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM properties WHERE propertyName = ?`;
-            db.all(sql, [propertyName.toLowerCase()], (err, rows) => {
+            all(sql, [propertyName.toLowerCase()], (err, rows) => {
                 if (err) reject(err);
                 resolve(rows);
             });
@@ -56,18 +56,18 @@ const propertyService = {
     updateProperty: (id, propertyName, usability, attributes) => {
         return new Promise((resolve, reject) => {
             const updatePropertySql = `UPDATE properties SET propertyName = ?, usability = ? WHERE id = ?`;
-            db.run(updatePropertySql, [propertyName, usability, id], function (err) {
+            run(updatePropertySql, [propertyName, usability, id], function (err) {
                 if (err) return reject(new Error('Failed to update property: ' + err.message));
                 if (this.changes === 0) return resolve(null); // Property not found
 
                 if (attributes && Array.isArray(attributes)) {
                     const deleteAttrSql = `DELETE FROM property_attributes WHERE propertyId = ?`;
-                    db.run(deleteAttrSql, [id], function (err) {
+                    run(deleteAttrSql, [id], function (err) {
                         if (err) return reject(new Error('Failed to update attributes: ' + err.message));
 
                         if (attributes.length > 0) {
                             const insertAttrSql = `INSERT INTO property_attributes (attribute, info, propertyId) VALUES (?, ?, ?)`;
-                            const stmt = db.prepare(insertAttrSql);
+                            const stmt = prepare(insertAttrSql);
 
                             for (const attr of attributes) {
                                 if (attr.attribute) {
@@ -93,11 +93,11 @@ const propertyService = {
     deleteProperty: (id) => {
         return new Promise((resolve, reject) => {
             const deleteAttributesSql = `DELETE FROM property_attributes WHERE propertyId = ?`;
-            db.run(deleteAttributesSql, [id], function (err) {
+            run(deleteAttributesSql, [id], function (err) {
                 if (err) return reject(new Error('Failed to delete property attributes: ' + err.message));
 
                 const deletePropertySql = `DELETE FROM properties WHERE id = ?`;
-                db.run(deletePropertySql, [id], function (err) {
+                run(deletePropertySql, [id], function (err) {
                     if (err) return reject(new Error('Failed to delete property: ' + err.message));
                     if (this.changes === 0) return resolve(false); // Property not found
                     resolve(true);

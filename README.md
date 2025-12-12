@@ -41,6 +41,8 @@ DocuKit is powered by a reliable Node.js backend and a modern, maintainable fron
 | **Database** | **SQLite3** | Lightweight, file-based relational data storage. |
 | **Security** | **Bcrypt** & **express-session** | Password hashing and secure user session management. |
 | **File Handling** | **Multer** | Middleware for processing profile photo uploads. |
+| **Testing** | **Jest** | Testing framework for unit testing. |
+| **Documentation** | **JSDoc** | Documentation generator for code documentation. |
 
 ### 🖼️ Frontend & Styling
 | Technology | Role | Key Feature(s) |
@@ -58,33 +60,34 @@ The codebase is organized following a clear, feature-separated structure for mai
 
 ```bash
 DocuKit/
-├── README.md           # README file
-├── app.js              # Main application entry point
-├── database.js         # Database connection and initialization
-├── package.json        # Project dependencies and scripts
-├── package-lock.json   # Project information
-├── jsdoc.json          # Generate documentation
+├── config/             # Configuration files
+├── controllers/        # Request handling logic
+│   ├── partials/       # Partial view controllers
+│   ├── properties/     # Property related controllers
+│   ├── tags/           # Tag related controllers
+│   └── users/          # User related controllers
+├── db/                 # Database scripts, schema, and connection
+├── docs/               # Documentation files
+├── middleware/         # Express middleware (e.g., auth.js)
+├── mocks/              # Mock data for testing
+├── node_modules/       # Node.js modules
+├── public/             # Static assets
+├── routes/             # Express route definitions
+├── services/           # Business logic & Database interactions
+│   ├── properties/     # Property services
+│   ├── tags/           # Tag services
+│   └── users/          # User services
+├── tests/              # Test files
+├── uploads/            # User uploaded content (profile photos)
+├── views/              # EJS templates
 ├── .env                # Environment variables configuration
 ├── .gitignore          # Git ignore file
-├── docs/               # Documentation files
-├── node_modules/       # Node.js modules
-├── uploads/            # User uploaded content (profile photos)
-├── config/             # Configuration files
-├── db/                 # Database scripts and schema
-├── middleware/         # Express middleware (e.g., auth.js)
-├── public/             # Static assets
-│   ├── css/            # Stylesheets (index.css, header.css, variables.css)
-│   └── js/             # Client-side scripts (organized by feature)
-│
-├── routes/             # Express route definitions
-│   ├── properties      # Properties Folder API routes
-│   ├── tags            # Tag Folder API routes
-│   ├── users.js        # User API routes
-│   └── partials.js     # Partials API routes
-│
-└── views/              # EJS templates
-    ├── partials/       # Reusable UI components (header, footer)
-    └── ...             # Page templates (home, login, profile, etc.)
+├── app.js              # Main application entry point
+├── DockerFile          # Dockerfile
+├── jsdoc.json          # Generate documentation
+├── package-lock.json   # Project information
+├── package.json        # Project dependencies and scripts
+└──  README.md           # README file
 ```
 ## ⚡ Installation & Setup Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 

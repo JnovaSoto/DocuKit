@@ -1,10 +1,10 @@
-import db from '../../db/database.js';
+import { all, prepare } from '../../db/database.js';
 
 const propertyAttributeService = {
     getAllAttributes: () => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM property_attributes`;
-            db.all(sql, [], (err, rows) => {
+            all(sql, [], (err, rows) => {
                 if (err) reject(err);
                 resolve(rows);
             });
@@ -14,7 +14,7 @@ const propertyAttributeService = {
     createAttributes: (propertyId, attributes) => {
         return new Promise((resolve, reject) => {
             const sql = `INSERT INTO property_attributes (attribute, info, propertyId) VALUES (?, ?, ?)`;
-            const stmt = db.prepare(sql);
+            const stmt = prepare(sql);
 
             for (const attr of attributes) {
                 if (!attr.attribute) continue;
@@ -31,7 +31,7 @@ const propertyAttributeService = {
     getAttributesByPropertyId: (propertyId) => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM property_attributes WHERE propertyId = ?`;
-            db.all(sql, [propertyId], (err, rows) => {
+            all(sql, [propertyId], (err, rows) => {
                 if (err) reject(err);
                 resolve(rows);
             });
@@ -41,7 +41,7 @@ const propertyAttributeService = {
     getAttributesByName: (attributeName) => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM property_attributes WHERE attribute = ?`;
-            db.all(sql, [attributeName], (err, rows) => {
+            all(sql, [attributeName], (err, rows) => {
                 if (err) reject(err);
                 resolve(rows);
             });

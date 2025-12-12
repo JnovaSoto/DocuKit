@@ -1,10 +1,10 @@
-import db from '../../db/database.js';
+import { all, prepare } from '../../db/database.js';
 
 const attributeService = {
     getAllAttributes: () => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM attributes`;
-            db.all(sql, [], (err, rows) => {
+            all(sql, [], (err, rows) => {
                 if (err) reject(err);
                 resolve(rows);
             });
@@ -14,7 +14,7 @@ const attributeService = {
     createAttributes: (tagId, attributes) => {
         return new Promise((resolve, reject) => {
             const sql = `INSERT INTO attributes (attribute, info, tagId) VALUES (?, ?, ?)`;
-            const stmt = db.prepare(sql);
+            const stmt = prepare(sql);
 
             for (const attr of attributes) {
                 if (!attr.attribute) continue;
@@ -31,7 +31,7 @@ const attributeService = {
     getAttributesByTagId: (tagId) => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM attributes WHERE tagId = ?`;
-            db.all(sql, tagId, (err, rows) => {
+            all(sql, tagId, (err, rows) => {
                 if (err) reject(err);
                 resolve(rows || []);
             });
@@ -41,7 +41,7 @@ const attributeService = {
     getAttributesByName: (name) => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM attributes WHERE attribute = ?`;
-            db.all(sql, [name], (err, rows) => {
+            all(sql, [name], (err, rows) => {
                 if (err) reject(err);
                 resolve(rows);
             });

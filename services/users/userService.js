@@ -1,4 +1,4 @@
-import db from '../../db/database.js';
+import { get, run } from '../../db/database.js';
 import bcrypt from 'bcrypt';
 
 const userService = {
@@ -10,7 +10,7 @@ const userService = {
     findByLogin: (login) => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM users WHERE username = ? OR email = ?`;
-            db.get(sql, [login, login], (err, row) => {
+            get(sql, [login, login], (err, row) => {
                 if (err) reject(err);
                 resolve(row);
             });
@@ -31,7 +31,7 @@ const userService = {
 
         return new Promise((resolve, reject) => {
             const sql = `INSERT INTO users (username, email, password, admin) VALUES (?, ?, ?, ?)`;
-            db.run(sql, [username, email, hash, admin], function (err) {
+            run(sql, [username, email, hash, admin], function (err) {
                 if (err) reject(err);
                 resolve(this.lastID);
             });
@@ -47,7 +47,7 @@ const userService = {
     updatePhoto: (userId, photoPath) => {
         return new Promise((resolve, reject) => {
             const sql = `UPDATE users SET photo = ? WHERE id = ?`;
-            db.run(sql, [photoPath, userId], (err) => {
+            run(sql, [photoPath, userId], (err) => {
                 if (err) reject(err);
                 resolve();
             });
@@ -62,7 +62,7 @@ const userService = {
     findById: (id) => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT id, username, email, admin, photo, favorites, favoritesCss FROM users WHERE id = ?`;
-            db.get(sql, [id], (err, row) => {
+            get(sql, [id], (err, row) => {
                 if (err) reject(err);
                 resolve(row);
             });
@@ -77,7 +77,7 @@ const userService = {
     findByIdAdmin: (id) => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM users WHERE ID = ?`;
-            db.get(sql, [id], (err, row) => {
+            get(sql, [id], (err, row) => {
                 if (err) reject(err);
                 resolve(row);
             });
@@ -94,7 +94,7 @@ const userService = {
         return new Promise((resolve, reject) => {
             const column = type === 'css' ? 'favoritesCss' : 'favorites';
             const sql = `SELECT ${column} FROM users WHERE id = ?`;
-            db.get(sql, [userId], (err, row) => {
+            get(sql, [userId], (err, row) => {
                 if (err) reject(err);
                 if (!row) return resolve(null); // User not found
                 try {
@@ -118,7 +118,7 @@ const userService = {
         return new Promise((resolve, reject) => {
             const column = type === 'css' ? 'favoritesCss' : 'favorites';
             const sql = `UPDATE users SET ${column} = ? WHERE id = ?`;
-            db.run(sql, [JSON.stringify(favorites), userId], (err) => {
+            run(sql, [JSON.stringify(favorites), userId], (err) => {
                 if (err) reject(err);
                 resolve();
             });
