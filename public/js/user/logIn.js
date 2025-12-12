@@ -5,7 +5,7 @@
 
 import { showTemporaryAlert } from '../tools/alerts.js';
 import { handleResponseError } from '../tools/caseState.js';
-import { API, SUCCESS_MESSAGES } from '../config/constants.js';
+import { API, SUCCESS_MESSAGES, ERROR_MESSAGES } from '../config/constants.js';
 import logger from '../tools/logger.js';
 import { pass } from '../tools/passwordHide.js';
 import { VALIDATION } from '../config/constants.js';
@@ -88,14 +88,21 @@ export async function init() {
       document.getElementById('password-input').value = '';
 
       // Redirect to the page user was on before login, or home if none saved
-      const returnPath = sessionStorage.getItem('returnPath') || '/home';
-      sessionStorage.removeItem('returnPath'); // Clear after use
-      window.location.href = returnPath;
+      const returnPath = sessionStorage.getItem('returnPath');
+      // Determine the destination URL
+      const targetUrl = (returnPath === '/signUp') ? '/home' : (returnPath || '/home');
+      // Perform the redirection
+      sessionStorage.removeItem('returnPath');// Clear after use
+      window.location.href = targetUrl;
+
+      if (window.location.href === '/logIn') {
+        showTemporaryAlert('alert', ERROR_MESSAGES.LOGIN_ERROR);
+      }
 
     } catch (error) {
       // Handle fetch/network errors
       logger.error('Login fetch failed:', error);
-      showTemporaryAlert('alert', 'Something went wrong');
+      showTemporaryAlert('alert', ERROR_MESSAGES.NETWORK_ERROR);
     }
   });
 }

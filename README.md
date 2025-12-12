@@ -58,26 +58,30 @@ The codebase is organized following a clear, feature-separated structure for mai
 
 ```bash
 DocuKit/
+├── README.md           # README file
 ├── app.js              # Main application entry point
 ├── database.js         # Database connection and initialization
 ├── package.json        # Project dependencies and scripts
+├── package-lock.json   # Project information
+├── jsdoc.json          # Generate documentation
 ├── .env                # Environment variables configuration
-│
+├── .gitignore          # Git ignore file
+├── docs/               # Documentation files
+├── node_modules/       # Node.js modules
+├── uploads/            # User uploaded content (profile photos)
 ├── config/             # Configuration files
 ├── db/                 # Database scripts and schema
 ├── middleware/         # Express middleware (e.g., auth.js)
-│
 ├── public/             # Static assets
 │   ├── css/            # Stylesheets (index.css, header.css, variables.css)
-│   ├── js/             # Client-side scripts (organized by feature)
-│   └── img/            # Images and icons
+│   └── js/             # Client-side scripts (organized by feature)
 │
 ├── routes/             # Express route definitions
-│   ├── tags.js         # Tag API routes
+│   ├── properties      # Properties Folder API routes
+│   ├── tags            # Tag Folder API routes
 │   ├── users.js        # User API routes
-│   └── ...
+│   └── partials.js     # Partials API routes
 │
-├── uploads/            # User uploaded content (profile photos)
 └── views/              # EJS templates
     ├── partials/       # Reusable UI components (header, footer)
     └── ...             # Page templates (home, login, profile, etc.)

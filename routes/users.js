@@ -1,10 +1,8 @@
 import express from 'express';
-import bcrypt from 'bcrypt';
-import validator from 'validator';
-import db from '../db/database.js';
 import { isAdminLevel1, isAuthenticated } from '../middleware/auth.js';
 import ROUTES from '../config/routes.js';
-import upload, { movePhotoToUserFolder } from '../config/multer.js';
+import upload from '../config/multer.js';
+import userController from '../controllers/users/userController.js';
 
 // User routes
 const router = express.Router();
@@ -14,380 +12,87 @@ const router = express.Router();
  * 
  * @name Login
  * @route {POST} /users/login
- * @param {Object} req.body - The request body
- * @param {string} req.body.login - Username or email
- * @param {string} req.body.password - User password
- * @param {express.Response} res - Express response object
  */
-router.post(ROUTES.USERS.LOGIN, (req, res) => {
-  const { login, password } = req.body;
-  if (!login || !password) return res.status(400).json({ error: 'All the inputs have to be fulled' });
+router.post(ROUTES.USERS.LOGIN, userController.login);
 
-  const sql = `SELECT * FROM users WHERE username = ? OR email = ?`;
-
-  db.get(sql, [login, login], async (err, user) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!user) return res.status(401).json({ error: 'User or password are incorrect' });
-
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(401).json({ error: 'User or password are incorrect' });
-
-    req.session.userId = user.id;
-    req.session.username = user.username;
-    req.session.admin = user.admin;
-    req.session.photo = user.photo;
-
-    res.json({ message: 'Successfully Login', userId: user.id, username: user.username, admin: user.admin, photo: user.photo });
-  });
-});
 /**
  * Create a new user account with photo upload support.
  * 
  * @name Sign Up
  * @route {POST} /users/signUp
- * @param {Object} req.body - The request body
- * @param {string} req.body.username - User's username
- * @param {string} req.body.email - User's email
- * @param {string} req.body.password - User's password
- * @param {string|number} req.body.admin - Admin status (0 or 1)
- * @param {Object} [req.file] - Uploaded photo file
- * @param {express.Response} res - Express response object
  */
-router.post(ROUTES.USERS.SIGNUP, upload.single('photo'), async (req, res) => {
-  try {
-    const { username, email, password, admin } = req.body;
-    const saltRounds = 10;
-    const hash = await bcrypt.hash(password, saltRounds);
-
-    if (!username || !email || admin === undefined || admin === null || !hash) {
-      return res.status(400).json({ error: 'All the attributes must be complete' });
-    }
-
-    if (!validator.isEmail(email)) {
-      return res.status(400).json({ error: "Invalid email" });
-    }
-
-    if (username.length > 20) return res.status(400).json({ error: 'Username too long' });
-    if (email.length > 40) return res.status(400).json({ error: 'Email too long' });
-    if (password.length < 8) return res.status(400).json({ error: 'Password too short' });
-
-    const adminValue = parseInt(admin, 10);
-    const sql = `INSERT INTO users (username, email, password, admin) VALUES (?, ?, ?, ?)`;
-
-    db.run(sql, [username, email, hash, adminValue], function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-
-      const userId = this.lastID;
-      let photoPath = '/uploads/users/cat_default.webp';
-
-      if (req.file && req.isNewUser) {
-        try {
-          photoPath = movePhotoToUserFolder(req.userPhotoFolder, userId, req.file.filename);
-        } catch (moveErr) {
-          // Continue with default photo if move fails
-        }
-      } else if (req.file) {
-        photoPath = `/uploads/users/${userId}/${req.file.filename}`;
-      }
-
-      const updateSql = `UPDATE users SET photo = ? WHERE id = ?`;
-      db.run(updateSql, [photoPath, userId], (updateErr) => {
-        if (updateErr) console.error('Error updating photo path:', updateErr);
-        res.status(201).json({ id: userId, username, email, photo: photoPath });
-      });
-    });
-  } catch (error) {
-    res.status(500).json({ error: 'An unexpected error occurred' });
-  }
-});
+router.post(ROUTES.USERS.SIGNUP, upload.single('photo'), userController.signUp);
 
 /**
  * Logout a user.
  * 
  * @name Logout
  * @route {POST} /users/logout
- * @param {express.Request} req - Express request object
- * @param {express.Response} res - Express response object
  */
-router.post(ROUTES.USERS.LOGOUT, (req, res) => {
-  if (req.session) {
-    req.session.destroy(err => {
-      if (err) return res.status(500).json({ message: 'Could not log out' });
-      res.clearCookie('connect.sid');
-      res.json({ message: 'Logged out successfully' });
-    });
-  } else {
-    res.status(200).json({ message: 'No active session' });
-  }
-});
+router.post(ROUTES.USERS.LOGOUT, userController.logout);
 
 /**
  * Get the current user's data.
  * 
  * @name Get Current User
  * @route {GET} /users/me
- * @param {express.Request} req - Express request object
- * @param {express.Response} res - Express response object
  */
-router.get(ROUTES.USERS.ME, (req, res) => {
-  if (!req.session.userId) return res.json({ loggedIn: false });
-
-  const sql = `SELECT id, username, email, admin, photo, favorites, favoritesCss FROM users WHERE id = ?`;
-
-  db.get(sql, [req.session.userId], (err, user) => {
-    if (err) return res.status(500).json({ error: 'Failed to fetch user data' });
-
-    if (!user) {
-      req.session.destroy();
-      return res.json({ loggedIn: false });
-    }
-
-    res.json({
-      loggedIn: true,
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      admin: user.admin,
-      photo: user.photo,
-      favorites: user.favorites,
-      favoritesCss: user.favoritesCss
-    });
-  });
-});
+router.get(ROUTES.USERS.ME, userController.getMe);
 
 /**
  * Get the current user's favorite tags.
  * 
  * @name Get Favorites
  * @route {GET} /users/favorites
- * @param {express.Request} req - Express request object
- * @param {express.Response} res - Express response object
  */
-router.get(ROUTES.USERS.FAVORITES, isAuthenticated, (req, res) => {
-  const userId = req.session.userId;
-  const sql = `SELECT favorites FROM users WHERE id = ?`;
-
-  db.get(sql, userId, (err, row) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!row) return res.status(404).json({ error: 'User not found' });
-    if (!row.favorites) return res.json({ favorites: [] });
-
-    let favorites = [];
-    try {
-      favorites = row.favorites ? JSON.parse(row.favorites) : [];
-    } catch (parseErr) {
-      favorites = [];
-    }
-
-    res.json({ favorites });
-  });
-});
+router.get(ROUTES.USERS.FAVORITES, isAuthenticated, userController.getFavorites);
 
 /**
  * Add a tag to the current user's favorites.
  * 
  * @name Add Favorite
  * @route {POST} /users/favorites
- * @param {Object} req.body - The request body
- * @param {string|number} req.body.tagId - The ID of the tag to add
- * @param {express.Response} res - Express response object
  */
-router.post(ROUTES.USERS.FAVORITES, isAuthenticated, (req, res) => {
-  const userId = req.session.userId;
-  const { tagId } = req.body;
-
-  if (!tagId) return res.status(400).json({ error: 'Tag ID is required' });
-
-  const selectSql = `SELECT favorites FROM users WHERE id = ?`;
-  db.get(selectSql, [userId], (err, row) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!row) return res.status(404).json({ error: 'User not found' });
-
-    let favorites = [];
-    try {
-      favorites = row.favorites ? JSON.parse(row.favorites) : [];
-    } catch (parseErr) {
-      favorites = [];
-    }
-
-    const tagIdNum = parseInt(tagId, 10);
-    if (isNaN(tagIdNum)) return res.status(400).json({ error: 'Invalid tag ID' });
-
-    if (!favorites.includes(tagIdNum)) {
-      favorites.push(tagIdNum);
-    }
-
-    const updateSql = `UPDATE users SET favorites = ? WHERE id = ?`;
-    db.run(updateSql, [JSON.stringify(favorites), userId], function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ message: 'Tag added to favorites', favorites });
-    });
-  });
-});
+router.post(ROUTES.USERS.FAVORITES, isAuthenticated, userController.addFavorite);
 
 /**
  * Remove a tag from the current user's favorites.
  * 
  * @name Remove Favorite
  * @route {DELETE} /users/favorites/:tagId
- * @param {express.Request} req - Express request object
- * @param {string} req.params.tagId - The ID of the tag to remove
- * @param {express.Response} res - Express response object
  */
-router.delete(`${ROUTES.USERS.FAVORITES}/:tagId`, isAuthenticated, (req, res) => {
-  const userId = req.session.userId;
-  const tagId = parseInt(req.params.tagId, 10);
-
-  if (isNaN(tagId)) return res.status(400).json({ error: 'Invalid tag ID' });
-
-  const selectSql = `SELECT favorites FROM users WHERE id = ?`;
-  db.get(selectSql, [userId], (err, row) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!row) return res.status(404).json({ error: 'User not found' });
-
-    let favorites = [];
-    try {
-      favorites = row.favorites ? JSON.parse(row.favorites) : [];
-    } catch (parseErr) {
-      favorites = [];
-    }
-
-    favorites = favorites.filter(id => id !== tagId);
-
-    const updateSql = `UPDATE users SET favorites = ? WHERE id = ?`;
-    db.run(updateSql, [JSON.stringify(favorites), userId], function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ message: 'Tag removed from favorites', favorites });
-    });
-  });
-});
+router.delete(`${ROUTES.USERS.FAVORITES}/:tagId`, isAuthenticated, userController.removeFavorite);
 
 /**
  * Get a user by ID (Admin only).
  * 
  * @name Get User By ID
  * @route {GET} /users/:id
- * @param {express.Request} req - Express request object
- * @param {string} req.params.id - The ID of the user to retrieve
- * @param {express.Response} res - Express response object
  */
-router.get(ROUTES.USERS.BY_ID, isAdminLevel1, (req, res) => {
-  const id = parseInt(req.params.id);
-  if (isNaN(id)) return res.status(400).json({ error: 'Invalid user ID' });
-
-  const sql = `SELECT * FROM users WHERE ID = ?`;
-  db.get(sql, [id], (err, row) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!row) return res.status(404).json({ error: 'User not found' });
-    res.json(row);
-  });
-});
+router.get(ROUTES.USERS.BY_ID, isAdminLevel1, userController.getUserById);
 
 /**
  * Get the current user's CSS property favorites.
  * 
  * @name Get CSS Favorites
  * @route {GET} /users/favorites-css
- * @param {express.Request} req - Express request object
- * @param {express.Response} res - Express response object
  */
-router.get(ROUTES.USERS.FAVORITES_CSS, isAuthenticated, (req, res) => {
-  const userId = req.session.userId;
-  const sql = `SELECT favoritesCss FROM users WHERE id = ?`;
-
-  db.get(sql, userId, (err, row) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!row) return res.status(404).json({ error: 'User not found' });
-    if (!row.favoritesCss) return res.json({ favorites: [] });
-
-    let favorites = [];
-    try {
-      favorites = row.favoritesCss ? JSON.parse(row.favoritesCss) : [];
-    } catch (parseErr) {
-      favorites = [];
-    }
-
-    res.json({ favorites });
-  });
-});
+router.get(ROUTES.USERS.FAVORITES_CSS, isAuthenticated, userController.getCssFavorites);
 
 /**
  * Add a CSS property to the current user's favorites.
  * 
  * @name Add CSS Favorite
  * @route {POST} /users/favorites-css
- * @param {Object} req.body - The request body
- * @param {string|number} req.body.propertyId - The ID of the property to add
- * @param {express.Response} res - Express response object
  */
-router.post(ROUTES.USERS.FAVORITES_CSS, isAuthenticated, (req, res) => {
-  const userId = req.session.userId;
-  const { propertyId } = req.body;
-
-  if (!propertyId) return res.status(400).json({ error: 'Property ID is required' });
-
-  const selectSql = `SELECT favoritesCss FROM users WHERE id = ?`;
-  db.get(selectSql, [userId], (err, row) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!row) return res.status(404).json({ error: 'User not found' });
-
-    let favorites = [];
-    try {
-      favorites = row.favoritesCss ? JSON.parse(row.favoritesCss) : [];
-    } catch (parseErr) {
-      favorites = [];
-    }
-
-    const propertyIdNum = parseInt(propertyId, 10);
-    if (isNaN(propertyIdNum)) return res.status(400).json({ error: 'Invalid property ID' });
-
-    if (!favorites.includes(propertyIdNum)) {
-      favorites.push(propertyIdNum);
-    }
-
-    const updateSql = `UPDATE users SET favoritesCss = ? WHERE id = ?`;
-    db.run(updateSql, [JSON.stringify(favorites), userId], function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ message: 'Property added to favorites', favorites });
-    });
-  });
-});
+router.post(ROUTES.USERS.FAVORITES_CSS, isAuthenticated, userController.addCssFavorite);
 
 /**
  * Remove a CSS property from the current user's favorites.
  * 
  * @name Remove CSS Favorite
  * @route {DELETE} /users/favorites-css/:propertyId
- * @param {express.Request} req - Express request object
- * @param {string} req.params.propertyId - The ID of the property to remove
- * @param {express.Response} res - Express response object
  */
-router.delete(`${ROUTES.USERS.FAVORITES_CSS}/:propertyId`, isAuthenticated, (req, res) => {
-  const userId = req.session.userId;
-  const propertyId = parseInt(req.params.propertyId, 10);
-
-  if (isNaN(propertyId)) return res.status(400).json({ error: 'Invalid property ID' });
-
-  const selectSql = `SELECT favoritesCss FROM users WHERE id = ?`;
-  db.get(selectSql, [userId], (err, row) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!row) return res.status(404).json({ error: 'User not found' });
-
-    let favorites = [];
-    try {
-      favorites = row.favoritesCss ? JSON.parse(row.favoritesCss) : [];
-    } catch (parseErr) {
-      favorites = [];
-    }
-
-    favorites = favorites.filter(id => id !== propertyId);
-
-    const updateSql = `UPDATE users SET favoritesCss = ? WHERE id = ?`;
-    db.run(updateSql, [JSON.stringify(favorites), userId], function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ message: 'Property removed from favorites', favorites });
-    });
-  });
-});
+router.delete(`${ROUTES.USERS.FAVORITES_CSS}/:propertyId`, isAuthenticated, userController.removeCssFavorite);
 
 export default router;

@@ -1,5 +1,7 @@
 // routes/partials.js
 import express from 'express';
+import partialController from '../controllers/partials/partialController.js';
+
 const router = express.Router();
 
 /**
@@ -7,28 +9,15 @@ const router = express.Router();
  * 
  * @name Get Header
  * @route {GET} /partials/header
- * @param {express.Request} req - Express request object
- * @param {express.Response} res - Express response object
  */
-router.get('/header', (req, res) => {
-  res.render('partials/header', {
-    layout: false,
-    user: req.session?.user || null
-  });
-});
+router.get('/header', partialController.getHeader);
 
 /**
  * Route to render the footer partial.
  * 
  * @name Get Footer
  * @route {GET} /partials/footer
- * @param {express.Request} req - Express request object
- * @param {express.Response} res - Express response object
  */
-router.get('/footer', (req, res) => {
-  res.render('partials/footer', {
-    layout: false
-  });
-});
+router.get('/footer', partialController.getFooter);
 
 export default router;
