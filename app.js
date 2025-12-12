@@ -88,34 +88,99 @@ app.use('/users', usersRoutes);
 // Page Routes (must come before static files to avoid conflicts)
 // ============================================================================
 
+/**
+ * Render the Home page.
+ * 
+ * @name Home Page
+ * @route {GET} /
+ * @route {GET} /home
+ * @param {express.Request} req - Express request object
+ * @param {express.Response} res - Express response object
+ */
 app.get(['/', '/home'], (req, res) => {
   res.render('home', { layout: 'layout', title: 'Home' });
 });
 
+/**
+ * Render the CSS Properties page.
+ * 
+ * @name CSS Properties Page
+ * @route {GET} /css-properties
+ * @param {express.Request} req - Express request object
+ * @param {express.Response} res - Express response object
+ */
 app.get('/css-properties', (req, res) => {
   res.render('css', { layout: 'layout', title: 'CSS Properties' });
 });
 
+/**
+ * Render the Create page (Protected).
+ * 
+ * @name Create Page
+ * @route {GET} /create
+ * @param {express.Request} req - Express request object
+ * @param {express.Response} res - Express response object
+ */
 app.get('/create', requireAuth, (req, res) => {
   res.render('create', { layout: 'layout', title: 'Create' });
 });
 
+/**
+ * Render the Sign Up page.
+ * 
+ * @name Sign Up Page
+ * @route {GET} /signUp
+ * @param {express.Request} req - Express request object
+ * @param {express.Response} res - Express response object
+ */
 app.get('/signUp', (req, res) => {
   res.render('signUp', { layout: 'layout', title: 'SignUp' });
 });
 
+/**
+ * Render the Login page.
+ * 
+ * @name Login Page
+ * @route {GET} /logIn
+ * @param {express.Request} req - Express request object
+ * @param {express.Response} res - Express response object
+ */
 app.get('/logIn', (req, res) => {
   res.render('logIn', { layout: 'layout', title: 'LogIn' });
 });
 
+/**
+ * Render the Edit page (Protected).
+ * 
+ * @name Edit Page
+ * @route {GET} /edit
+ * @param {express.Request} req - Express request object
+ * @param {express.Response} res - Express response object
+ */
 app.get('/edit', requireAuth, (req, res) => {
   res.render('edit', { layout: 'layout', title: 'Edit' });
 });
 
+/**
+ * Render the Profile page (Protected).
+ * 
+ * @name Profile Page
+ * @route {GET} /profile
+ * @param {express.Request} req - Express request object
+ * @param {express.Response} res - Express response object
+ */
 app.get('/profile', requireAuth, (req, res) => {
   res.render('profile', { layout: 'layout', title: 'Profile' });
 });
 
+/**
+ * Render the Favorites page (Protected).
+ * 
+ * @name Favorites Page
+ * @route {GET} /favorites
+ * @param {express.Request} req - Express request object
+ * @param {express.Response} res - Express response object
+ */
 app.get('/favorites', requireAuth, (req, res) => {
   res.render('favorites', { layout: 'layout', title: 'Favorites' });
 });

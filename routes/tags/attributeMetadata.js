@@ -8,6 +8,14 @@ const router = express.Router();
 /**
  * Get all attribute metadata
  */
+/**
+ * Get all attribute metadata.
+ * 
+ * @name Get All Attribute Metadata
+ * @route {GET} /attribute-metadata
+ * @param {express.Request} req - Express request object
+ * @param {express.Response} res - Express response object
+ */
 router.get(ROUTES.ATTRIBUTE_METADATA.BASE, (req, res) => {
     const sql = `SELECT * FROM attribute_metadata ORDER BY attributeName ASC`;
     db.all(sql, [], (err, rows) => {
@@ -18,6 +26,15 @@ router.get(ROUTES.ATTRIBUTE_METADATA.BASE, (req, res) => {
 
 /**
  * Get attribute metadata by name
+ */
+/**
+ * Get attribute metadata by name.
+ * 
+ * @name Get Attribute Metadata By Name
+ * @route {GET} /attribute-metadata/:name
+ * @param {express.Request} req - Express request object
+ * @param {string} req.params.name - The name of the attribute
+ * @param {express.Response} res - Express response object
  */
 router.get(ROUTES.ATTRIBUTE_METADATA.BY_NAME, (req, res) => {
     const name = req.params.name;
@@ -32,6 +49,16 @@ router.get(ROUTES.ATTRIBUTE_METADATA.BY_NAME, (req, res) => {
 
 /**
  * Create new attribute metadata (admin only)
+ */
+/**
+ * Create new attribute metadata (Admin only).
+ * 
+ * @name Create Attribute Metadata
+ * @route {POST} /attribute-metadata/create
+ * @param {express.Request} req - Express request object
+ * @param {string} req.body.attributeName - The name of the attribute
+ * @param {string} req.body.generalDescription - A description of the attribute
+ * @param {express.Response} res - Express response object
  */
 router.post(ROUTES.ATTRIBUTE_METADATA.CREATE, isAdminLevel1, (req, res) => {
     const { attributeName, generalDescription } = req.body;

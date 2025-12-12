@@ -11,7 +11,16 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+/**
+ * Path to the SQLite database file
+ * @constant {string}
+ */
 const DB_PATH = path.resolve(__dirname, 'database.sqlite');
+
+/**
+ * Database connection mode (Read/Write + Create)
+ * @constant {number}
+ */
 const DB_MODE = sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE;
 
 // ============================================================================
@@ -43,6 +52,10 @@ const db = initializeDatabase();
 // Schema Definitions
 // ============================================================================
 
+/**
+ * SQL definitions for database tables
+ * @constant {Object.<string, string>}
+ */
 const TABLES = {
   tags: `
     CREATE TABLE IF NOT EXISTS tags (

@@ -2,7 +2,14 @@
 import express from 'express';
 const router = express.Router();
 
-// Renders the header and sends the user data if a session exists
+/**
+ * Route to render the header partial.
+ * 
+ * @name Get Header
+ * @route {GET} /partials/header
+ * @param {express.Request} req - Express request object
+ * @param {express.Response} res - Express response object
+ */
 router.get('/header', (req, res) => {
   res.render('partials/header', {
     layout: false,
@@ -10,6 +17,14 @@ router.get('/header', (req, res) => {
   });
 });
 
+/**
+ * Route to render the footer partial.
+ * 
+ * @name Get Footer
+ * @route {GET} /partials/footer
+ * @param {express.Request} req - Express request object
+ * @param {express.Response} res - Express response object
+ */
 router.get('/footer', (req, res) => {
   res.render('partials/footer', {
     layout: false

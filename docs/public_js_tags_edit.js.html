@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: public/js/tags/edit.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: public/js/tags/edit.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Tag Edit functionality.
+ * Handles editing HTML tags from the database.
+ */
+
+import { showTemporaryAlert } from '../tools/alerts.js';
+import { handleResponseError } from '../tools/caseState.js';
+import { requireLogin } from '../tools/session.js';
+import { API, ROUTES, SUCCESS_MESSAGES } from "../config/constants.js";
+import logger from '../tools/logger.js';
+import { tagForm } from '../auto/tagForm.js';
+
+
+logger.edit('Edit module loaded');
+
+// Flag to prevent duplicate initialization
+let isEditButtonListenerAttached = false;
+let isInitialized = false;
+
+/**
+ * Initializes the edition functionality.
+ * Called by navigation.js on page load/navigation.
+ */
+export async function init() {
+    logger.edit('Edit init() called');
+
+    // 1. Attach the global "Edit" button listener ONCE
+    if (!isEditButtonListenerAttached) {
+        logger.edit('Attaching edit button listener');
+        isEditButtonListenerAttached = true;
+
+        document.body.addEventListener("click", async (event) => {
+            const editBtn = event.target.closest(".edit-btn");
+            if (!editBtn) return;
+
+            // Prevent default behavior (page reload)
+            event.preventDefault();
+
+            // Stop event propagation to prevent other handlers from firing
+            event.stopPropagation();
+
+            const tagId = editBtn.dataset.id;
+            const type = editBtn.dataset.type;
+
+            // Only handle tag edits
+            if (type &amp;&amp; type !== 'tag') return;
+
+            if (!tagId) {
+                logger.warn('Edit button missing data-id attribute');
+                return;
+            }
+
+            // Check login first
+            if (!await requireLogin()) {
+                showTemporaryAlert('alert', 'You must log in to edit');
+                return;
+            }
+
+            // Save ID to session storage for the Edit page to use
+            sessionStorage.setItem('editTagId', tagId);
+            logger.info('Edit button clicked. ID saved:', tagId);
+
+            // Navigate to edit page using history API (SPA navigation)
+            history.pushState(null, null, ROUTES.EDIT);
+
+            // Manually fetch and load the edit page content
+            try {
+                const response = await fetch(ROUTES.EDIT);
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newContent = doc.querySelector('#app');
+
+                if (newContent) {
+                    document.querySelector('#app').innerHTML = newContent.innerHTML;
+                    // Load the edit form with the saved tag ID
+                    await loadEditForm();
+                } else {
+                    logger.error('Could not find #app in edit page response');
+                }
+            } catch (error) {
+                logger.error('Error navigating to edit page:', error);
+                showTemporaryAlert('alert', 'Failed to load edit page');
+            }
+        });
+    }
+
+    // 2. Logic for the Edit Page itself
+    // This needs to run every time we navigate to /edit
+    if (window.location.pathname === ROUTES.EDIT) {
+        await loadEditForm();
+    }
+}
+
+/**
+ * Loads the tag data and populates the edit form.
+ * This runs when the user is on the /edit page.
+ */
+async function loadEditForm() {
+    const tagId = sessionStorage.getItem('editTagId');
+
+    if (!tagId) {
+        logger.warn('No tag ID found in session storage');
+        return;
+    }
+
+    try {
+        if (!await requireLogin()) return;
+
+        logger.info('Fetching data for tag ID:', tagId);
+
+        // Fetch Tag Data
+        const tagResponse = await fetch(API.TAGS.BY_ID(tagId), {
+            credentials: 'include'
+        });
+        if (await handleResponseError(tagResponse)) return;
+        const tagData = await tagResponse.json();
+
+        // Fetch Attributes Data for this Tag
+        const attrResponse = await fetch(API.ATTRIBUTES.BY_TAG_ID(tagId), {
+            credentials: 'include'
+        });
+        let attributesData = [];
+        if (attrResponse.ok) {
+            attributesData = await attrResponse.json();
+        }
+
+        const data = {
+            tag: tagData,
+            attributes: attributesData
+        };
+
+        const mainForm = document.getElementById('form-container');
+        if (!mainForm) {
+            logger.error('Edit form container not found');
+            return;
+        }
+
+        // Generate the form element using tagForm
+        const newFormElement = tagForm(data);
+
+        // Replace the existing form with the new one to avoid nesting
+        mainForm.replaceWith(newFormElement);
+
+        // Attach submit handler to the NEW form element
+        setupSubmitHandler(newFormElement, tagId);
+
+    } catch (error) {
+        logger.error('Error loading edit form:', error);
+        showTemporaryAlert('alert', 'Failed to load tag data');
+    }
+}
+
+/**
+ * Sets up the submit handler for the form
+ */
+function setupSubmitHandler(formElement, tagId) {
+    formElement.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(formElement);
+        const rawData = Object.fromEntries(formData.entries());
+
+        // Extract basic tag info
+        const updateBody = {
+            tagName: rawData.name,
+            usability: rawData.utility,
+            attributes: []
+        };
+
+        // Extract dynamic attributes
+        Object.keys(rawData).forEach(key => {
+            if (key.startsWith('attributeName_')) {
+                const attrId = key.split('_')[1];
+                const infoKey = `attributeInfo_${attrId}`;
+
+                // Only add if name is present
+                if (rawData[key]) {
+                    updateBody.attributes.push({
+                        id: attrId,
+                        attribute: rawData[key],
+                        info: rawData[infoKey] || ''
+                    });
+                }
+            }
+        });
+
+        logger.network('Sending update for tag:', updateBody);
+
+        try {
+            const response = await fetch(API.TAGS.UPDATE(tagId), {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include', // Important: Send session cookie
+                body: JSON.stringify(updateBody)
+            });
+
+            if (await handleResponseError(response)) return;
+
+            showTemporaryAlert('success', SUCCESS_MESSAGES.TAG_UPDATED);
+
+            // Cleanup and redirect
+            sessionStorage.removeItem('editTagId');
+            setTimeout(() => {
+                // Use history API if possible, or window.location
+                window.location.href = ROUTES.HOME;
+            }, 1000);
+
+        } catch (error) {
+            logger.error('Update failed:', error);
+            showTemporaryAlert('alert', 'Failed to update tag');
+        }
+    });
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ALERT_IDS">ALERT_IDS</a></li><li><a href="global.html#ALERT_TIMING">ALERT_TIMING</a></li><li><a href="global.html#API">API</a></li><li><a href="global.html#AddCSSFavorite">Add CSS Favorite</a></li><li><a href="global.html#AddFavorite">Add Favorite</a></li><li><a href="global.html#CSSPropertiesPage">CSS Properties Page</a></li><li><a href="global.html#CreateAttributeMetadata">Create Attribute Metadata</a></li><li><a href="global.html#CreateAttributes">Create Attributes</a></li><li><a href="global.html#CreatePage">Create Page</a></li><li><a href="global.html#CreateProperty">Create Property</a></li><li><a href="global.html#CreatePropertyAttribute">Create Property Attribute</a></li><li><a href="global.html#CreateTag">Create Tag</a></li><li><a href="global.html#DB_MODE">DB_MODE</a></li><li><a href="global.html#DB_PATH">DB_PATH</a></li><li><a href="global.html#DeleteProperty">Delete Property</a></li><li><a href="global.html#DeleteTag">Delete Tag</a></li><li><a href="global.html#ERROR_MESSAGES">ERROR_MESSAGES</a></li><li><a href="global.html#EditPage">Edit Page</a></li><li><a href="global.html#FavoritesPage">Favorites Page</a></li><li><a href="global.html#GetAllAttributeMetadata">Get All Attribute Metadata</a></li><li><a href="global.html#GetAllAttributes">Get All Attributes</a></li><li><a href="global.html#GetAllProperties">Get All Properties</a></li><li><a href="global.html#GetAllPropertyAttributes">Get All Property Attributes</a></li><li><a href="global.html#GetAllTags">Get All Tags</a></li><li><a href="global.html#GetAttributeByName">Get Attribute By Name</a></li><li><a href="global.html#GetAttributeMetadataByName">Get Attribute Metadata By Name</a></li><li><a href="global.html#GetAttributesByPropertyID">Get Attributes By Property ID</a></li><li><a href="global.html#GetAttributesByTagID">Get Attributes By Tag ID</a></li><li><a href="global.html#GetCSSFavorites">Get CSS Favorites</a></li><li><a href="global.html#GetCurrentUser">Get Current User</a></li><li><a href="global.html#GetFavorites">Get Favorites</a></li><li><a href="global.html#GetFooter">Get Footer</a></li><li><a href="global.html#GetHeader">Get Header</a></li><li><a href="global.html#GetPropertiesByIDs">Get Properties By IDs</a></li><li><a href="global.html#GetPropertyAttributeByName">Get Property Attribute By Name</a></li><li><a href="global.html#GetPropertyByID">Get Property By ID</a></li><li><a href="global.html#GetPropertyByName">Get Property By Name</a></li><li><a href="global.html#GetTagByID">Get Tag By ID</a></li><li><a href="global.html#GetTagByName">Get Tag By Name</a></li><li><a href="global.html#GetTagsByIDs">Get Tags By IDs</a></li><li><a href="global.html#GetUserByID">Get User By ID</a></li><li><a href="global.html#HTTP_STATUS">HTTP_STATUS</a></li><li><a href="global.html#HomePage">Home Page</a></li><li><a href="global.html#LOG_LEVELS">LOG_LEVELS</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#LoginPage">Login Page</a></li><li><a href="global.html#Logout">Logout</a></li><li><a href="global.html#ProfilePage">Profile Page</a></li><li><a href="global.html#ROUTES">ROUTES</a></li><li><a href="global.html#RemoveCSSFavorite">Remove CSS Favorite</a></li><li><a href="global.html#RemoveFavorite">Remove Favorite</a></li><li><a href="global.html#SESSION">SESSION</a></li><li><a href="global.html#SUCCESS_MESSAGES">SUCCESS_MESSAGES</a></li><li><a href="global.html#SignUp">Sign Up</a></li><li><a href="global.html#SignUpPage">Sign Up Page</a></li><li><a href="global.html#TABLES">TABLES</a></li><li><a href="global.html#UpdateProperty">Update Property</a></li><li><a href="global.html#UpdateTag">Update Tag</a></li><li><a href="global.html#VALIDATION">VALIDATION</a></li><li><a href="global.html#addFavorite">addFavorite</a></li><li><a href="global.html#alert">alert</a></li><li><a href="global.html#applyTheme">applyTheme</a></li><li><a href="global.html#auth">auth</a></li><li><a href="global.html#checkSession">checkSession</a></li><li><a href="global.html#closeDatabase">closeDatabase</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#createTables">createTables</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#deleteLog">deleteLog</a></li><li><a href="global.html#displayAttributeMetadata">displayAttributeMetadata</a></li><li><a href="global.html#edit">edit</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#executePageScript">executePageScript</a></li><li><a href="global.html#form">form</a></li><li><a href="global.html#generateAttributeBlock">generateAttributeBlock</a></li><li><a href="global.html#generateTable">generateTable</a></li><li><a href="global.html#getCurrentTheme">getCurrentTheme</a></li><li><a href="global.html#getCurrentUser">getCurrentUser</a></li><li><a href="global.html#handlePopState">handlePopState</a></li><li><a href="global.html#handleResponseError">handleResponseError</a></li><li><a href="global.html#info">info</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initNavigation">initNavigation</a></li><li><a href="global.html#initTheme">initTheme</a></li><li><a href="global.html#initializeDatabase">initializeDatabase</a></li><li><a href="global.html#isAdminLevel1">isAdminLevel1</a></li><li><a href="global.html#isAuthenticated">isAuthenticated</a></li><li><a href="global.html#isDevelopment">isDevelopment</a></li><li><a href="global.html#loadCssFavorites">loadCssFavorites</a></li><li><a href="global.html#loadEditForm">loadEditForm</a></li><li><a href="global.html#loadHeaderAndFooter">loadHeaderAndFooter</a></li><li><a href="global.html#loadTagFavorites">loadTagFavorites</a></li><li><a href="global.html#navigation">navigation</a></li><li><a href="global.html#network">network</a></li><li><a href="global.html#removeFavorite">removeFavorite</a></li><li><a href="global.html#renderTable">renderTable</a></li><li><a href="global.html#requireAdmin">requireAdmin</a></li><li><a href="global.html#requireAuth">requireAuth</a></li><li><a href="global.html#requireLogin">requireLogin</a></li><li><a href="global.html#seedDatabase">seedDatabase</a></li><li><a href="global.html#setupSubmitHandler">setupSubmitHandler</a></li><li><a href="global.html#setupThemeSwitcher">setupThemeSwitcher</a></li><li><a href="global.html#showTemporaryAlert">showTemporaryAlert</a></li><li><a href="global.html#success">success</a></li><li><a href="global.html#tag">tag</a></li><li><a href="global.html#themes">themes</a></li><li><a href="global.html#toggleTheme">toggleTheme</a></li><li><a href="global.html#user">user</a></li><li><a href="global.html#warn">warn</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Dec 12 2025 10:25:07 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -6,6 +6,20 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const dbPath = path.join(__dirname, 'database.sqlite');
 
+/**
+ * Seeds the database with initial data from scriptExample.txt.
+ * 
+ * This function performs the following steps:
+ * 1. Deletes the existing database file if it exists.
+ * 2. Dynamically imports the database module to initialize the connection.
+ * 3. Reads the SQL script from `scriptExample.txt`.
+ * 4. Executes the SQL script to create tables and insert data.
+ * 5. Closes the database connection.
+ * 
+ * @async
+ * @function seedDatabase
+ * @returns {Promise<void>}
+ */
 const seedDatabase = async () => {
     // Delete existing database if it exists
     if (fs.existsSync(dbPath)) {

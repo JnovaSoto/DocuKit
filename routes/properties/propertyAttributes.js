@@ -7,6 +7,11 @@ const router = express.Router();
 
 /**
  * Get all property attributes.
+ * 
+ * @name Get All Property Attributes
+ * @route {GET} /property-attributes
+ * @param {express.Request} req - Express request object
+ * @param {express.Response} res - Express response object
  */
 router.get(ROUTES.PROPERTY_ATTRIBUTES.BASE, (req, res) => {
     const sql = `SELECT * FROM property_attributes`;
@@ -17,7 +22,14 @@ router.get(ROUTES.PROPERTY_ATTRIBUTES.BASE, (req, res) => {
 });
 
 /**
- * Create a new property attribute.
+ * Create a new property attribute (Authenticated users).
+ * 
+ * @name Create Property Attribute
+ * @route {POST} /property-attributes/create
+ * @param {Object} req.body - The request body
+ * @param {number} req.body.propertyId - The ID of the associated property
+ * @param {Array<Object>} req.body.attributes - Array of attribute objects
+ * @param {express.Response} res - Express response object
  */
 router.post(ROUTES.PROPERTY_ATTRIBUTES.CREATE, isAuthenticated, (req, res) => {
     const { propertyId, attributes } = req.body;
@@ -42,6 +54,12 @@ router.post(ROUTES.PROPERTY_ATTRIBUTES.CREATE, isAuthenticated, (req, res) => {
 
 /**
  * Get all property attributes by property ID.
+ * 
+ * @name Get Attributes By Property ID
+ * @route {GET} /property-attributes/property/:id
+ * @param {express.Request} req - Express request object
+ * @param {string} req.params.id - The ID of the property
+ * @param {express.Response} res - Express response object
  */
 router.get(ROUTES.PROPERTY_ATTRIBUTES.BY_PROPERTY_ID, (req, res) => {
     const propertyId = req.params.id;
@@ -55,6 +73,12 @@ router.get(ROUTES.PROPERTY_ATTRIBUTES.BY_PROPERTY_ID, (req, res) => {
 
 /**
  * Get a property attribute by name.
+ * 
+ * @name Get Property Attribute By Name
+ * @route {GET} /property-attributes/name/:name
+ * @param {express.Request} req - Express request object
+ * @param {string} req.params.name - The name of the attribute
+ * @param {express.Response} res - Express response object
  */
 router.get(ROUTES.PROPERTY_ATTRIBUTES.BY_NAME, (req, res) => {
     const attributeName = req.params.name;
