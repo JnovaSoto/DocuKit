@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: public/js/user/logOut.js</title>
+    <title>JSDoc: Source: controllers/partials/partialController.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: public/js/user/logOut.js</h1>
+    <h1 class="page-title">Source: controllers/partials/partialController.js</h1>
 
     
 
@@ -26,54 +26,33 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * Logout functionality.
- * Handles user session termination.
- */
+            <pre class="prettyprint source linenums"><code>const partialController = {
+    /**
+     * Render the header partial.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    getHeader: (req, res) => {
+        res.render('partials/header', {
+            layout: false,
+            user: req.session?.user || null
+        });
+    },
 
-import { API, SUCCESS_MESSAGES } from '../config/constants.js';
-import { showTemporaryAlert } from '../tools/alerts.js';
-import logger from '../tools/logger.js';
-
-/**
- * Initializes the logout functionality.
- * 
- * @param {HTMLElement} logOutButton - The logout button element
- */
-export function init(logOutButton) {
-    logger.auth('Logout script initialized');
-
-    if (!logOutButton) {
-        logger.warn('Logout button not found');
-        return;
+    /**
+     * Render the footer partial.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    getFooter: (req, res) => {
+        res.render('partials/footer', {
+            layout: false
+        });
     }
+};
 
-    logOutButton.addEventListener('click', async (event) => {
-        event.preventDefault();
-
-        try {
-            logger.network('Sending logout request');
-
-            const response = await fetch(API.USERS.LOGOUT, {
-                method: 'POST',
-                credentials: 'include'
-            });
-
-            if (response.ok) {
-                logger.success('User logged out successfully');
-                showTemporaryAlert('success', SUCCESS_MESSAGES.LOGOUT);
-            }
-
-            // Stay on current page after logout
-            window.location.reload();
-
-        } catch (error) {
-            logger.error('Logout failed:', error);
-            // Still reload page even if logout request fails
-            window.location.reload();
-        }
-    });
-}</code></pre>
+export default partialController;
+</code></pre>
         </article>
     </section>
 

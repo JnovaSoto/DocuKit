@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: public/js/user/logOut.js</title>
+    <title>JSDoc: Source: services/users/userService.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: public/js/user/logOut.js</h1>
+    <h1 class="page-title">Source: services/users/userService.js</h1>
 
     
 
@@ -26,54 +26,136 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * Logout functionality.
- * Handles user session termination.
- */
+            <pre class="prettyprint source linenums"><code>import { get, run } from '../../db/database.js';
+import bcrypt from 'bcrypt';
 
-import { API, SUCCESS_MESSAGES } from '../config/constants.js';
-import { showTemporaryAlert } from '../tools/alerts.js';
-import logger from '../tools/logger.js';
-
-/**
- * Initializes the logout functionality.
- * 
- * @param {HTMLElement} logOutButton - The logout button element
- */
-export function init(logOutButton) {
-    logger.auth('Logout script initialized');
-
-    if (!logOutButton) {
-        logger.warn('Logout button not found');
-        return;
-    }
-
-    logOutButton.addEventListener('click', async (event) => {
-        event.preventDefault();
-
-        try {
-            logger.network('Sending logout request');
-
-            const response = await fetch(API.USERS.LOGOUT, {
-                method: 'POST',
-                credentials: 'include'
+const userService = {
+    /**
+     * Find user by login (username or email).
+     * @param {string} login - Username or email.
+     * @returns {Promise&lt;Object>} User object.
+     */
+    findByLogin: (login) => {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM users WHERE username = ? OR email = ?`;
+            get(sql, [login, login], (err, row) => {
+                if (err) reject(err);
+                resolve(row);
             });
+        });
+    },
 
-            if (response.ok) {
-                logger.success('User logged out successfully');
-                showTemporaryAlert('success', SUCCESS_MESSAGES.LOGOUT);
-            }
+    /**
+     * Create a new user.
+     * @param {string} username - User's username.
+     * @param {string} email - User's email.
+     * @param {string} password - User's password.
+     * @param {number} admin - Admin status (0 or 1).
+     * @returns {Promise&lt;number>} New user ID.
+     */
+    createUser: async (username, email, password, admin) => {
+        const saltRounds = 10;
+        const hash = await bcrypt.hash(password, saltRounds);
 
-            // Stay on current page after logout
-            window.location.reload();
+        return new Promise((resolve, reject) => {
+            const sql = `INSERT INTO users (username, email, password, admin) VALUES (?, ?, ?, ?)`;
+            run(sql, [username, email, hash, admin], function (err) {
+                if (err) reject(err);
+                resolve(this.lastID);
+            });
+        });
+    },
 
-        } catch (error) {
-            logger.error('Logout failed:', error);
-            // Still reload page even if logout request fails
-            window.location.reload();
-        }
-    });
-}</code></pre>
+    /**
+     * Update user photo path.
+     * @param {number} userId - ID of the user.
+     * @param {string} photoPath - Path to the user's photo.
+     * @returns {Promise&lt;void>}
+     */
+    updatePhoto: (userId, photoPath) => {
+        return new Promise((resolve, reject) => {
+            const sql = `UPDATE users SET photo = ? WHERE id = ?`;
+            run(sql, [photoPath, userId], (err) => {
+                if (err) reject(err);
+                resolve();
+            });
+        });
+    },
+
+    /**
+     * Find user by ID.
+     * @param {number} id - User ID.
+     * @returns {Promise&lt;Object>} User object.
+     */
+    findById: (id) => {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT id, username, email, admin, photo, favorites, favoritesCss FROM users WHERE id = ?`;
+            get(sql, [id], (err, row) => {
+                if (err) reject(err);
+                resolve(row);
+            });
+        });
+    },
+
+    /**
+     * Find user by ID (for admin, returns all fields including password hash if needed, but usually limited).
+     * @param {number} id - User ID.
+     * @returns {Promise&lt;Object>} User object.
+     */
+    findByIdAdmin: (id) => {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM users WHERE ID = ?`;
+            get(sql, [id], (err, row) => {
+                if (err) reject(err);
+                resolve(row);
+            });
+        });
+    },
+
+    /**
+     * Get user favorites by ID and type.
+     * @param {number} userId - User ID.
+     * @param {string} type - 'tags' or 'css'.
+     * @returns {Promise&lt;Array>} Array of favorite IDs.
+     */
+    getFavorites: (userId, type = 'tags') => {
+        return new Promise((resolve, reject) => {
+            const column = type === 'css' ? 'favoritesCss' : 'favorites';
+            const sql = `SELECT ${column} FROM users WHERE id = ?`;
+            get(sql, [userId], (err, row) => {
+                if (err) reject(err);
+                if (!row) return resolve(null); // User not found
+                try {
+                    const favorites = row[column] ? JSON.parse(row[column]) : [];
+                    resolve(favorites);
+                } catch (parseErr) {
+                    resolve([]);
+                }
+            });
+        });
+    },
+
+    /**
+     * Update user favorites.
+     * @param {number} userId - User ID.
+     * @param {Array} favorites - Array of favorite IDs.
+     * @param {string} type - 'tags' or 'css'.
+     * @returns {Promise&lt;void>}
+     */
+    updateFavorites: (userId, favorites, type = 'tags') => {
+        return new Promise((resolve, reject) => {
+            const column = type === 'css' ? 'favoritesCss' : 'favorites';
+            const sql = `UPDATE users SET ${column} = ? WHERE id = ?`;
+            run(sql, [JSON.stringify(favorites), userId], (err) => {
+                if (err) reject(err);
+                resolve();
+            });
+        });
+    }
+};
+
+export default userService;
+</code></pre>
         </article>
     </section>
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: public/js/user/logOut.js</title>
+    <title>JSDoc: Source: controllers/tags/attributeMetadataController.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: public/js/user/logOut.js</h1>
+    <h1 class="page-title">Source: controllers/tags/attributeMetadataController.js</h1>
 
     
 
@@ -26,54 +26,65 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * Logout functionality.
- * Handles user session termination.
- */
+            <pre class="prettyprint source linenums"><code>import attributeMetadataService from '../../services/tags/attributeMetadataService.js';
 
-import { API, SUCCESS_MESSAGES } from '../config/constants.js';
-import { showTemporaryAlert } from '../tools/alerts.js';
-import logger from '../tools/logger.js';
+const attributeMetadataController = {
+    /**
+     * Get all attribute metadata.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    getAllMetadata: async (req, res) => {
+        try {
+            const rows = await attributeMetadataService.getAllMetadata();
+            res.json(rows);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    },
 
-/**
- * Initializes the logout functionality.
- * 
- * @param {HTMLElement} logOutButton - The logout button element
- */
-export function init(logOutButton) {
-    logger.auth('Logout script initialized');
+    /**
+     * Get metadata by name.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    getMetadataByName: async (req, res) => {
+        const name = req.params.name;
+        try {
+            const row = await attributeMetadataService.getMetadataByName(name);
+            if (!row) return res.status(404).json({ error: 'Attribute metadata not found' });
+            res.json(row);
+        } catch (err) {
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    },
 
-    if (!logOutButton) {
-        logger.warn('Logout button not found');
-        return;
-    }
+    /**
+     * Create attribute metadata.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    createMetadata: async (req, res) => {
+        const { attributeName, generalDescription } = req.body;
 
-    logOutButton.addEventListener('click', async (event) => {
-        event.preventDefault();
+        if (!attributeName || !generalDescription) {
+            return res.status(400).json({ error: 'Missing required fields: attributeName and generalDescription' });
+        }
 
         try {
-            logger.network('Sending logout request');
-
-            const response = await fetch(API.USERS.LOGOUT, {
-                method: 'POST',
-                credentials: 'include'
-            });
-
-            if (response.ok) {
-                logger.success('User logged out successfully');
-                showTemporaryAlert('success', SUCCESS_MESSAGES.LOGOUT);
+            const id = await attributeMetadataService.createMetadata(attributeName, generalDescription);
+            res.status(201).json({ id, attributeName, generalDescription });
+        } catch (err) {
+            if (err.message &amp;&amp; err.message.includes('UNIQUE constraint failed')) {
+                return res.status(409).json({ error: 'Attribute metadata already exists' });
             }
-
-            // Stay on current page after logout
-            window.location.reload();
-
-        } catch (error) {
-            logger.error('Logout failed:', error);
-            // Still reload page even if logout request fails
-            window.location.reload();
+            res.status(500).json({ error: err.message });
         }
-    });
-}</code></pre>
+    }
+};
+
+export default attributeMetadataController;
+</code></pre>
         </article>
     </section>
 

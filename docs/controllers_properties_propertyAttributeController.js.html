@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: public/js/user/logOut.js</title>
+    <title>JSDoc: Source: controllers/properties/propertyAttributeController.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: public/js/user/logOut.js</h1>
+    <h1 class="page-title">Source: controllers/properties/propertyAttributeController.js</h1>
 
     
 
@@ -26,54 +26,77 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * Logout functionality.
- * Handles user session termination.
- */
+            <pre class="prettyprint source linenums"><code>import propertyAttributeService from '../../services/properties/propertyAttributeService.js';
 
-import { API, SUCCESS_MESSAGES } from '../config/constants.js';
-import { showTemporaryAlert } from '../tools/alerts.js';
-import logger from '../tools/logger.js';
+const propertyAttributeController = {
+    /**
+     * Get all property attributes.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    getAllAttributes: async (req, res) => {
+        try {
+            const rows = await propertyAttributeService.getAllAttributes();
+            res.json(rows);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    },
 
-/**
- * Initializes the logout functionality.
- * 
- * @param {HTMLElement} logOutButton - The logout button element
- */
-export function init(logOutButton) {
-    logger.auth('Logout script initialized');
+    /**
+     * Create property attributes.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    createAttributes: async (req, res) => {
+        const { propertyId, attributes } = req.body;
 
-    if (!logOutButton) {
-        logger.warn('Logout button not found');
-        return;
-    }
-
-    logOutButton.addEventListener('click', async (event) => {
-        event.preventDefault();
+        if (!Array.isArray(attributes)) {
+            return res.status(400).json({ error: 'attributes must be an array.' });
+        }
 
         try {
-            logger.network('Sending logout request');
-
-            const response = await fetch(API.USERS.LOGOUT, {
-                method: 'POST',
-                credentials: 'include'
-            });
-
-            if (response.ok) {
-                logger.success('User logged out successfully');
-                showTemporaryAlert('success', SUCCESS_MESSAGES.LOGOUT);
-            }
-
-            // Stay on current page after logout
-            window.location.reload();
-
-        } catch (error) {
-            logger.error('Logout failed:', error);
-            // Still reload page even if logout request fails
-            window.location.reload();
+            await propertyAttributeService.createAttributes(propertyId, attributes);
+            res.status(201).json({ message: 'Property attributes added successfully' });
+        } catch (err) {
+            res.status(500).json({ error: err.message });
         }
-    });
-}</code></pre>
+    },
+
+    /**
+     * Get attributes by property ID.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    getAttributesByPropertyId: async (req, res) => {
+        const propertyId = req.params.id;
+        try {
+            const rows = await propertyAttributeService.getAttributesByPropertyId(propertyId);
+            res.json(rows);
+        } catch (err) {
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    },
+
+    /**
+     * Get attributes by name.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    getAttributesByName: async (req, res) => {
+        const attributeName = req.params.name;
+        try {
+            const rows = await propertyAttributeService.getAttributesByName(attributeName);
+            if (rows.length === 0) return res.status(404).json({ error: 'Attribute not found' });
+            res.json(rows);
+        } catch (err) {
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+};
+
+export default propertyAttributeController;
+</code></pre>
         </article>
     </section>
 

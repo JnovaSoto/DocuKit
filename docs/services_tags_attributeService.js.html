@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: public/js/user/logOut.js</title>
+    <title>JSDoc: Source: services/tags/attributeService.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: public/js/user/logOut.js</h1>
+    <h1 class="page-title">Source: services/tags/attributeService.js</h1>
 
     
 
@@ -26,54 +26,79 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * Logout functionality.
- * Handles user session termination.
- */
+            <pre class="prettyprint source linenums"><code>import { all, prepare } from '../../db/database.js';
 
-import { API, SUCCESS_MESSAGES } from '../config/constants.js';
-import { showTemporaryAlert } from '../tools/alerts.js';
-import logger from '../tools/logger.js';
-
-/**
- * Initializes the logout functionality.
- * 
- * @param {HTMLElement} logOutButton - The logout button element
- */
-export function init(logOutButton) {
-    logger.auth('Logout script initialized');
-
-    if (!logOutButton) {
-        logger.warn('Logout button not found');
-        return;
-    }
-
-    logOutButton.addEventListener('click', async (event) => {
-        event.preventDefault();
-
-        try {
-            logger.network('Sending logout request');
-
-            const response = await fetch(API.USERS.LOGOUT, {
-                method: 'POST',
-                credentials: 'include'
+const attributeService = {
+    /**
+     * Retrieves all attributes from the database.
+     * @returns {Promise&lt;Array>} A promise that resolves to an array of attribute objects.
+     */
+    getAllAttributes: () => {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM attributes`;
+            all(sql, [], (err, rows) => {
+                if (err) reject(err);
+                resolve(rows);
             });
+        });
+    },
 
-            if (response.ok) {
-                logger.success('User logged out successfully');
-                showTemporaryAlert('success', SUCCESS_MESSAGES.LOGOUT);
+    /**
+     * Creates multiple attributes for a tag.
+     * @param {number} tagId - The ID of the tag the attributes belong to.
+     * @param {Array&lt;Object>} attributes - An array of attribute objects containing `attribute` and `info` properties.
+     * @returns {Promise&lt;void>} A promise that resolves when the attributes are created.
+     */
+    createAttributes: (tagId, attributes) => {
+        return new Promise((resolve, reject) => {
+            const sql = `INSERT INTO attributes (attribute, info, tagId) VALUES (?, ?, ?)`;
+            const stmt = prepare(sql);
+
+            for (const attr of attributes) {
+                if (!attr.attribute) continue;
+                stmt.run([attr.attribute, attr.info, tagId]);
             }
 
-            // Stay on current page after logout
-            window.location.reload();
+            stmt.finalize(err => {
+                if (err) reject(err);
+                resolve();
+            });
+        });
+    },
 
-        } catch (error) {
-            logger.error('Logout failed:', error);
-            // Still reload page even if logout request fails
-            window.location.reload();
-        }
-    });
-}</code></pre>
+    /**
+     * Retrieves attributes associated with a specific tag ID.
+     * @param {number} tagId - The ID of the tag.
+     * @returns {Promise&lt;Array>} A promise that resolves to an array of attribute objects.
+     */
+    getAttributesByTagId: (tagId) => {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM attributes WHERE tagId = ?`;
+            all(sql, tagId, (err, rows) => {
+                if (err) reject(err);
+                resolve(rows || []);
+            });
+        });
+    },
+
+    /**
+     * Retrieves attributes by their name.
+     * @param {string} name - The name of the attribute to search for.
+     * @returns {Promise&lt;Array>} A promise that resolves to an array of matching attribute objects.
+     */
+    getAttributesByName: (name) => {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM attributes WHERE attribute = ?`;
+            all(sql, [name], (err, rows) => {
+                if (err) reject(err);
+                resolve(rows);
+            });
+        });
+    }
+};
+
+export default attributeService;
+</code></pre>
         </article>
     </section>
 

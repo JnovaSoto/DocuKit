@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: public/js/user/logOut.js</title>
+    <title>JSDoc: Source: controllers/tags/attributeController.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: public/js/user/logOut.js</h1>
+    <h1 class="page-title">Source: controllers/tags/attributeController.js</h1>
 
     
 
@@ -26,54 +26,78 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * Logout functionality.
- * Handles user session termination.
- */
+            <pre class="prettyprint source linenums"><code>import attributeService from '../../services/tags/attributeService.js';
 
-import { API, SUCCESS_MESSAGES } from '../config/constants.js';
-import { showTemporaryAlert } from '../tools/alerts.js';
-import logger from '../tools/logger.js';
+const attributeController = {
+    /**
+     * Get all attributes.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    getAllAttributes: async (req, res) => {
+        try {
+            const attributes = await attributeService.getAllAttributes();
+            res.json(attributes);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    },
 
-/**
- * Initializes the logout functionality.
- * 
- * @param {HTMLElement} logOutButton - The logout button element
- */
-export function init(logOutButton) {
-    logger.auth('Logout script initialized');
+    /**
+     * Create attributes for a tag.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    createAttributes: async (req, res) => {
+        const { tagId, attributes } = req.body;
 
-    if (!logOutButton) {
-        logger.warn('Logout button not found');
-        return;
-    }
-
-    logOutButton.addEventListener('click', async (event) => {
-        event.preventDefault();
+        if (!Array.isArray(attributes)) {
+            return res.status(400).json({ error: 'attributes must be an array.' });
+        }
 
         try {
-            logger.network('Sending logout request');
-
-            const response = await fetch(API.USERS.LOGOUT, {
-                method: 'POST',
-                credentials: 'include'
-            });
-
-            if (response.ok) {
-                logger.success('User logged out successfully');
-                showTemporaryAlert('success', SUCCESS_MESSAGES.LOGOUT);
-            }
-
-            // Stay on current page after logout
-            window.location.reload();
-
-        } catch (error) {
-            logger.error('Logout failed:', error);
-            // Still reload page even if logout request fails
-            window.location.reload();
+            await attributeService.createAttributes(tagId, attributes);
+            res.status(201).json({ message: 'Attributes added successfully' });
+        } catch (err) {
+            res.status(500).json({ error: err.message });
         }
-    });
-}</code></pre>
+    },
+
+    /**
+     * Get attributes by tag ID.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    getAttributesByTagId: async (req, res) => {
+        const tagId = req.params.id;
+        try {
+            const rows = await attributeService.getAttributesByTagId(tagId);
+            if (rows.length === 0) return res.status(404).json({ error: 'No attributes found for this tag' });
+            res.json(rows);
+        } catch (err) {
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    },
+
+    /**
+     * Get attributes by name.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    getAttributesByName: async (req, res) => {
+        const name = req.params.name;
+        try {
+            const rows = await attributeService.getAttributesByName(name);
+            if (rows.length === 0) return res.status(404).json({ error: 'No attributes found' });
+            res.json(rows);
+        } catch (err) {
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+};
+
+export default attributeController;
+</code></pre>
         </article>
     </section>
 

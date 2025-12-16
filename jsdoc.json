@@ -9,7 +9,9 @@
             "db",
             "middleware",
             "routes",
-            "public/js"
+            "public/js",
+            "controllers",
+            "services"
         ],
         "includePattern": ".+\\.js(doc|x)?$",
         "excludePattern": "(^|\\/|\\\\)_"

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: public/js/user/logOut.js</title>
+    <title>JSDoc: Source: services/tags/tagService.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: public/js/user/logOut.js</h1>
+    <h1 class="page-title">Source: services/tags/tagService.js</h1>
 
     
 
@@ -26,54 +26,159 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * Logout functionality.
- * Handles user session termination.
- */
+            <pre class="prettyprint source linenums"><code>import { get, run, all, prepare } from '../../db/database.js';
 
-import { API, SUCCESS_MESSAGES } from '../config/constants.js';
-import { showTemporaryAlert } from '../tools/alerts.js';
-import logger from '../tools/logger.js';
+const tagService = {
+    /**
+     * Retrieves all tags from the database.
+     * @returns {Promise&lt;Array>} A promise that resolves to an array of tag objects.
+     */
+    getAllTags: () => {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM tags`;
+            all(sql, [], (err, rows) => {
+                if (err) reject(err);
+                resolve(rows);
+            });
+        });
+    },
+
+    /**
+     * Creates a new tag.
+     * @param {string} tagName - The name of the tag.
+     * @param {string} usability - A description of the tag's usability.
+     * @param {string} [content] - Optional additional content for the tag.
+     * @returns {Promise&lt;number>} A promise that resolves to the ID of the newly created tag.
+     */
+    createTag: (tagName, usability, content) => {
+        return new Promise((resolve, reject) => {
+            const sql = `INSERT INTO tags (tagName, usability, content) VALUES (?, ?, ?)`;
+            run(sql, [tagName, usability, content || ''], function (err) {
+                if (err) reject(err);
+                resolve(this.lastID);
+            });
+        });
+    },
+
+    /**
+     * Retrieves a tag by its ID.
+     * @param {number} id - The ID of the tag to retrieve.
+     * @returns {Promise&lt;Object|undefined>} A promise that resolves to the tag object if found, or undefined.
+     */
+    getTagById: (id) => {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM tags WHERE id = ?`;
+            get(sql, [id], (err, row) => {
+                if (err) reject(err);
+                resolve(row);
+            });
+        });
+    },
+
+    /**
+     * Retrieves multiple tags by their IDs.
+     * @param {Array&lt;number>} ids - An array of tag IDs.
+     * @returns {Promise&lt;Array>} A promise that resolves to an array of tag objects.
+     */
+    getTagsByIds: (ids) => {
+        return new Promise((resolve, reject) => {
+            const placeholders = ids.map(() => '?').join(',');
+            const sqlTag = `SELECT * FROM Tags WHERE id IN (${placeholders})`;
+
+            all(sqlTag, ids, (err, tagRows) => {
+                if (err) reject(err);
+                resolve(tagRows);
+            });
+        });
+    },
+
+    /**
+     * Retrieves a tag by its name.
+     * @param {string} tagName - The name of the tag to search for.
+     * @returns {Promise&lt;Array>} A promise that resolves to an array of matching tag objects.
+     */
+    getTagByName: (tagName) => {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM tags WHERE tagName = ?`;
+            all(sql, [tagName.toLowerCase()], (err, rows) => {
+                if (err) reject(err);
+                resolve(rows);
+            });
+        });
+    },
+
+    /**
+     * Updates an existing tag and its attributes.
+     * @param {number} id - The ID of the tag to update.
+     * @param {string} tagName - The new name of the tag.
+     * @param {string} usability - The new usability description.
+     * @param {Array&lt;Object>} [attributes] - An optional array of attributes to update.
+     * @returns {Promise&lt;boolean|null>} A promise that resolves to `true` if successful, or `null` if the tag was not found.
+     */
+    updateTag: (id, tagName, usability, attributes) => {
+        return new Promise((resolve, reject) => {
+            const updateTagSql = `UPDATE tags SET tagName = ?, usability = ? WHERE id = ?`;
+
+            run(updateTagSql, [tagName, usability, id], function (err) {
+                if (err) return reject(new Error('Failed to update tag: ' + err.message));
+                if (this.changes === 0) return resolve(null);
+
+                if (!Array.isArray(attributes)) return resolve(true);
+
+                updateTagAttributes(id, attributes)
+                    .then(() => resolve(true))
+                    .catch(reject);
+            });
+        });
+    },
+
+    /**
+     * Deletes a tag and its related attributes.
+     * @param {number} id - The ID of the tag to delete.
+     * @returns {Promise&lt;boolean>} A promise that resolves to `true` if the tag was deleted, or `false` if not found.
+     */
+    deleteTag: (id) => {
+        return new Promise((resolve, reject) => {
+            const deleteAttributesSql = `DELETE FROM attributes WHERE tagId = ?`;
+            run(deleteAttributesSql, [id], function (err) {
+                if (err) return reject(new Error('Failed to delete tag attributes: ' + err.message));
+
+                const deleteTagSql = `DELETE FROM tags WHERE id = ?`;
+                run(deleteTagSql, [id], function (err) {
+                    if (err) return reject(new Error('Failed to delete tag: ' + err.message));
+                    if (this.changes === 0) return resolve(false);
+                    resolve(true);
+                });
+            });
+        });
+    }
+};
 
 /**
- * Initializes the logout functionality.
- * 
- * @param {HTMLElement} logOutButton - The logout button element
+ * Helper function to update attributes for a tag.
+ * Deletes existing attributes and inserts new ones.
+ * @param {number} tagId - The ID of the tag.
+ * @param {Array&lt;Object>} attributes - The new list of attributes.
+ * @returns {Promise&lt;void>} A promise that resolves when the update is complete.
  */
-export function init(logOutButton) {
-    logger.auth('Logout script initialized');
+const updateTagAttributes = (tagId, attributes) => {
+    return new Promise((resolve, reject) => {
+        run(`DELETE FROM attributes WHERE tagId = ?`, [tagId], (err) => {
+            if (err) return reject(new Error('Failed to clear attributes: ' + err.message));
 
-    if (!logOutButton) {
-        logger.warn('Logout button not found');
-        return;
-    }
+            if (attributes.length === 0) return resolve();
 
-    logOutButton.addEventListener('click', async (event) => {
-        event.preventDefault();
-
-        try {
-            logger.network('Sending logout request');
-
-            const response = await fetch(API.USERS.LOGOUT, {
-                method: 'POST',
-                credentials: 'include'
+            const stmt = prepare(`INSERT INTO attributes (attribute, info, tagId) VALUES (?, ?, ?)`);
+            attributes.forEach(attr => {
+                if (attr.attribute) stmt.run([attr.attribute, attr.info || '', tagId]);
             });
 
-            if (response.ok) {
-                logger.success('User logged out successfully');
-                showTemporaryAlert('success', SUCCESS_MESSAGES.LOGOUT);
-            }
-
-            // Stay on current page after logout
-            window.location.reload();
-
-        } catch (error) {
-            logger.error('Logout failed:', error);
-            // Still reload page even if logout request fails
-            window.location.reload();
-        }
+            stmt.finalize(err => err ? reject(new Error('Failed to insert attributes: ' + err.message)) : resolve());
+        });
     });
-}</code></pre>
+};
+export default tagService;
+</code></pre>
         </article>
     </section>
 
