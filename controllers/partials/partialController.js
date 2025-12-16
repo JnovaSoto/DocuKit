@@ -1,4 +1,9 @@
 const partialController = {
+    /**
+     * Render the header partial.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getHeader: (req, res) => {
         res.render('partials/header', {
             layout: false,
@@ -6,6 +11,11 @@ const partialController = {
         });
     },
 
+    /**
+     * Render the footer partial.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getFooter: (req, res) => {
         res.render('partials/footer', {
             layout: false

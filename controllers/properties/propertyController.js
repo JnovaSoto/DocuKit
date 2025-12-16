@@ -1,6 +1,11 @@
 import propertyService from '../../services/properties/propertyService.js';
 
 const propertyController = {
+    /**
+     * Get all properties.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getAllProperties: async (req, res) => {
         try {
             const properties = await propertyService.getAllProperties();
@@ -10,6 +15,11 @@ const propertyController = {
         }
     },
 
+    /**
+     * Create a new property.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     createProperty: async (req, res) => {
         const { propertyName, usability, content } = req.body;
         if (!propertyName || !usability) return res.status(400).json({ error: 'Missing fields' });
@@ -25,6 +35,11 @@ const propertyController = {
         }
     },
 
+    /**
+     * Get a property by ID.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getPropertyById: async (req, res) => {
         const id = req.params.id;
         try {
@@ -36,6 +51,11 @@ const propertyController = {
         }
     },
 
+    /**
+     * Get properties by multiple IDs.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getPropertiesByIds: async (req, res) => {
         const idsParam = req.params.ids;
         if (!idsParam) return res.status(400).json({ error: 'No IDs received' });
@@ -50,6 +70,11 @@ const propertyController = {
         }
     },
 
+    /**
+     * Get a property by name.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getPropertyByName: async (req, res) => {
         const propertyName = req.params.name;
         try {
@@ -61,6 +86,11 @@ const propertyController = {
         }
     },
 
+    /**
+     * Update a property.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     updateProperty: async (req, res) => {
         const id = req.params.id;
         const { propertyName, usability, attributes } = req.body;
@@ -83,6 +113,11 @@ const propertyController = {
         }
     },
 
+    /**
+     * Delete a property.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     deleteProperty: async (req, res) => {
         const id = req.params.id;
         try {

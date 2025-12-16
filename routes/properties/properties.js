@@ -52,7 +52,7 @@ router.get(ROUTES.PROPERTIES.BY_NAME, propertyController.getPropertyByName);
  * @name Update Property
  * @route {PUT} /properties/:id
  */
-router.put('/:id', isAdminLevel1, propertyController.updateProperty);
+router.put(ROUTES.PROPERTIES.UPDATE, isAdminLevel1, propertyController.updateProperty);
 
 /**
  * Delete property and all related attributes (Admin only).

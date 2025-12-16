@@ -1,6 +1,11 @@
 import attributeMetadataService from '../../services/tags/attributeMetadataService.js';
 
 const attributeMetadataController = {
+    /**
+     * Get all attribute metadata.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getAllMetadata: async (req, res) => {
         try {
             const rows = await attributeMetadataService.getAllMetadata();
@@ -10,6 +15,11 @@ const attributeMetadataController = {
         }
     },
 
+    /**
+     * Get metadata by name.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getMetadataByName: async (req, res) => {
         const name = req.params.name;
         try {
@@ -21,6 +31,11 @@ const attributeMetadataController = {
         }
     },
 
+    /**
+     * Create attribute metadata.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     createMetadata: async (req, res) => {
         const { attributeName, generalDescription } = req.body;
 

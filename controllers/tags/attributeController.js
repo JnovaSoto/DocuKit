@@ -1,6 +1,11 @@
 import attributeService from '../../services/tags/attributeService.js';
 
 const attributeController = {
+    /**
+     * Get all attributes.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getAllAttributes: async (req, res) => {
         try {
             const attributes = await attributeService.getAllAttributes();
@@ -10,6 +15,11 @@ const attributeController = {
         }
     },
 
+    /**
+     * Create attributes for a tag.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     createAttributes: async (req, res) => {
         const { tagId, attributes } = req.body;
 
@@ -25,6 +35,11 @@ const attributeController = {
         }
     },
 
+    /**
+     * Get attributes by tag ID.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getAttributesByTagId: async (req, res) => {
         const tagId = req.params.id;
         try {
@@ -36,6 +51,11 @@ const attributeController = {
         }
     },
 
+    /**
+     * Get attributes by name.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getAttributesByName: async (req, res) => {
         const name = req.params.name;
         try {

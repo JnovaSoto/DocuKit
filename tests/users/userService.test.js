@@ -1,4 +1,4 @@
-// tests/users/userService.test.js
+// tests/users/userService.test.js 
 
 import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 
@@ -436,5 +436,4 @@ describe("userService Unit Tests", () => {
 
         await expect(userService.updateFavorites(1, [], 'tags')).rejects.toThrow(mockError);
     });
-
 });

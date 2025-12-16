@@ -1,6 +1,11 @@
 import propertyAttributeService from '../../services/properties/propertyAttributeService.js';
 
 const propertyAttributeController = {
+    /**
+     * Get all property attributes.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getAllAttributes: async (req, res) => {
         try {
             const rows = await propertyAttributeService.getAllAttributes();
@@ -10,6 +15,11 @@ const propertyAttributeController = {
         }
     },
 
+    /**
+     * Create property attributes.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     createAttributes: async (req, res) => {
         const { propertyId, attributes } = req.body;
 
@@ -25,6 +35,11 @@ const propertyAttributeController = {
         }
     },
 
+    /**
+     * Get attributes by property ID.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getAttributesByPropertyId: async (req, res) => {
         const propertyId = req.params.id;
         try {
@@ -35,6 +50,11 @@ const propertyAttributeController = {
         }
     },
 
+    /**
+     * Get attributes by name.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getAttributesByName: async (req, res) => {
         const attributeName = req.params.name;
         try {

@@ -52,7 +52,7 @@ router.get(ROUTES.TAGS.BY_NAME, tagController.getTagByName);
  * @name Update Tag
  * @route {PUT} /tags/:id
  */
-router.put('/:id', isAdminLevel1, tagController.updateTag);
+router.put(ROUTES.TAGS.UPDATE, isAdminLevel1, tagController.updateTag);
 
 /**
  * Delete tag and all related attributes (Admin only).

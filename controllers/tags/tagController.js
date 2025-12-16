@@ -1,6 +1,11 @@
 import tagService from '../../services/tags/tagService.js';
 
 const tagController = {
+    /**
+     * Get all tags.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getAllTags: async (req, res) => {
         try {
             const tags = await tagService.getAllTags();
@@ -10,6 +15,11 @@ const tagController = {
         }
     },
 
+    /**
+     * Create a new tag.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     createTag: async (req, res) => {
         const { tagName, usability, content } = req.body;
         if (!tagName || !usability) return res.status(400).json({ error: 'Missing fields' });
@@ -22,6 +32,11 @@ const tagController = {
         }
     },
 
+    /**
+     * Get a tag by ID.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getTagById: async (req, res) => {
         const id = req.params.id;
         try {
@@ -33,6 +48,11 @@ const tagController = {
         }
     },
 
+    /**
+     * Get tags by multiple IDs.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getTagsByIds: async (req, res) => {
         const idsParam = req.params.ids;
         if (!idsParam) return res.status(400).json({ error: 'No IDs received' });
@@ -47,6 +67,11 @@ const tagController = {
         }
     },
 
+    /**
+     * Get a tag by name.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getTagByName: async (req, res) => {
         const tagName = req.params.name;
         try {
@@ -58,6 +83,11 @@ const tagController = {
         }
     },
 
+    /**
+     * Update a tag.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     updateTag: async (req, res) => {
         const id = req.params.id;
         const { tagName, usability, attributes } = req.body;
@@ -80,6 +110,11 @@ const tagController = {
         }
     },
 
+    /**
+     * Delete a tag.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     deleteTag: async (req, res) => {
         const id = req.params.id;
         try {

@@ -4,6 +4,11 @@ import validator from 'validator';
 import { movePhotoToUserFolder } from '../../config/multer.js';
 
 const userController = {
+    /**
+     * Authenticate and login a user.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     login: async (req, res) => {
         const { login, password } = req.body;
         if (!login || !password) return res.status(400).json({ error: 'All the inputs have to be fulled' });
@@ -26,6 +31,11 @@ const userController = {
         }
     },
 
+    /**
+     * Register a new user.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     signUp: async (req, res) => {
         try {
             const { username, email, password, admin } = req.body;
@@ -66,6 +76,11 @@ const userController = {
         }
     },
 
+    /**
+     * Logout the current user.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     logout: (req, res) => {
         if (req.session) {
             req.session.destroy(err => {
@@ -78,6 +93,11 @@ const userController = {
         }
     },
 
+    /**
+     * Get current user's session data.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getMe: async (req, res) => {
         if (!req.session.userId) return res.json({ loggedIn: false });
 
@@ -103,6 +123,11 @@ const userController = {
         }
     },
 
+    /**
+     * Get current user's favorite tags.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getFavorites: async (req, res) => {
         const userId = req.session.userId;
         try {
@@ -114,6 +139,11 @@ const userController = {
         }
     },
 
+    /**
+     * Add a tag to favorites.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     addFavorite: async (req, res) => {
         const userId = req.session.userId;
         const { tagId } = req.body;
@@ -138,6 +168,11 @@ const userController = {
         }
     },
 
+    /**
+     * Remove a tag from favorites.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     removeFavorite: async (req, res) => {
         const userId = req.session.userId;
         const tagId = parseInt(req.params.tagId, 10);
@@ -157,6 +192,11 @@ const userController = {
         }
     },
 
+    /**
+     * Get user by ID (Admin).
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getUserById: async (req, res) => {
         const id = parseInt(req.params.id);
         if (isNaN(id)) return res.status(400).json({ error: 'Invalid user ID' });
@@ -170,6 +210,11 @@ const userController = {
         }
     },
 
+    /**
+     * Get current user's CSS property favorites.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     getCssFavorites: async (req, res) => {
         const userId = req.session.userId;
         try {
@@ -181,6 +226,11 @@ const userController = {
         }
     },
 
+    /**
+     * Add a CSS property to favorites.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     addCssFavorite: async (req, res) => {
         const userId = req.session.userId;
         const { propertyId } = req.body;
@@ -205,6 +255,11 @@ const userController = {
         }
     },
 
+    /**
+     * Remove a CSS property from favorites.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
     removeCssFavorite: async (req, res) => {
         const userId = req.session.userId;
         const propertyId = parseInt(req.params.propertyId, 10);
