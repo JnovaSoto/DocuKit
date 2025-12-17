@@ -388,95 +388,95 @@ INSERT OR IGNORE INTO properties (propertyName, usability, content) VALUES
 
 -- 2. ATRIBUTOS DE PROPIEDAD (Valores específicos para cada PropertyId)
 
--- Propiedad: color (ID: 1)
+-- Property: color (ID: 1)
 INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
-('red', 'Valor de color usando un nombre predefinido', 1),
-('#FF0000', 'Rojo puro en formato hexadecimal', 1),
-('rgb(255, 0, 0)', 'Rojo puro en formato RGB', 1),
-('transparent', 'Define el color como completamente transparente', 1);
+('red', 'Color value using a predefined name', 1),
+('#FF0000', 'Pure red in hexadecimal format', 1),
+('rgb(255, 0, 0)', 'Pure red in RGB format', 1),
+('transparent', 'Defines the color as completely transparent', 1);
 
--- Propiedad: font-size (ID: 2)
+-- Property: font-size (ID: 2)
 INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
-('16px', 'Tamaño de fuente de 16 píxeles (valor absoluto)', 2),
-('1.2em', 'Tamaño relativo a la fuente del elemento padre', 2),
-('small', 'Tamaño de fuente predefinido (palabra clave)', 2),
-('120%', 'Tamaño relativo al tamaño de fuente del padre (porcentaje)', 2);
+('16px', '16-pixel font size (absolute value)', 2),
+('1.2em', 'Size relative to the font of the parent element', 2),
+('small', 'Predefined font size (keyword)', 2),
+('120%', 'Size relative to the parent font size (percentage)', 2);
 
--- Propiedad: background-color (ID: 3)
+-- Property: background-color (ID: 3)
 INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
-('blue', 'Color azul usando nombre', 3),
-('rgba(0, 0, 255, 0.5)', 'Azul con 50% de opacidad (RGBA)', 3),
-('initial', 'Establece la propiedad a su valor por defecto', 3);
+('blue', 'Blue color using name', 3),
+('rgba(0, 0, 255, 0.5)', 'Blue with 50% opacity (RGBA)', 3),
+('initial', 'Sets the property to its default value', 3);
 
--- Propiedad: margin (ID: 4)
+-- Property: margin (ID: 4)
 INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
-('10px', 'Margen de 10px en los cuatro lados', 4),
+('10px', '10px margin on all four sides', 4),
 ('20px 5px', '20px vertical, 5px horizontal (shorthand)', 4),
-('auto', 'Permite que el navegador calcule el margen (uso común para centrar)', 4);
+('auto', 'Allows the browser to calculate the margin (commonly used for centering)', 4);
 
--- Propiedad: padding (ID: 5)
+-- Property: padding (ID: 5)
 INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
-('1rem', 'Relleno de 1 unidad relativa a la fuente raíz', 5),
-('5%', 'Relleno del 5% del ancho del elemento padre', 5);
+('1rem', 'Padding of 1 unit relative to the root font size', 5),
+('5%', 'Padding of 5% of the parent element width', 5);
 
--- Propiedad: display (ID: 6)
+-- Property: display (ID: 6)
 INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
-('block', 'El elemento ocupa su propia línea (ej: <div>)', 6),
-('inline', 'El elemento solo ocupa el ancho necesario (ej: <span>)', 6),
-('flex', 'Establece un contexto de formato flexible', 6),
-('none', 'Oculta el elemento por completo', 6);
+('block', 'The element takes up its own line (e.g., <div>)', 6),
+('inline', 'The element only takes up the necessary width (e.g., <span>)', 6),
+('flex', 'Establishes a flexible formatting context', 6),
+('none', 'Hides the element completely', 6);
 
--- Propiedad: width (ID: 7)
+-- Property: width (ID: 7)
 INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
-('50%', 'El 50% del ancho del contenedor padre', 7),
-('300px', 'Ancho fijo de 300 píxeles', 7);
+('50%', '50% of the parent container width', 7),
+('300px', 'Fixed width of 300 pixels', 7);
 
--- Propiedad: height (ID: 8)
+-- Property: height (ID: 8)
 INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
-('100vh', '100% de la altura de la ventana (viewport height)', 8),
-('auto', 'Altura determinada automáticamente por el contenido', 8);
+('100vh', '100% of the viewport height', 8),
+('auto', 'Height determined automatically by the content', 8);
 
--- Propiedad: border (ID: 9)
+-- Property: border (ID: 9)
 INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
-('1px solid black', 'Borde de 1px, línea sólida, color negro (shorthand)', 9),
-('none', 'No muestra ningún borde', 9);
+('1px solid black', '1px border, solid line, black color (shorthand)', 9),
+('none', 'Shows no border', 9);
 
--- Propiedad: text-align (ID: 10)
+-- Property: text-align (ID: 10)
 INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
-('left', 'Alinea el texto a la izquierda (valor por defecto)', 10),
-('center', 'Alinea el texto al centro', 10),
-('justify', 'Justifica el texto para cubrir todo el ancho', 10);
+('left', 'Aligns text to the left (default value)', 10),
+('center', 'Aligns text to the center', 10),
+('justify', 'Justifies text to cover the full width', 10);
 
--- Propiedad: position (ID: 11)
+-- Property: position (ID: 11)
 INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
-('static', 'Posicionamiento normal (valor por defecto)', 11),
-('relative', 'Posicionamiento relativo a su posición normal', 11),
-('absolute', 'Posicionamiento relativo al ancestro posicionado más cercano', 11),
-('fixed', 'Posicionamiento relativo a la ventana del navegador', 11);
+('static', 'Normal positioning (default value)', 11),
+('relative', 'Positioning relative to its normal position', 11),
+('absolute', 'Positioning relative to the nearest positioned ancestor', 11),
+('fixed', 'Positioning relative to the browser window', 11);
 
--- Propiedad: z-index (ID: 12)
+-- Property: z-index (ID: 12)
 INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
-('100', 'Un número entero positivo para apilar el elemento en la parte superior', 12),
-('-1', 'Un número entero negativo para colocar el elemento detrás del contenido normal', 12),
-('auto', 'El orden de apilamiento lo define el apilamiento del padre', 12);
+('100', 'A positive integer to stack the element on top', 12),
+('-1', 'A negative integer to place the element behind normal content', 12),
+('auto', 'Stacking order is defined by the parent stacking context', 12);
 
--- Propiedad: flex-direction (ID: 13)
+-- Property: flex-direction (ID: 13)
 INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
-('row', 'Eje principal horizontal (izquierda a derecha)', 13),
-('column', 'Eje principal vertical (arriba a abajo)', 13),
-('row-reverse', 'Eje principal horizontal (derecha a izquierda)', 13);
+('row', 'Horizontal main axis (left to right)', 13),
+('column', 'Vertical main axis (top to bottom)', 13),
+('row-reverse', 'Horizontal main axis (right to left)', 13);
 
--- Propiedad: justify-content (ID: 14)
+-- Property: justify-content (ID: 14)
 INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
-('flex-start', 'Los ítems se agrupan al inicio del eje principal', 14),
-('space-between', 'Distribuye los ítems uniformemente con espacio entre ellos', 14),
-('center', 'Centra los ítems en el eje principal', 14);
+('flex-start', 'Items are packed toward the start of the main axis', 14),
+('space-between', 'Distributes items evenly with space between them', 14),
+('center', 'Centers items along the main axis', 14);
 
--- Propiedad: opacity (ID: 15)
+-- Property: opacity (ID: 15)
 INSERT OR IGNORE INTO property_attributes (attribute, info, propertyId) VALUES
-('1.0', 'Totalmente opaco', 15),
-('0.5', '50% de transparencia', 15),
-('0', 'Completamente transparente (invisible)', 15);
+('1.0', 'Fully opaque', 15),
+('0.5', '50% transparency', 15),
+('0', 'Completely transparent (invisible)', 15);
 
 -- 3. ATTRIBUTE METADATA (Analogy to ATTRIBUTE_METADATA)
 INSERT OR IGNORE INTO attribute_metadata (attributeName, generalDescription) VALUES

@@ -13,13 +13,13 @@ export function propertyForm(data) {
     form.action = 'post'; // This action is likely intercepted by JS anyway
     form.innerHTML = `
         <div class="container">
-            <label for="name"><h3 id="label-name"><span class="material-symbols-outlined">style</span>Name of the property</h3></label>
+            <label for="name"><h3 id="label-name"><span class="material-symbols-outlined" translate="no">style</span>Name of the property</h3></label>
         <input type="text" name="name" id="name" placeholder="${data.property.propertyName}" value="${data.property.propertyName}" required>
 
-        <label for="utility"><h3 id="label-utility"><span class="material-symbols-outlined">build</span>Utility of the property</h3></label>
+        <label for="utility"><h3 id="label-utility"><span class="material-symbols-outlined" translate="no">build</span>Utility of the property</h3></label>
         <input type="text" name="utility" id="utility" placeholder="${data.property.usability}" value="${data.property.usability}" required>
 
-        <label for="attributes-container" ><h4 id="label-attributes"><span class="material-symbols-outlined">description</span>Values / Attributes</h4></label>
+        <label for="attributes-container" ><h4 id="label-attributes"><span class="material-symbols-outlined" translate="no">description</span>Values / Attributes</h4></label>
         <div id="attributes-container">
             ${data.attributes.map((attr, index) => `
                 <div class="attribute-group">

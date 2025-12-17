@@ -36,21 +36,21 @@ export function generateTable(item, attributes, row, dropdownRow, isFavorite = f
     if (showFavorite) {
         favoriteButtonHTML = `
         <button class="favorite-btn js-favorite-toggle ${isFavorite ? 'favorited' : ''}" data-id="${item.id}" data-favorited="${isFavorite}" data-type="${type}">
-            <span class="material-symbols-outlined icon_favorite">${heartIcon}</span>
+            <span class="material-symbols-outlined icon_favorite" translate="no">${heartIcon}</span>
         </button>`;
     }
 
     if (showEdit) {
         editButtonHTML = `
         <button class="edit-btn edit" data-id="${item.id}" data-type="${type}">
-            <span class="material-symbols-outlined icon_edit">edit</span>
+            <span class="material-symbols-outlined icon_edit" translate="no">edit</span>
         </button>`;
     }
 
     if (showDelete) {
         deleteButtonHTML = `
         <button class="delete-btn delete" data-id="${item.id}" data-type="${type}">
-            <span class="material-symbols-outlined icon_delete">delete</span>
+            <span class="material-symbols-outlined icon_delete" translate="no">delete</span>
         </button>`;
     }
 
@@ -58,14 +58,14 @@ export function generateTable(item, attributes, row, dropdownRow, isFavorite = f
     // Add tooltip to item name if content exists
     let rowHTML = `
         <td class="tag-name-cell">
-            <strong>${safeItemName}</strong>
+            <strong translate="no">${safeItemName}</strong>
             ${item.content ? `<div class="tag-tooltip ${item.content.length > 50 ? 'multiline' : ''}">${escapeHTML(item.content)}</div>` : ''}
         </td>
         <td>${safeUsability}</td>
         <td>
         <button class="dropdown-btn table-button">
             <strong>${dropdownLabel}</strong>
-            <span class="material-symbols-outlined arrow">arrow_drop_down</span>
+            <span class="material-symbols-outlined arrow" translate="no">arrow_drop_down</span>
         </button>
         </td>`;
 
@@ -94,7 +94,7 @@ export function generateTable(item, attributes, row, dropdownRow, isFavorite = f
             html += `
           <tr>
             <td>Attribute</td>
-            <td>${escapeHTML(att.attribute)}</td>
+            <td translate="no">${escapeHTML(att.attribute)}</td>
             <td>Information</td>
             <td>${escapeHTML(att.info)}</td>
           </tr>

@@ -44,6 +44,7 @@ async function loadHeaderAndFooter() {
       import('/js/main/header.js').then(mod => mod.init && mod.init());
       import('/js/tags/getTag.js').then(mod => mod.init && mod.init());
       import('/js/properties/getProperty.js').then(mod => mod.init && mod.init());
+      import('/js/tools/translation.js').then(mod => mod.init && mod.init());
 
     } catch (err) {
       logger.error('Error loading header:', err);
@@ -210,10 +211,10 @@ function executePageScript() {
       // Force HTML theme on home page
       applyTheme('html');
       updateHeaderButton();
-      import('/js/main/home.js').then(mod => mod.init && mod.init());
-      import('/js/tags/edit.js').then(mod => mod.init && mod.init());
-      import('/js/tags/delete.js').then(mod => mod.init && mod.init());
-      import('/js/tags/favorites.js').then(mod => mod.init && mod.init());
+      import('../js/main/home.js').then(mod => mod.init && mod.init());
+      import('../js/tags/edit.js').then(mod => mod.init && mod.init());
+      import('../js/tags/delete.js').then(mod => mod.init && mod.init());
+      import('../js/tags/favorites.js').then(mod => mod.init && mod.init());
       break;
     case ROUTES.CSS:
     case '/css-properties':

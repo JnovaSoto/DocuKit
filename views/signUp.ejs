@@ -1,61 +1,68 @@
 <div class="container">
     <form id="signUp-form" enctype="multipart/form-data" required>
 
-    <div class="mb-3">
-        <label for="user" class="form-label">Username</label>
-        <div class="form-text">
-            <div class="input-wrapper">
-                <span class="material-symbols-outlined">person</span>
-                <input type="text" name="user" class="form-control" id="user-input" placeholder="Enter your username" minlength="8"  maxlength="20" required>
+        <div class="mb-3">
+            <label for="user" class="form-label">Username</label>
+            <div class="form-text">
+                <div class="input-wrapper">
+                    <span class="material-symbols-outlined" translate="no">person</span>
+                    <input type="text" name="user" class="form-control" id="user-input"
+                        placeholder="Enter your username" minlength="8" maxlength="20" required>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="mb-3">
-        <label for="email" class="form-label">Email adress</label>
-        <div class="form-text">
-            <div class="input-wrapper">
-                <span class="material-symbols-outlined">mail</span>
-                <input type="email" name="email" class="form-control" id="email-input" placeholder="Enter your email" minlength="8" maxlength="40" required>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email adress</label>
+            <div class="form-text">
+                <div class="input-wrapper">
+                    <span class="material-symbols-outlined" translate="no">mail</span>
+                    <input type="email" name="email" class="form-control" id="email-input"
+                        placeholder="Enter your email" minlength="8" maxlength="40" required>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="mb-3">
-        <label for="pass" class="form-label">Password</label>
-        <div class="form-password">
-            <div class="input-wrapper">
-                <span class="material-symbols-outlined">lock</span>
-                <input type="password" class="form-control" name="pass" id="password-input"  placeholder="Enter your password" minlength="8" required>
-            </div>
-            <button type="button" class="form-password-action"  id="toggle-password"  data-coreui-toggle="password" aria-label="Toggle password visibility">
-            <span class="material-symbols-outlined" id="toggle-password-icon">visibility</span>
-            </button>
-        </div>
-    </div>
-    <div class="mb-3">
-        <label for="passConf" class="form-label">Repeat Password</label>
-        <div class="form-password">
-            <div class="input-wrapper">
-                <span class="material-symbols-outlined">lock_reset</span>
-                <input type="password" class="form-control" name="passConf" id="repeat-password-input"  placeholder="Enter your password" minlength="8" required>
-            </div>
-            <button type="button" class="form-password-action"  id="toggle-repeat-password"  data-coreui-toggle="password" aria-label="Toggle password visibility">
-            <span class="material-symbols-outlined" id="toggle-repeat-password-icon">visibility</span>
-            </button>
-        </div>
-    </div>
-    <div class="mb-3">
-        <label for="img" class="form-label">Profile Image (Optional)</label>
-        <div class="form-text">
-            <div class="input-wrapper">
-                <span class="material-symbols-outlined">image</span>
-                <input type="file" name="img" class="form-control" id="img-input" accept="image/*">
+        <div class="mb-3">
+            <label for="pass" class="form-label">Password</label>
+            <div class="form-password">
+                <div class="input-wrapper">
+                    <span class="material-symbols-outlined" translate="no">lock</span>
+                    <input type="password" class="form-control" name="pass" id="password-input"
+                        placeholder="Enter your password" minlength="8" required>
+                </div>
+                <button type="button" class="form-password-action" id="toggle-password" data-coreui-toggle="password"
+                    aria-label="Toggle password visibility">
+                    <span class="material-symbols-outlined" id="toggle-password-icon" translate="no">visibility</span>
+                </button>
             </div>
         </div>
-    </div>
+        <div class="mb-3">
+            <label for="passConf" class="form-label">Repeat Password</label>
+            <div class="form-password">
+                <div class="input-wrapper">
+                    <span class="material-symbols-outlined" translate="no">lock_reset</span>
+                    <input type="password" class="form-control" name="passConf" id="repeat-password-input"
+                        placeholder="Enter your password" minlength="8" required>
+                </div>
+                <button type="button" class="form-password-action" id="toggle-repeat-password"
+                    data-coreui-toggle="password" aria-label="Toggle password visibility">
+                    <span class="material-symbols-outlined" id="toggle-repeat-password-icon"
+                        translate="no">visibility</span>
+                </button>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="img" class="form-label">Profile Image (Optional)</label>
+            <div class="form-text">
+                <div class="input-wrapper">
+                    <span class="material-symbols-outlined" translate="no">image</span>
+                    <input type="file" name="img" class="form-control" id="img-input" accept="image/*">
+                </div>
+            </div>
+        </div>
 
-    <input type="submit" value="Submit">
+        <input type="submit" value="Submit">
 
-  </form>
+    </form>
 </div>

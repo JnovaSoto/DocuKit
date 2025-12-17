@@ -4,13 +4,13 @@ export function tagForm(tag) {
     form.action = 'post';
     form.innerHTML = `
         <div class="container">
-            <label for="name"><h3 id="label-name"><span class="material-symbols-outlined">sticker</span>Name of the tag</h3></label>
+            <label for="name"><h3 id="label-name"><span class="material-symbols-outlined" translate="no">sticker</span>Name of the tag</h3></label>
         <input type="text" name="name" id="name" placeholder="${tag.tag.tagName}" value="${tag.tag.tagName}" required>
         
-        <label for="utility"><h3 id="label-utility"><span class="material-symbols-outlined">build</span>Utility of the tag</h3></label>
+        <label for="utility"><h3 id="label-utility"><span class="material-symbols-outlined" translate="no">build</span>Utility of the tag</h3></label>
         <input type="text" name="utility" id="utility" placeholder="${tag.tag.usability}" value="${tag.tag.usability}" required>
         
-        <label for="attributes-container" ><h4 id="label-attributes"><span class="material-symbols-outlined">description</span>Attributes</h4></label>
+        <label for="attributes-container" ><h4 id="label-attributes"><span class="material-symbols-outlined" translate="no">description</span>Attributes</h4></label>
         <div id="attributes-container">
             ${tag.attributes.map((attr, index) => `
                 <div class="attribute-group">

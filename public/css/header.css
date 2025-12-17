@@ -79,6 +79,121 @@
     margin-left: 5px;
 }
 
+/* ==========================================================================
+   Translation
+   ========================================================================== */
+#google_translate_element {
+    /* Do NOT use display: none, it prevents Google script from initializing the select box */
+    /* visibility: hidden; also sometimes prevents interaction */
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.skiptranslate,
+.goog-te-banner-frame {
+    display: none !important;
+}
+
+
+.custom-translate-container {
+    position: relative;
+    display: inline-block;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.translate-button {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    padding: 10px 16px;
+    border-radius: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    font-size: 14px;
+    color: #333;
+}
+
+.translate-button:hover {
+    background: #f8f9fa;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.translate-button .icon {
+    font-size: 18px;
+}
+
+.translate-button .arrow {
+    font-size: 10px;
+    color: #999;
+}
+
+.custom-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 200px;
+    /* Reduced width */
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    margin-top: 8px;
+    padding: 8px;
+    z-index: 1000;
+}
+
+.custom-options.show {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+.option {
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s;
+    color: #333;
+    font-size: 14px;
+}
+
+.option:hover {
+    background: #f0f7ff;
+    color: #007bff;
+}
+
+.option img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Responsive adjustments */
 @media (max-width: 991px) {
     .header {
