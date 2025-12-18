@@ -3,6 +3,7 @@ import { isAdminLevel1, isAuthenticated } from '../middleware/auth.js';
 import ROUTES from '../config/routes.js';
 import upload from '../config/multer.js';
 import userController from '../controllers/users/userController.js';
+import passport from '../config/passport.js';
 
 // User routes
 const router = express.Router();
@@ -94,5 +95,30 @@ router.post(ROUTES.USERS.FAVORITES_CSS, isAuthenticated, userController.addCssFa
  * @route {DELETE} /users/favorites-css/:propertyId
  */
 router.delete(`${ROUTES.USERS.FAVORITES_CSS}/:propertyId`, isAuthenticated, userController.removeCssFavorite);
+
+/**
+ * Initiate Google OAuth authentication.
+ * 
+ * @name Google Auth
+ * @route {GET} /users/google
+ */
+router.get(ROUTES.USERS.GOOGLE, passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+/**
+ * Handle Google OAuth callback.
+ * 
+ * @name Google Auth Callback
+ * @route {GET} /users/google/callback
+ */
+router.get(ROUTES.USERS.GOOGLE_CALLBACK,
+    passport.authenticate('google', { failureRedirect: '/logIn' }),
+    (req, res) => {
+        req.session.userId = req.user.id;
+        req.session.username = req.user.username;
+        req.session.admin = req.user.admin;
+        req.session.photo = req.user.photo;
+        res.redirect('/');
+    }
+);
 
 export default router;

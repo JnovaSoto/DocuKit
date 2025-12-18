@@ -18,20 +18,39 @@ const userService = {
     },
 
     /**
+     * Find user by Google ID.
+     * @param {string} googleId - Google profile ID.
+     * @returns {Promise<Object>} User object.
+     */
+    findByGoogleId: (googleId) => {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM users WHERE googleId = ?`;
+            get(sql, [googleId], (err, row) => {
+                if (err) reject(err);
+                resolve(row);
+            });
+        });
+    },
+
+    /**
      * Create a new user.
      * @param {string} username - User's username.
      * @param {string} email - User's email.
-     * @param {string} password - User's password.
+     * @param {string} [password] - User's password (optional for Google users).
      * @param {number} admin - Admin status (0 or 1).
+     * @param {string} [googleId] - Google ID (optional).
      * @returns {Promise<number>} New user ID.
      */
-    createUser: async (username, email, password, admin) => {
-        const saltRounds = 10;
-        const hash = await bcrypt.hash(password, saltRounds);
+    createUser: async (username, email, password, admin, googleId = null) => {
+        let hash = null;
+        if (password) {
+            const saltRounds = 10;
+            hash = await bcrypt.hash(password, saltRounds);
+        }
 
         return new Promise((resolve, reject) => {
-            const sql = `INSERT INTO users (username, email, password, admin) VALUES (?, ?, ?, ?)`;
-            run(sql, [username, email, hash, admin], function (err) {
+            const sql = `INSERT INTO users (username, email, password, admin, googleId) VALUES (?, ?, ?, ?, ?)`;
+            run(sql, [username, email, hash, admin, googleId], function (err) {
                 if (err) reject(err);
                 resolve(this.lastID);
             });

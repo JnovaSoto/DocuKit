@@ -24,3 +24,53 @@
     pointer-events: none;
     font-size: 1.2rem;
 }
+
+/* Google Auth Button */
+.login-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1.5rem 0;
+    color: var(--color-gray-light);
+}
+
+.login-divider hr {
+    flex: 1;
+    border: none;
+    border-top: 1px solid #ddd;
+}
+
+.login-divider span {
+    padding: 0 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    color: #3c4043;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-google:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+    color: #3c4043;
+    text-decoration: none;
+}
+
+.btn-google img {
+    width: 20px;
+    height: 20px;
+}

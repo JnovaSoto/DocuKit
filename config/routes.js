@@ -12,7 +12,9 @@ export const ROUTES = {
         SIGNUP: '/user',
         BY_ID: '/userbyid/:id',
         FAVORITES: '/favorites',
-        FAVORITES_CSS: '/favorites-css'
+        FAVORITES_CSS: '/favorites-css',
+        GOOGLE: '/google',
+        GOOGLE_CALLBACK: '/google/callback'
     },
     TAGS: {
         BASE: '/',

@@ -9,6 +9,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { requireAuth } from './middleware/auth.js';
 import { initDatabase } from './db/database.js';
+import passport from './config/passport.js';
 
 // Route imports
 
@@ -72,6 +73,10 @@ app.use(session({
     maxAge: SESSION_DURATION
   }
 }));
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 // ============================================================================
 // API Routes (must come before static files)

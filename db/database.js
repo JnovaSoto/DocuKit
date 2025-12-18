@@ -11,29 +11,15 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/**
- * Path to the SQLite database file
- * @constant {string}
- */
 const DB_PATH = path.resolve(__dirname, 'database.sqlite');
-
-/**
- * Database connection mode (Read/Write + Create)
- * @constant {number}
- */
 const DB_MODE = sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE;
 
 // ============================================================================
 // Internal State and Schema Definitions
 // ============================================================================
-let dbInstance = null; // CONTROLLED INSTANCE (Starts null)
+let dbInstance = null;
 
-/**
- * SQL definitions for database tables
- * @constant {Object.<string, string>}
- */
 const TABLES = {
-  // ... (Your table definitions remain here) ...
   tags: `
       CREATE TABLE IF NOT EXISTS tags (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,7 +46,8 @@ const TABLES = {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL UNIQUE,
         email TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL,
+        password TEXT,                -- Opcional para usuarios de Google
+        googleId TEXT UNIQUE,          -- Identificador único de Google
         admin INTEGER DEFAULT 0,
         photo TEXT DEFAULT '/uploads/users/cat_default.webp',
         favorites TEXT DEFAULT '[]',
@@ -102,73 +89,44 @@ const TABLES = {
 };
 
 // ============================================================================
-// Database Initialization Logic (Internal)
+// Database Initialization Logic
 // ============================================================================
-
-/**
- * Create all database tables using the provided instance.
- * @param {sqlite3.Database} db The active database instance.
- * @returns {Promise<void>}
- */
 const createTables = (db) => {
   return new Promise((resolve, reject) => {
-    db.serialize(() => {
-      const tableNames = Object.keys(TABLES);
-      let completed = 0;
-      let hasError = false;
-
-      tableNames.forEach((tableName) => {
-        db.run(TABLES[tableName], (err) => {
-          if (err && !hasError) {
-            hasError = true;
-            console.error(`❌ Error creating table '${tableName}':`, err.message);
-            reject(err);
-            return;
-          }
-
-          completed++;
-
-          if (completed === tableNames.length && !hasError) {
-            console.log('✅ All database tables initialized successfully');
-            resolve();
-          }
-        });
-      });
+    db.serialize(async () => {
+      try {
+        const tableNames = Object.keys(TABLES);
+        for (const tableName of tableNames) {
+          await new Promise((res, rej) => {
+            db.run(TABLES[tableName], (err) => {
+              if (err) rej(err);
+              else res();
+            });
+          });
+        }
+        console.log('✅ All database tables initialized successfully');
+        resolve();
+      } catch (error) {
+        console.error(`❌ Database initialization failed:`, error.message);
+        reject(error);
+      }
     });
   });
 };
 
-// ============================================================================
-// Exported Initialization Function (Called ONLY by app.js)
-// ============================================================================
-
-/**
- * Initialize SQLite database connection and schema.
- * @returns {Promise<void>} Resolves when connection is open and tables are created.
- */
 export const initDatabase = () => {
   return new Promise((resolve, reject) => {
-    if (dbInstance) {
-      console.log('✅ Database connection already active.');
-      return resolve();
-    }
+    if (dbInstance) return resolve();
 
     dbInstance = new sqlite3.Database(DB_PATH, DB_MODE, (err) => {
       if (err) {
-        console.error('❌ Failed to connect to SQLite database:', err.message);
-        // In production, exit is fine; in tests, you must handle the error without exiting.
+        console.error('❌ Failed to connect to database:', err.message);
         return reject(err);
       }
-      console.log('✅ Connected to SQLite database');
 
-      // Enable foreign keys
       dbInstance.run('PRAGMA foreign_keys = ON', (pragmaErr) => {
-        if (pragmaErr) {
-          console.error('❌ Failed to enable foreign keys:', pragmaErr.message);
-          return reject(pragmaErr);
-        }
+        if (pragmaErr) return reject(pragmaErr);
 
-        // Initialize tables only after successful connection
         createTables(dbInstance)
           .then(resolve)
           .catch(reject);
@@ -178,67 +136,28 @@ export const initDatabase = () => {
 };
 
 // ============================================================================
-// Exported Wrappers (Used by services/controllers)
+// Exported Wrappers
 // ============================================================================
-
-/**
- * Validates that the database instance is active.
- * @returns {sqlite3.Database} The active database instance.
- */
 const validateDbInstance = () => {
-  if (!dbInstance) {
-    // This indicates a configuration error if called outside initDatabase.
-    throw new Error("Database is not initialized. Call initDatabase() in app.js first.");
-  }
+  if (!dbInstance) throw new Error("Database not initialized. Call initDatabase() first.");
   return dbInstance;
 };
 
-// Export functions that wrap the active dbInstance
-export const get = (sql, params, callback) => {
-  return validateDbInstance().get(sql, params, callback);
-};
-
-export const run = (sql, params, callback) => {
-  return validateDbInstance().run(sql, params, callback);
-};
-
-export const all = (sql, params, callback) => {
-  return validateDbInstance().all(sql, params, callback);
-};
-
-export const prepare = (sql) => {
-  return validateDbInstance().prepare(sql);
-};
+export const get = (sql, params, callback) => validateDbInstance().get(sql, params, callback);
+export const run = (sql, params, callback) => validateDbInstance().run(sql, params, callback);
+export const all = (sql, params, callback) => validateDbInstance().all(sql, params, callback);
+export const prepare = (sql) => validateDbInstance().prepare(sql);
+export const exec = (sql, callback) => validateDbInstance().exec(sql, callback);
 
 // ============================================================================
 // Graceful Shutdown
 // ============================================================================
-
-/**
- * Close database connection gracefully
- */
 export const closeDatabase = () => {
   if (dbInstance) {
     dbInstance.close((err) => {
-      if (err) {
-        console.error('❌ Error closing database:', err.message);
-      } else {
-        console.log('✅ Database connection closed');
-      }
-      dbInstance = null;
+      if (err) console.error('❌ Error closing database:', err.message);
+      else console.log('✅ Database connection closed');
     });
+    dbInstance = null;
   }
 };
-
-// Handle process termination
-process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down gracefully...');
-  closeDatabase();
-  process.exit(0);
-});
-
-process.on('SIGTERM', () => {
-  console.log('\n🛑 Shutting down gracefully...');
-  closeDatabase();
-  process.exit(0);
-});

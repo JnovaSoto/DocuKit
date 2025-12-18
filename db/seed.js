@@ -36,11 +36,10 @@ const seedDatabase = async () => {
         }
     }
 
-    // Dynamic import to ensure database is initialized AFTER deletion
-    const { default: db } = await import('./database.js');
+    // Named imports from database.js
+    const { initDatabase, exec, closeDatabase } = await import('./database.js');
 
-    // Wait for tables to be created (database.js creates them on load, but async)
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await initDatabase();
 
     const scriptPath = path.join(__dirname, 'scriptExample.txt');
 
@@ -49,7 +48,7 @@ const seedDatabase = async () => {
 
         console.log('🌱 Seeding database...');
 
-        db.exec(sql, (err) => {
+        exec(sql, (err) => {
             if (err) {
                 console.error('❌ Error seeding database:', err.message);
                 process.exit(1);
@@ -57,13 +56,7 @@ const seedDatabase = async () => {
             console.log('✅ Database seeded successfully');
             console.log('🎟️ User Admin created successfully -> userAdmin12345@gmail.com | password: userAdmin12345');
 
-            db.close((closeErr) => {
-                if (closeErr) {
-                    console.error('❌ Error closing database:', closeErr.message);
-                } else {
-                    console.log('✅ Database connection closed');
-                }
-            });
+            closeDatabase();
         });
 
     } catch (err) {

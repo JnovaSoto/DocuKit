@@ -1,169 +1,109 @@
 # 📚 DocuKit: The Ultimate HTML & CSS Reference Platform
 
-**DocuKit** is a comprehensive, feature-rich web application designed to serve as the definitive **interactive reference guide** for **HTML tags** and their associated metadata. Built on a secure and modern stack, it provides detailed explanations, attribute data, usage examples, and powerful user-centric features, making it an indispensable tool for developers and learners alike.
+**DocuKit** is a comprehensive, feature-rich web application designed to serve as the definitive **interactive reference guide** for **HTML tags** and **CSS Properties**. Built on a secure and modern stack, it provides detailed explanations, attribute data, usage examples, and powerful user-centric features, making it an indispensable tool for developers and learners alike.
 
 ---
 
 ## ✨ Feature Breakdown
 
-DocuKit is divided into three key functional pillars: Core Documentation, User Management, and Administration.
+DocuKit is divided into four key functional pillars: Core Documentation, User Management, Internationalization, and Administration.
 
 ### 🔍 Core Documentation & Interactivity
-* **Intelligent Tag Search:** Robust search functionality allows users to quickly locate tags based on **name** or **attribute**.
-* **Attribute Metadata:** Provides detailed descriptions, compatibility notes, and usage context for every HTML attribute.
-* **Interactive Table View:** A clean, responsive table displays tags, their **usability status**, and associated attributes for rapid reference.
-* **Dynamic Theme Switcher:** Personalize the experience with a **Theme Switcher** toggling between the:
-    * **HTML Theme** (`#cca31e` - Yellow/Gold)
-    * **CSS Theme** (`#1c7ed6` - Blue)
-    * *Styling is managed efficiently using **CSS Variables** for real-time updates.*
+* **SPA-like Experience:** Modern navigation system that updates content dynamically without full page reloads, providing a smooth, fluid user interface.
+* **Intelligent Search:** Robust search functionality allows users to quickly locate tags/properties based on **name** or **attribute**.
+* **Attribute Metadata:** Detailed descriptions, compatibility notes, and usage context for every HTML/CSS attribute.
+* **Dynamic Theme System:** 
+    * **HTML Theme** (Gold): Tailored for HTML element exploration.
+    * **CSS Theme** (Blue): Optimized for CSS property discovery.
+    * *Managed via **CSS Variables** for instant, across-the-board aesthetic swaps.*
 
-### 👤 Secure User System
-* **Authentication:** Secure **Sign Up** and **Log In** system utilizing `bcrypt` for password hashing and `express-session` for session management.
-* **Profile Management:** Users can manage their profiles, including **profile photo uploads** (handled by `multer`).
-* **Favorites System:** Logged-in users can **"favorite"** essential tags for quick and easy access.
+### 👤 Advanced User System
+* **Unified Authentication:** Supports both traditional **Email/Password** and **Google OAuth 2.0** login/signup.
+* **Secure Sessions:** Utilizes `passport.js` and `express-session` for high-security session management.
+* **Smart Favorites:** Separate bookmarking systems for HTML tags and CSS properties, persisting within the user's secure profile.
+* **Profile Customization:** Dynamic profile photo uploads with automated folder management for users.
+
+### 🌎 Internationalization (i18n)
+* **Real-time Translation:** Integrated Google Translate engine with a **premium custom UI**.
+* **Smart Labeling:** Selection persists across sessions and page reloads via cookie-based state management.
+* **Visual Polish:** Intelligent layout adjustments that prevent translation UI from interfering with the site's design.
 
 ### 🛡️ Administration Module
-* **Full CRUD Access:** Admin-level users (Admin Level 1) have complete control over the documentation content:
-    * **Create** new tags and attributes.
-    * **Edit** existing documentation.
-    * **Delete** outdated or incorrect entries.
+* **Full CRUD Control:** Administrators have complete authority to:
+    * **Create/Update/Delete** tags, properties, and their associated attributes.
+    * **Manage Metadata:** Update global attribute definitions.
+* **Automated Migrations:** Smart database initialization system that automatically updates the schema (e.g., adding Google Auth support) while preserving data.
 
 ---
 
 ## 🛠️ Technology Stack
 
-DocuKit is powered by a reliable Node.js backend and a modern, maintainable frontend built primarily on Vanilla JavaScript and CSS.
-
-### 💻 Backend & Server
-| Technology | Role | Key Package(s) |
+| Category | Technology | Key Features |
 | :--- | :--- | :--- |
-| **Server** | **Node.js** & **Express.js** | Provides the core application framework. |
-| **Database** | **SQLite3** | Lightweight, file-based relational data storage. |
-| **Security** | **Bcrypt** & **express-session** | Password hashing and secure user session management. |
-| **File Handling** | **Multer** | Middleware for processing profile photo uploads. |
-| **Testing** | **Jest** | Testing framework for unit testing. |
-| **Documentation** | **JSDoc** | Documentation generator for code documentation. |
-
-### 🖼️ Frontend & Styling
-| Technology | Role | Key Feature(s) |
-| :--- | :--- | :--- |
-| **Templating** | **EJS** | Embedded JavaScript for dynamic HTML rendering. |
-| **Styling** | **Vanilla CSS** | Custom, maintainable styling with extensive use of **CSS Variables**. |
-| **Interactivity** | **Vanilla JavaScript** | Client-side logic for search, navigation, and theme switching (SPA-like experience). |
-| **Layout** | **Responsive Design** | Optimized for Desktop, Tablet, and Mobile devices. |
+| **Server** | Node.js & Express.js | Core application and API framework. |
+| **Database** | SQLite3 | Lightweight, transactional relational storage. |
+| **Auth** | Passport.js & Google OAuth 2.0 | Multi-provider authentication system. |
+| **Templating** | EJS | Dynamic server-side rendering. |
+| **UI/UX** | Vanilla JS & CSS Variables | High-performance SPA navigation and theme logic. |
+| **Docs** | JSDoc | Fully documented service and controller layers. |
 
 ---
 
-## 📂 Project Structure
+## 📂 Internal Architecture
 
-The codebase is organized following a clear, feature-separated structure for maintainability.
+The codebase follows a clear **Feature-Driven Design** for maximum scalability.
 
 ```bash
 DocuKit/
-├── config/             # Configuration files
-├── controllers/        # Request handling logic
-│   ├── partials/       # Partial view controllers
-│   ├── properties/     # Property related controllers
-│   ├── tags/           # Tag related controllers
-│   └── users/          # User related controllers
-├── db/                 # Database scripts, schema, and connection
-├── docs/               # Documentation files
-├── middleware/         # Express middleware (e.g., auth.js)
-├── mocks/              # Mock data for testing
-├── node_modules/       # Node.js modules
-├── public/             # Static assets
-├── routes/             # Express route definitions
-├── services/           # Business logic & Database interactions
-│   ├── properties/     # Property services
-│   ├── tags/           # Tag services
-│   └── users/          # User services
-├── tests/              # Test files
-├── uploads/            # User uploaded content (profile photos)
-├── views/              # EJS templates
-├── .env                # Environment variables configuration
-├── .gitignore          # Git ignore file
-├── app.js              # Main application entry point
-├── DockerFile          # Dockerfile
-├── jsdoc.json          # Generate documentation
-├── package-lock.json   # Project information
-├── package.json        # Project dependencies and scripts
-└──  README.md           # README file
+├── config/             # Passport, Multer, and Route centralization
+├── controllers/        # Request handling (Tags, Properties, Users, Partials)
+├── db/                 # SQLite connection & Auto-migration engine
+├── middleware/         # Auth guards & Validation
+├── public/             # SPA Logic, Global Styles, and Tools
+├── routes/             # Centralized route definitions
+├── services/           # Decoupled Business Logic & DB queries
+├── views/              # Modular EJS templates
+└── app.js              # Application entry point & Middleware orchestration
 ```
-## ⚡ Installation & Setup Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 
-1. **Excecute this in the powershell if the commands are not working**
+---
 
-    ```bash
-    Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-    ```
+## ⚡ Installation & Setup
 
-2. **Clone the repository:**
-
+1. **Clone & Install:**
     ```bash
     git clone https://github.com/JnovaSoto/DocuKit.git
     cd DocuKit
-    ```
-
-3. **Install dependencies:**
-
-    ```bash
     npm install
     ```
 
-4. **Configure Environment:**
-
-    Create a `.env` file in the root directory and add your session secret:
-
+2. **Environment Configuration:**
+    Create a `.env` file in the root:
     ```env
-    SESSION_SECRET=your_secret_key_here
     PORT=3000
+    SESSION_SECRET=your_super_secret_key
     NODE_ENV=development
+    GOOGLE_CLIENT_ID=your_google_id
+    GOOGLE_CLIENT_SECRET=your_google_secret
     ```
 
-    Then copy and execute the scriptExample.txt Script to create the database. (Only for the first time)
-
+3. **Initialize Database:**
     ```bash
+    # This creates the schema and seeds initial data
     npm run create-db
     ```
 
-5. **Start the application:**
-
+4. **Run Application:**
     ```bash
     npm start
     ```
 
-6. **Access the app:**
-
-    Open your browser and navigate to `http://localhost:3000`.
-
 ---
-
-
-## 🎨 Themes
-
-
-
-The application features a unique theme switcher located in the header:
-
-*   **HTML Tags (Button):** Activates the "HTML" theme (Primary Color: `#cca31e`).
-
-*   **CSS Properties (Button):** Activates the "CSS" theme (Primary Color: `#1c7ed6`).
-
-
 
 ## 👤 Author
 
-
-
 **Juan David Nova Soto**
-
-
+*Interactive Reference Guide Project*
 
 ---
-
 *This project is for educational purposes.*
-
-
-
-
-
