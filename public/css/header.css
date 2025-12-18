@@ -49,7 +49,9 @@
     display: flex;
     align-items: center;
     list-style: none;
-    margin-left: 17em;
+    flex-grow: 1;
+    justify-content: center;
+    margin: 0;
 }
 
 .header-toggler {
@@ -62,6 +64,8 @@
 .search-form {
     position: relative;
     width: 250px;
+    margin-right: 1rem;
+    flex-shrink: 0;
 }
 
 .search-form .form-control {
@@ -83,8 +87,6 @@
    Translation
    ========================================================================== */
 #google_translate_element {
-    /* Do NOT use display: none, it prevents Google script from initializing the select box */
-    /* visibility: hidden; also sometimes prevents interaction */
     opacity: 0;
     position: absolute;
     top: 0;
@@ -99,6 +101,10 @@
 .skiptranslate,
 .goog-te-banner-frame {
     display: none !important;
+}
+
+body {
+    top: 0 !important;
 }
 
 
@@ -144,7 +150,6 @@
     top: 100%;
     right: 0;
     width: 200px;
-    /* Reduced width */
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
