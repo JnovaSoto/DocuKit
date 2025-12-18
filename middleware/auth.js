@@ -25,9 +25,6 @@ export function requireAuth(req, res, next) {
 }
 
 /**
- * Check if user is admin (level 1).
- */
-/**
  * Middleware to check if user is admin (level 1).
  * Returns 401 if not logged in, 403 if not admin.
  * 

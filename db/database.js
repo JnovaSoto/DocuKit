@@ -91,6 +91,11 @@ const TABLES = {
 // ============================================================================
 // Database Initialization Logic
 // ============================================================================
+/**
+ * Create all database tables using the provided instance.
+ * @param {sqlite3.Database} db The active database instance.
+ * @returns {Promise<void>}
+ */
 const createTables = (db) => {
   return new Promise((resolve, reject) => {
     db.serialize(async () => {
@@ -114,6 +119,10 @@ const createTables = (db) => {
   });
 };
 
+/**
+ * Initialize SQLite database connection and schema.
+ * @returns {Promise<void>} Resolves when connection is open and tables are created.
+ */
 export const initDatabase = () => {
   return new Promise((resolve, reject) => {
     if (dbInstance) return resolve();
@@ -138,20 +147,62 @@ export const initDatabase = () => {
 // ============================================================================
 // Exported Wrappers
 // ============================================================================
+
+/**
+ * Validates that the database instance is active.
+ * @returns {sqlite3.Database} The active database instance.
+ * @throws {Error} If database is not initialized.
+ */
 const validateDbInstance = () => {
   if (!dbInstance) throw new Error("Database not initialized. Call initDatabase() first.");
   return dbInstance;
 };
 
+/**
+ * Executes a SELECT query that returns a single row.
+ * @param {string} sql - The SQL query.
+ * @param {Array} params - The query parameters.
+ * @param {Function} callback - The result callback.
+ */
 export const get = (sql, params, callback) => validateDbInstance().get(sql, params, callback);
+
+/**
+ * Executes an INSERT, UPDATE, or DELETE query.
+ * @param {string} sql - The SQL query.
+ * @param {Array} params - The query parameters.
+ * @param {Function} callback - The result callback.
+ */
 export const run = (sql, params, callback) => validateDbInstance().run(sql, params, callback);
+
+/**
+ * Executes a SELECT query that returns multiple rows.
+ * @param {string} sql - The SQL query.
+ * @param {Array} params - The query parameters.
+ * @param {Function} callback - The result callback.
+ */
 export const all = (sql, params, callback) => validateDbInstance().all(sql, params, callback);
+
+/**
+ * Prepares an SQL statement for execution.
+ * @param {string} sql - The SQL query.
+ * @returns {sqlite3.Statement}
+ */
 export const prepare = (sql) => validateDbInstance().prepare(sql);
+
+/**
+ * Executes multiple SQL statements.
+ * @param {string} sql - The SQL script.
+ * @param {Function} callback - The result callback.
+ */
 export const exec = (sql, callback) => validateDbInstance().exec(sql, callback);
 
 // ============================================================================
 // Graceful Shutdown
 // ============================================================================
+
+/**
+ * Close database connection gracefully.
+ */
 export const closeDatabase = () => {
   if (dbInstance) {
     dbInstance.close((err) => {
