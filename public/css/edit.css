@@ -1,0 +1,282 @@
+/* ==========================================================================
+   Edit Page Styles
+   ========================================================================== */
+
+.edit-page-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--color-gray-lightest);
+}
+
+.edit-title {
+    color: var(--color-primary);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.edit-title .material-symbols-outlined {
+    font-size: 2.5rem;
+}
+
+.edit-subtitle {
+    color: var(--color-gray);
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.edit-form {
+    background: white;
+    padding: 2.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.edit-form .form-group {
+    margin-bottom: 1.75rem;
+}
+
+.edit-form label {
+    font-weight: 600;
+    color: var(--color-gray-dark);
+    margin-bottom: 0.5rem;
+    display: block;
+    font-size: 1rem;
+}
+
+.edit-form input,
+.edit-form textarea,
+.edit-form select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--color-gray-border);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    transition: all var(--transition-fast);
+}
+
+.edit-form input:focus,
+.edit-form textarea:focus,
+.edit-form select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
+}
+
+.edit-form textarea {
+    min-height: 120px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* Attributes container with scroll */
+.edit-form #attributesContainer {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 10px;
+    margin-bottom: 1.5rem;
+}
+
+/* Custom scrollbar for attributes */
+.edit-form #attributesContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.edit-form #attributesContainer::-webkit-scrollbar-track {
+    background: var(--color-gray-lightest);
+    border-radius: 4px;
+}
+
+.edit-form #attributesContainer::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 4px;
+}
+
+.edit-form #attributesContainer::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-dark);
+}
+
+/* Attribute blocks in edit form */
+.edit-form .attribute-block {
+    background: var(--color-gray-lightest);
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--color-primary);
+    position: relative;
+    transition: all var(--transition-fast);
+}
+
+.edit-form .attribute-block:hover {
+    background: #e8e8e8;
+    transform: translateX(4px);
+}
+
+/* Attribute block labels with icons */
+.edit-form .attribute-block label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.edit-form .attribute-block label::before {
+    content: 'link';
+    font-family: 'Material Symbols Outlined';
+    font-size: 1.2rem;
+    color: var(--color-primary);
+}
+
+.edit-form .attribute-block label:last-of-type::before {
+    content: 'description';
+}
+
+.edit-form .removeBtn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--color-red);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.edit-form .removeBtn:hover {
+    background: var(--color-red-hover);
+    transform: scale(1.1);
+}
+
+.edit-form .removeBtn .material-symbols-outlined {
+    font-size: 1.2rem;
+}
+
+/* Add attribute button */
+.edit-form #addAttributeBtn {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.edit-form #addAttributeBtn:hover {
+    background: var(--color-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.edit-form #addAttributeBtn .material-symbols-outlined {
+    font-size: 1.3rem;
+}
+
+/* Form buttons */
+.edit-form .form-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--color-gray-lightest);
+}
+
+.edit-form .btn-submit {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: var(--radius-md);
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.edit-form .btn-submit:hover {
+    background: var(--color-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.edit-form .btn-cancel {
+    background: var(--color-gray-lighter);
+    color: var(--color-gray-dark);
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: var(--radius-md);
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.edit-form .btn-cancel:hover {
+    background: var(--color-gray-light);
+}
+
+/* Dark mode edit page */
+.dark-mode .edit-page-header {
+    border-bottom-color: var(--color-border);
+}
+
+.dark-mode .edit-subtitle {
+    color: var(--color-text-secondary);
+}
+
+.dark-mode .edit-form {
+    background: var(--color-bg-secondary);
+}
+
+.dark-mode .edit-form .attribute-block {
+    background: var(--color-bg-primary);
+    border-left-color: var(--color-primary);
+}
+
+.dark-mode .edit-form .attribute-block:hover {
+    background: #2a2a2a;
+}
+
+.dark-mode .edit-form .form-buttons {
+    border-top-color: var(--color-border);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .edit-title {
+        font-size: 2rem;
+    }
+
+    .edit-form {
+        padding: 1.5rem;
+    }
+
+    .edit-form .form-buttons {
+        flex-direction: column;
+    }
+
+    .edit-form .btn-submit,
+    .edit-form .btn-cancel {
+        width: 100%;
+    }
+}

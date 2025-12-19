@@ -1,0 +1,32 @@
+<div class="not-found-container">
+    <div class="not-found-content">
+        <div class="icon-wrapper">
+            <span class="material-symbols-outlined icon">search_off</span>
+        </div>
+        <h1 class="title">No Results Found</h1>
+        <p class="message">We couldn't find any match for your search.</p>
+        <p class="suggestion">Try checking for typos or searching for a different keyword.</p>
+
+        <div class="actions">
+            <button onclick="window.history.back()" class="btn btn-secondary">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Go Back
+            </button>
+            <a href="/home" class="btn btn-primary">
+                <span class="material-symbols-outlined">home</span>
+                Return Home
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Optional: display searched term if passed via session storage
+    document.addEventListener('DOMContentLoaded', () => {
+        const lastSearch = sessionStorage.getItem('lastSearchTerm');
+        if (lastSearch) {
+            const msg = document.querySelector('.message');
+            if (msg) msg.innerHTML = `We couldn't find any match for "<strong>${lastSearch}</strong>".`;
+        }
+    });
+</script>

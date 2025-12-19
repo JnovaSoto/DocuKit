@@ -73,12 +73,12 @@ footer {
    ========================================================================== */
 .slide-alert {
     position: fixed;
-    top: 80px;
+    top: 100px;
     right: -350px;
     width: 300px;
     color: var(--color-white);
     padding: 15px 20px;
-    z-index: 1050;
+    z-index: 2100;
     transition: right var(--transition-alert), opacity var(--transition-medium);
     opacity: 0;
     border-radius: 12px;
@@ -92,11 +92,11 @@ footer {
 }
 
 .slide-alert.pri {
-    background-color: rgba(30, 110, 30, 0.8) !important;
+    background-color: color-mix(in srgb, var(--color-primary), transparent 20%) !important;
 }
 
 .slide-alert.sec {
-    background-color: rgba(196, 26, 26, 0.8) !important;
+    background-color: color-mix(in srgb, var(--color-secondary), transparent 20%) !important;
 }
 
 .slide-alert.show {

@@ -71,6 +71,20 @@ export async function init() {
     const table = document.querySelector('.tagTable');
     renderTable(table, tags, attributes, userFavorites);
 
+    // Check for pending search from fuzzy search overlay
+    const lastTag = sessionStorage.getItem('lastTag');
+    if (lastTag) {
+      sessionStorage.removeItem('lastTag');
+      const searchForm = document.getElementById('getTag');
+      const searchInput = searchForm?.querySelector('input[type="search"]');
+      if (searchForm && searchInput) {
+        searchInput.value = lastTag;
+        // Trigger the search logic
+        const event = new Event('submit', { bubbles: true, cancelable: true });
+        searchForm.dispatchEvent(event);
+      }
+    }
+
   } catch (error) {
     logger.error('Error loading tags:', error);
   }

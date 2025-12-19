@@ -17,11 +17,11 @@
 }
 
 .header.pri {
-    background-color: rgba(204, 163, 30, 0.8) !important;
+    background-color: color-mix(in srgb, var(--color-primary), transparent 20%) !important;
 }
 
 .header.sec {
-    background-color: rgba(155, 136, 74, 0.8) !important;
+    background-color: color-mix(in srgb, var(--color-secondary), transparent 20%) !important;
 }
 
 /* ==========================================================================
@@ -68,6 +68,13 @@
     margin: 0;
 }
 
+/* Global disabled state */
+.nav-link.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 .header-toggler {
     margin-left: auto;
 }
@@ -95,6 +102,70 @@
     padding: 0 1rem;
     border-radius: 20px;
     margin-left: 5px;
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+
+.search-form .btn:hover {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+}
+
+/* Dark mode search button */
+.dark-mode .search-form .btn {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+
+.dark-mode .search-form .btn:hover {
+    background-color: var(--color-primary-light);
+    border-color: var(--color-primary-light);
+}
+
+.dark-mode .search-form .form-control {
+    background-color: var(--color-bg-primary);
+    border-color: var(--color-border);
+    color: white;
+}
+
+.dark-mode .search-form .form-control::placeholder {
+    color: var(--color-text-secondary);
+}
+
+
+/* ==========================================================================
+   Dark Mode Toggle
+   ========================================================================== */
+.dark-mode-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    margin-right: 1rem;
+    padding: 0;
+}
+
+.dark-mode-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: rotate(180deg) scale(1.1);
+}
+
+.dark-mode-btn:active {
+    transform: rotate(180deg) scale(0.95);
+}
+
+.dark-mode-btn .material-symbols-outlined {
+    color: white;
+    font-size: 1.3rem;
+    transition: transform var(--transition-fast);
 }
 
 /* ==========================================================================

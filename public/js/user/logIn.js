@@ -9,6 +9,7 @@ import { API, SUCCESS_MESSAGES, ERROR_MESSAGES } from '../config/constants.js';
 import logger from '../tools/logger.js';
 import { pass } from '../tools/passwordHide.js';
 import { VALIDATION } from '../config/constants.js';
+import { changePage } from '../navigation.js';
 
 // Flag to prevent duplicate initialization
 let isInitialized = false;
@@ -38,24 +39,34 @@ export async function init() {
   const passwordInput = document.getElementById('password-input');
   const togglePasswordButton = document.getElementById('toggle-password');
   const togglePasswordIcon = document.getElementById('toggle-password-icon');
+  const submitButton = form.querySelector('button[type="submit"]');
 
   pass(togglePasswordButton, passwordInput, togglePasswordIcon)
+
+  let isSubmitting = false;
 
   form.addEventListener('submit', async (event) => {
     // Prevent page reload
     event.preventDefault();
 
+    // Prevent double submission
+    if (isSubmitting) {
+      logger.warn('Login already in progress');
+      return;
+    }
+
     // Get user login input
     const login = loginInput.value;
     const password = passwordInput.value;
 
-    if (loginInput.value.length < VALIDATION.LOGIN.MAX_LENGTH) {
+    // Validate max length
+    if (loginInput.value.length > VALIDATION.LOGIN.MAX_LENGTH) {
       loginInput.setCustomValidity(`Username must be ${VALIDATION.LOGIN.MAX_LENGTH} characters or less`);
     } else {
       loginInput.setCustomValidity('');
     }
 
-    if (passwordInput.value.length < VALIDATION.PASSWORD.MAX_LENGTH) {
+    if (passwordInput.value.length > VALIDATION.PASSWORD.MAX_LENGTH) {
       passwordInput.setCustomValidity(`Password must be ${VALIDATION.PASSWORD.MAX_LENGTH} characters or less`);
     } else {
       passwordInput.setCustomValidity('');
@@ -64,6 +75,12 @@ export async function init() {
     const requestBody = { login, password };
 
     try {
+      isSubmitting = true;
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Logging in...';
+      }
+
       logger.network('Sending login request');
 
       // Send login request to server
@@ -87,22 +104,67 @@ export async function init() {
       document.getElementById('login-input').value = '';
       document.getElementById('password-input').value = '';
 
+      // Reload header to update user info
+      await reloadHeader();
+
       // Redirect to the page user was on before login, or home if none saved
       const returnPath = sessionStorage.getItem('returnPath');
       // Determine the destination URL
       const targetUrl = (returnPath === '/signUp') ? '/home' : (returnPath || '/home');
       // Perform the redirection
       sessionStorage.removeItem('returnPath');// Clear after use
-      window.location.href = targetUrl;
 
-      if (window.location.href === '/logIn') {
-        showTemporaryAlert('alert', ERROR_MESSAGES.LOGIN_ERROR);
-      }
+      await changePage(targetUrl);
 
     } catch (error) {
       // Handle fetch/network errors
       logger.error('Login fetch failed:', error);
       showTemporaryAlert('alert', ERROR_MESSAGES.NETWORK_ERROR);
+    } finally {
+      isSubmitting = false;
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Log in';
+      }
     }
   });
+}
+
+/**
+ * Reloads the header to update user session info
+ */
+async function reloadHeader() {
+  try {
+    const header = document.querySelector('#header');
+    if (!header) return;
+
+    const response = await fetch('/partials/header');
+    const html = await response.text();
+
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    const metaTags = tempDiv.querySelectorAll('meta');
+    metaTags.forEach(meta => meta.remove());
+
+    header.innerHTML = tempDiv.innerHTML;
+
+    // Re-initialize header scripts
+    const headerModule = await import('/js/main/header.js');
+    // Reset the initialization flag
+    if (headerModule.resetInit) headerModule.resetInit();
+    if (headerModule.init) await headerModule.init();
+
+    const getTagModule = await import('/js/tags/getTag.js');
+    if (getTagModule.init) await getTagModule.init();
+
+    const getPropertyModule = await import('/js/properties/getProperty.js');
+    if (getPropertyModule.init) await getPropertyModule.init();
+
+    // Re-initialize translation
+    const translationModule = await import('/js/tools/translation.js');
+    if (translationModule.init) await translationModule.init();
+
+  } catch (err) {
+    logger.error('Error reloading header:', err);
+  }
 }

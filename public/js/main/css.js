@@ -71,6 +71,20 @@ export async function init() {
         const table = document.querySelector('.propertyTable');
         renderTable(table, properties, propertyAttributes, userFavorites);
 
+        // Check for pending search from fuzzy search overlay
+        const lastProperty = sessionStorage.getItem('lastProperty');
+        if (lastProperty) {
+            sessionStorage.removeItem('lastProperty');
+            const searchForm = document.getElementById('getTag');
+            const searchInput = searchForm?.querySelector('input[type="search"]');
+            if (searchForm && searchInput) {
+                searchInput.value = lastProperty;
+                // Trigger the search logic
+                const event = new Event('submit', { bubbles: true, cancelable: true });
+                searchForm.dispatchEvent(event);
+            }
+        }
+
     } catch (error) {
         logger.error('Error loading properties:', error);
     }

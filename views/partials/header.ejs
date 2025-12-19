@@ -1,9 +1,9 @@
 <header class="header pri">
-  <a class="header-brand " href="/">
+  <a class="header-brand " href="/home">
     <img src="https://www.svgrepo.com/show/502707/html.svg" alt="" class="d-inline-block align-top" alt="CoreUI Logo">
     HTML Tags
   </a>
-  <a class="header-brand " href="/css">
+  <a class="header-brand " href="/css-properties">
     <img src="https://staging.svgrepo.com/show/102011/css-3.svg" alt="" class="d-inline-block align-top"
       alt="CoreUI Logo">
     CSS Properties
@@ -11,7 +11,7 @@
 
   <ul class="header-nav ">
     <li class="nav-item me-4">
-      <a class="nav-link " href="/">Home</a>
+      <a class="nav-link " href="/home">Home</a>
     </li>
     <li class="nav-item dropdown me-4">
       <a class="nav-link dropdown-toggle" id="headerDropdown" role="button" data-coreui-toggle="dropdown"
@@ -33,6 +33,12 @@
         aria-disabled="true">Favorites</a>
     </li>
   </ul>
+
+  <!-- Dark Mode Toggle -->
+  <button id="dark-mode-toggle" class="dark-mode-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
+    <span class="material-symbols-outlined" id="dark-mode-icon" translate="no">dark_mode</span>
+  </button>
+
   <div class="custom-translate-container">
     <button class="translate-button" id="custom-btn">
       <span id="current-lang">English</span>

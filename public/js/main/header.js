@@ -30,6 +30,9 @@ export async function init() {
   // Set up theme switcher buttons
   setupThemeSwitcher();
 
+  // Set up dark mode toggle
+  setupDarkModeToggle();
+
   try {
     const sessionData = await checkSession();
 
@@ -142,6 +145,14 @@ export async function init() {
 }
 
 /**
+ * Resets the initialization flag to allow re-initialization
+ */
+export function resetInit() {
+  isInitialized = false;
+  logger.debug('Header initialization flag reset');
+}
+
+/**
  * Sets up theme switcher functionality for header brand buttons
  */
 function setupThemeSwitcher() {
@@ -170,5 +181,37 @@ function setupThemeSwitcher() {
         });
       }
     });
+  });
+}
+
+/**
+ * Sets up dark mode toggle functionality
+ */
+function setupDarkModeToggle() {
+  const darkModeBtn = document.getElementById('dark-mode-toggle');
+  const darkModeIcon = document.getElementById('dark-mode-icon');
+
+  if (!darkModeBtn || !darkModeIcon) {
+    logger.warn('Dark mode toggle button not found');
+    return;
+  }
+
+  // Update icon based on current mode
+  const updateIcon = async () => {
+    const { getDarkMode } = await import('../tools/themeSwitch.js');
+    const isDark = getDarkMode();
+    darkModeIcon.textContent = isDark ? 'light_mode' : 'dark_mode';
+  };
+
+  // Set initial icon
+  updateIcon();
+
+  // Handle click
+  darkModeBtn.addEventListener('click', async () => {
+    const { toggleDarkMode } = await import('../tools/themeSwitch.js');
+    if (toggleDarkMode) {
+      toggleDarkMode();
+      updateIcon();
+    }
   });
 }

@@ -111,11 +111,12 @@ app.get(['/', '/home'], (req, res) => {
  * Render the CSS Properties page.
  * 
  * @name CSS Properties Page
+ * @route {GET} /css
  * @route {GET} /css-properties
  * @param {express.Request} req - Express request object
  * @param {express.Response} res - Express response object
  */
-app.get('/css-properties', (req, res) => {
+app.get(['/css', '/css-properties'], (req, res) => {
   res.render('css', { layout: 'layout', title: 'CSS Properties' });
 });
 
@@ -194,6 +195,16 @@ app.get('/favorites', requireAuth, (req, res) => {
 // Static files middleware (comes last to not interfere with routes)
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+/**
+ * Render the Not Found page.
+ * 
+ * @name Not Found Page
+ * @route {GET} /not-found
+ */
+app.get('/not-found', (req, res) => {
+  res.render('notFound', { layout: 'layout', title: 'Not Found' });
+});
 
 // ============================================================================
 // Error Handling Middleware

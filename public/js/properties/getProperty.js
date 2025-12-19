@@ -94,8 +94,9 @@ export async function init() {
             const attributeResponse = await fetch(API.PROPERTY_ATTRIBUTES.BY_NAME(propertyName));
 
             if (await handleResponseError(attributeResponse, true)) {
-                if (table) table.innerHTML = '';
-                if (error) error.style.display = 'block';
+                sessionStorage.setItem('lastSearchTerm', propertyName);
+                const { changePage } = await import('../navigation.js');
+                changePage('/not-found');
                 return;
             }
 

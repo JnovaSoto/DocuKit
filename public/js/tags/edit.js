@@ -9,6 +9,7 @@ import { requireLogin } from '../tools/session.js';
 import { API, ROUTES, SUCCESS_MESSAGES } from "../config/constants.js";
 import logger from '../tools/logger.js';
 import { tagForm } from '../auto/tagForm.js';
+import { changePage } from '../navigation.js';
 
 
 logger.edit('Edit module loaded');
@@ -60,28 +61,10 @@ export async function init() {
             sessionStorage.setItem('editTagId', tagId);
             logger.info('Edit button clicked. ID saved:', tagId);
 
-            // Navigate to edit page using history API (SPA navigation)
-            history.pushState(null, null, ROUTES.EDIT);
-
-            // Manually fetch and load the edit page content
-            try {
-                const response = await fetch(ROUTES.EDIT);
-                const html = await response.text();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const newContent = doc.querySelector('#app');
-
-                if (newContent) {
-                    document.querySelector('#app').innerHTML = newContent.innerHTML;
-                    // Load the edit form with the saved tag ID
-                    await loadEditForm();
-                } else {
-                    logger.error('Could not find #app in edit page response');
-                }
-            } catch (error) {
-                logger.error('Error navigating to edit page:', error);
-                showTemporaryAlert('alert', 'Failed to load edit page');
-            }
+            // Navigate to edit page using SPA navigation
+            changePage(ROUTES.EDIT).then(() => {
+                loadEditForm();
+            });
         });
     }
 
@@ -202,8 +185,7 @@ function setupSubmitHandler(formElement, tagId) {
             // Cleanup and redirect
             sessionStorage.removeItem('editTagId');
             setTimeout(() => {
-                // Use history API if possible, or window.location
-                window.location.href = ROUTES.HOME;
+                changePage(ROUTES.HOME);
             }, 1000);
 
         } catch (error) {

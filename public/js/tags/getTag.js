@@ -127,8 +127,9 @@ export async function init() {
       const attributeResponse = await fetch(API.ATTRIBUTES.BY_NAME(tagName));
 
       if (await handleResponseError(attributeResponse, true)) {
-        if (table) table.innerHTML = '';
-        if (error) error.style.display = 'block';
+        sessionStorage.setItem('lastSearchTerm', tagName);
+        const { changePage } = await import('../navigation.js');
+        changePage('/not-found');
         return;
       }
 

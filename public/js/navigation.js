@@ -76,40 +76,39 @@ async function loadHeaderAndFooter() {
  * @fires {changePage} changePage
  */
 function initNavigation() {
-  // Event delegation: any click inside body
   document.body.addEventListener('click', e => {
-    // Note: #btn-edit-tags is NOT handled here - it's handled by edit.js
-    // to ensure the tag ID is saved to sessionStorage before navigation
+    // Look for the closest anchor tag
+    const link = e.target.closest('a');
 
-    if (e.target.matches('#btn-go-create') || e.target.matches('#btn-create-tags')) {
-      e.preventDefault();
-      // Only navigate if not disabled (though disabled attribute usually prevents click, standard a tags not always)
-      if (!e.target.classList.contains('disabled')) {
-        changePage(ROUTES.CREATE);
-      }
+    if (!link) return;
+
+    const href = link.getAttribute('href');
+
+    // Skip if no href, external link, or starts with # (hash anchor)
+    if (!href || href.startsWith('http') || href.startsWith('#') || link.target === '_blank') {
+      return;
     }
-    if (e.target.matches('#btn-go-home')) {
-      e.preventDefault();
-      changePage(ROUTES.HOME);
+
+    // Skip OAuth and server-side authentication routes
+    if (href.includes('/users/google') || href.includes('/auth/')) {
+      return; // Don't intercept, let browser handle full redirect
     }
-    if (e.target.matches('#btn-sign-up')) {
-      e.preventDefault();
-      changePage(ROUTES.SIGNUP);
-    }
-    if (e.target.matches('#btn-log-in')) {
-      e.preventDefault();
-      // Save current path to return after login
+
+    // Special case for logout and other non-SPA actions if any
+    if (link.id === 'btn-log-out') return;
+
+    // Intercept internal navigation
+    e.preventDefault();
+
+    // Check for disabled state
+    if (link.classList.contains('disabled')) return;
+
+    // Handle login specific logic
+    if (link.id === 'btn-log-in') {
       sessionStorage.setItem('returnPath', window.location.pathname);
-      changePage(ROUTES.LOGIN);
     }
-    if (e.target.matches('#btn-go-profile')) {
-      e.preventDefault();
-      changePage(ROUTES.PROFILE);
-    }
-    if (e.target.matches('#btn-go-favorites')) {
-      e.preventDefault();
-      changePage(ROUTES.FAVORITES);
-    }
+
+    changePage(href);
   });
 }
 
@@ -224,6 +223,7 @@ function executePageScript() {
       import('../js/tags/delete.js').then(mod => mod.init && mod.init());
       import('../js/tags/favorites.js').then(mod => mod.init && mod.init());
       break;
+    case '/css':
     case ROUTES.CSS:
     case '/css-properties':
       // Force CSS theme on CSS properties page

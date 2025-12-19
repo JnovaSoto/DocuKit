@@ -9,6 +9,7 @@ import { requireLogin } from '../tools/session.js';
 import { API, ROUTES } from "../config/constants.js";
 import logger from '../tools/logger.js';
 import { propertyForm } from '../auto/propertyForm.js';
+import { changePage } from '../navigation.js';
 
 logger.edit('Property Edit module loaded');
 
@@ -45,25 +46,10 @@ export async function init() {
             sessionStorage.setItem('editPropertyId', propertyId);
             logger.info('Property Edit button clicked. ID saved:', propertyId);
 
-            history.pushState(null, null, ROUTES.EDIT);
-
-            try {
-                const response = await fetch(ROUTES.EDIT);
-                const html = await response.text();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const newContent = doc.querySelector('#app');
-
-                if (newContent) {
-                    document.querySelector('#app').innerHTML = newContent.innerHTML;
-                    await loadEditForm();
-                } else {
-                    logger.error('Could not find #app in edit page response');
-                }
-            } catch (error) {
-                logger.error('Error navigating to edit page:', error);
-                showTemporaryAlert('alert', 'Failed to load edit page');
-            }
+            // Navigate to edit page using SPA navigation
+            changePage(ROUTES.EDIT).then(() => {
+                loadEditForm();
+            });
         });
     }
 
@@ -165,7 +151,7 @@ function setupSubmitHandler(formElement, propertyId) {
 
             sessionStorage.removeItem('editPropertyId');
             setTimeout(() => {
-                window.location.href = ROUTES.CSS;
+                changePage(ROUTES.CSS);
             }, 1000);
 
         } catch (error) {

@@ -1,0 +1,346 @@
+/* ==========================================================================
+   Dark Mode Styles
+   ========================================================================== */
+
+/* Dark mode body and background */
+.dark-mode {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+}
+
+.dark-mode body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+}
+
+/* Dark mode header text */
+.dark-mode .header,
+.dark-mode .header-nav,
+.dark-mode .nav-link,
+.dark-mode .header-brand {
+    color: #ffffff !important;
+}
+
+.dark-mode .nav-link:hover {
+    color: var(--color-primary-lighter) !important;
+}
+
+/* Dark mode containers and cards */
+.dark-mode .container,
+.dark-mode .card,
+.dark-mode .profile-container,
+.dark-mode .form-container {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+}
+
+/* Dark mode tables */
+.dark-mode table {
+    background-color: var(--color-bg-secondary);
+    color: #ffffff;
+}
+
+.dark-mode th {
+    background-color: var(--color-bg-primary);
+    color: #ffffff !important;
+}
+
+.dark-mode td {
+    border-color: var(--color-border);
+    color: #ffffff !important;
+}
+
+.dark-mode tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Dark mode forms */
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select {
+    background-color: #2a2a2a;
+    color: #ffffff;
+    border-color: #404040;
+}
+
+.dark-mode input:hover,
+.dark-mode textarea:hover,
+.dark-mode select:hover {
+    border-color: #555555;
+    background-color: #2f2f2f;
+}
+
+.dark-mode input:hover,
+.dark-mode textarea:hover,
+.dark-mode select:hover {
+    border-color: #555555;
+    background-color: #2f2f2f;
+}
+
+.dark-mode input:focus,
+.dark-mode textarea:focus,
+.dark-mode select:focus {
+    background-color: #2f2f2f;
+    border-color: var(--color-primary);
+    color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.2);
+}
+
+.dark-mode input::placeholder,
+.dark-mode textarea::placeholder {
+    color: #888888;
+    opacity: 1;
+}
+
+/* Dark mode select dropdown options */
+.dark-mode select option {
+    background-color: #2a2a2a;
+    color: #ffffff;
+}
+
+/* Dark mode buttons */
+.dark-mode .btn {
+    background-color: var(--color-bg-secondary);
+    color: #ffffff;
+    border-color: var(--color-border);
+}
+
+.dark-mode .btn:hover {
+    background-color: var(--color-bg-primary);
+    color: #ffffff;
+}
+
+.dark-mode .btn-primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #ffffff;
+}
+
+.dark-mode .btn-primary:hover {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+}
+
+/* Dark mode links */
+.dark-mode a {
+    color: var(--color-primary-light);
+}
+
+.dark-mode a:hover {
+    color: var(--color-primary-lighter);
+}
+
+/* Dark mode dropdown */
+.dark-mode .dropdown-menu {
+    background-color: #2a2a2a;
+    border-color: var(--color-border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode .dropdown-item {
+    color: #ffffff !important;
+    background-color: transparent;
+}
+
+.dark-mode .dropdown-item:hover,
+.dark-mode .dropdown-item:focus {
+    background-color: var(--color-primary);
+    color: #ffffff !important;
+}
+
+.dark-mode .dropdown-divider {
+    border-color: var(--color-border);
+    opacity: 0.3;
+}
+
+.dark-mode .dropdown-toggle {
+    color: #ffffff !important;
+}
+
+.dark-mode .dropdown-toggle::after {
+    border-top-color: #ffffff;
+}
+
+/* Dark mode footer */
+.dark-mode .footer {
+    background-color: var(--color-bg-secondary);
+    border-top-color: var(--color-border);
+    color: #ffffff;
+}
+
+/* Fix for Search Input - keep white in dark mode */
+.dark-mode .search-form {
+    background-color: rgba(255, 255, 255, 0) !important;
+}
+
+
+/* Disabled styling */
+.dark-mode .nav-link.disabled,
+.dark-mode .btn.disabled,
+.dark-mode button:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Dark mode tables - Ensure transparency or dark background */
+.dark-mode .table,
+.dark-mode table {
+    background-color: var(--color-bg-secondary) !important;
+    color: #ffffff !important;
+}
+
+.dark-mode .table td,
+.dark-mode .table th {
+    background-color: var(--color-bg-secondary) !important;
+    color: #ffffff !important;
+    border-color: var(--color-border) !important;
+}
+
+/* File Input */
+.dark-mode input[type="file"] {
+    background-color: var(--color-bg-secondary);
+    color: #ffffff;
+}
+
+.dark-mode input[type="file"]:hover {
+    background-color: var(--color-bg-secondary);
+}
+
+.dark-mode input[type="file"]::file-selector-button {
+    background-color: var(--color-bg-secondary);
+    color: #1a1a1a;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.dark-mode input[type="file"]::file-selector-button:hover {
+    background-color: black;
+    color: #1a1a1a;
+}
+
+/* Translate Dropdown Fix */
+.dark-mode .dropdown-content {
+    background-color: #2a2a2a !important;
+    border: 1px solid var(--color-border);
+}
+
+.dark-mode .dropdown-content td {
+    background-color: #2a2a2a !important;
+}
+
+.dark-mode .custom-options {
+    background-color: #2a2a2a !important;
+    border: 1px solid var(--color-border);
+}
+
+.dark-mode .option:hover {
+    background-color: var(--color-primary);
+    color: white !important;
+}
+
+/* Dark mode search modal */
+.dark-mode .search-modal {
+    background: rgba(30, 30, 30, 0.95);
+    color: var(--color-text-primary);
+}
+
+.dark-mode #command-k-input {
+    color: var(--color-text-primary);
+}
+
+.dark-mode .search-result-item:hover,
+.dark-mode .search-result-item.selected {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Dark mode profile info */
+.dark-mode .info-section {
+    background-color: var(--color-bg-primary);
+}
+
+.dark-mode .info-section p {
+    background-color: var(--color-bg-secondary);
+    color: #ffffff;
+}
+
+.dark-mode .info-section p:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode .info-section h3 {
+    color: var(--color-primary);
+}
+
+/* Dark mode translate button */
+.dark-mode .translate-button {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-border);
+    color: var(--color-text-primary);
+}
+
+.dark-mode .translate-button:hover {
+    background: var(--color-bg-primary);
+}
+
+.dark-mode .custom-options {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-border);
+}
+
+.dark-mode .option {
+    color: var(--color-text-primary);
+}
+
+.dark-mode .option:hover {
+    background: var(--color-bg-primary);
+}
+
+/* Dark mode labels and headings */
+.dark-mode label,
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6 {
+    color: #ffffff;
+}
+
+/* Dark mode attribute blocks */
+.dark-mode .attribute-block {
+    background-color: #2a2a2a;
+    border-color: var(--color-border);
+    border-left-color: var(--color-primary);
+}
+
+.dark-mode .attribute-block:hover {
+    background-color: #2f2f2f;
+}
+
+.dark-mode .attribute-block label {
+    color: #ffffff;
+}
+
+/* Dark mode scrollbar for attributes */
+.dark-mode #attributesContainer::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+.dark-mode #attributesContainer::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+}
+
+.dark-mode #attributesContainer::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-light);
+}
+
+/* Dark mode forms */
+.dark-mode #myForm,
+#login-form,
+#signUp-form {
+    background-color: var(--color-bg-secondary);
+}
