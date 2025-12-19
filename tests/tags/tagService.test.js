@@ -1,110 +1,105 @@
-// tests/tags/tagService.test.js
-
 import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 
-// Mock the database dependency using unstable_mockModule for ESM support
-jest.unstable_mockModule('../../db/database.js', () => {
-    return import('../../mocks/database/database.js');
+// Mock the Prisma dependency
+jest.unstable_mockModule('../../db/prisma.js', () => {
+    return import('../../mocks/prisma.js');
 });
 
-// Import the mocks and the service under test dynamically
-const { get, run, all, prepare } = await import('../../mocks/database/database.js');
+const { default: prisma } = await import('../../db/prisma.js');
 const { default: tagService } = await import('../../services/tags/tagService.js');
 
 describe('Tag Service', () => {
 
     beforeEach(() => {
-        jest.resetAllMocks();
+        jest.clearAllMocks();
     });
 
-    // Testing getAllTags
     test('should get all tags', async () => {
         const mockTags = [{ id: 1, tagName: 'Urgent' }, { id: 2, tagName: 'Archive' }];
-        all.mockImplementation((sql, params, callback) => callback(null, mockTags));
+        prisma.tag.findMany.mockResolvedValue(mockTags);
 
         const tags = await tagService.getAllTags();
         expect(tags).toEqual(mockTags);
-        expect(tags.length).toBe(2);
+        expect(prisma.tag.findMany).toHaveBeenCalled();
     });
 
-    // Testing error handling
     test('should reject when there is a database error', async () => {
-        all.mockImplementation((sql, params, callback) => {
-            callback(new Error('DB Error'), null);
-        });
+        prisma.tag.findMany.mockRejectedValue(new Error('DB Error'));
 
         await expect(tagService.getAllTags()).rejects.toThrow('DB Error');
     });
 
-    // Testing createTag
-    test('should create a tag and return lastID', async () => {
-        const mockId = 10;
-        run.mockImplementation(function (sql, params, callback) {
-            callback.call({ lastID: mockId }, null);
-        });
+    test('should create a tag and return its ID', async () => {
+        const mockTag = { id: 10 };
+        prisma.tag.create.mockResolvedValue(mockTag);
 
         const id = await tagService.createTag('NewTag', 'Global', 'Content');
-        expect(id).toBe(mockId);
+        expect(id).toBe(10);
+        expect(prisma.tag.create).toHaveBeenCalledWith({
+            data: {
+                tagName: 'NewTag',
+                usability: 'Global',
+                content: 'Content'
+            }
+        });
     });
 
-    // Testing getTagById
     test('should get a tag by id', async () => {
         const mockTag = { id: 1, tagName: 'TestTag' };
-        get.mockImplementation((sql, params, callback) => callback(null, mockTag));
+        prisma.tag.findUnique.mockResolvedValue(mockTag);
 
         const tag = await tagService.getTagById(1);
         expect(tag.tagName).toBe('TestTag');
+        expect(prisma.tag.findUnique).toHaveBeenCalledWith({
+            where: { id: 1 }
+        });
     });
 
-    // Testing getTagsByIds
     test('should get tags by multiple ids', async () => {
         const mockTags = [{ id: 1 }, { id: 2 }];
-        all.mockImplementation((sql, params, callback) => callback(null, mockTags));
+        prisma.tag.findMany.mockResolvedValue(mockTags);
 
         const tags = await tagService.getTagsByIds([1, 2]);
         expect(tags.length).toBe(2);
-        expect(all).toHaveBeenCalledWith(expect.stringContaining('IN (?,?)'), [1, 2], expect.any(Function));
+        expect(prisma.tag.findMany).toHaveBeenCalledWith({
+            where: {
+                id: { in: [1, 2] }
+            }
+        });
     });
 
-    // Testing updateTag
     test('should update tag and its attributes', async () => {
-
-        const mockStmt = {
-            run: jest.fn(),
-            finalize: jest.fn((cb) => cb(null))
-        };
-        prepare.mockReturnValue(mockStmt);
-
-        run.mockImplementationOnce(function (sql, params, cb) {
-            cb.call({ changes: 1 }, null);
-        });
-        run.mockImplementationOnce((sql, params, cb) => cb(null));
+        prisma.tag.update.mockResolvedValue({ id: 1 });
 
         const result = await tagService.updateTag(1, 'Updated', 'Usage', [{ attribute: 'key', info: 'val' }]);
 
         expect(result).toBe(true);
-        expect(mockStmt.run).toHaveBeenCalled();
-        expect(mockStmt.finalize).toHaveBeenCalled();
+        expect(prisma.tag.update).toHaveBeenCalled();
     });
 
-    // Testing deleteTag
-    test('should delete tag and its attributes', async () => {
-        run.mockImplementationOnce((sql, params, cb) => cb(null));
-        run.mockImplementationOnce(function (sql, params, cb) {
-            cb.call({ changes: 1 }, null);
-        });
+    test('should return null if updating non-existent tag', async () => {
+        const error = new Error('Not found');
+        error.code = 'P2025';
+        prisma.tag.update.mockRejectedValue(error);
+
+        const result = await tagService.updateTag(999, 'None', 'None');
+        expect(result).toBe(null);
+    });
+
+    test('should delete tag', async () => {
+        prisma.tag.delete.mockResolvedValue({ id: 1 });
 
         const result = await tagService.deleteTag(1);
         expect(result).toBe(true);
-        expect(run).toHaveBeenCalledTimes(2);
+        expect(prisma.tag.delete).toHaveBeenCalledWith({
+            where: { id: 1 }
+        });
     });
 
-    // Testing deleteTag
     test('should return false if deleting non-existent tag', async () => {
-        run.mockImplementationOnce((sql, params, cb) => cb(null));
-        run.mockImplementationOnce(function (sql, params, cb) {
-            cb.call({ changes: 0 }, null);
-        });
+        const error = new Error('Not found');
+        error.code = 'P2025';
+        prisma.tag.delete.mockRejectedValue(error);
 
         const result = await tagService.deleteTag(999);
         expect(result).toBe(false);

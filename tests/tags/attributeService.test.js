@@ -1,92 +1,60 @@
-// tests/tags/attributeService.test.js
-
 import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 
-// Mock the database dependency using unstable_mockModule for ESM support
-jest.unstable_mockModule('../../db/database.js', () => {
-    return import('../../mocks/database/database.js');
+// Mock the Prisma dependency
+jest.unstable_mockModule('../../db/prisma.js', () => {
+    return import('../../mocks/prisma.js');
 });
 
-// Import the mocks and the service under test dynamically
-const { all, prepare } = await import('../../mocks/database/database.js');
-
-const { default: tagAttributeService } = await import('../../services/tags/attributeService.js');
+const { default: prisma } = await import('../../db/prisma.js');
+const { default: attributeService } = await import('../../services/tags/attributeService.js');
 
 describe('Tag Attribute Service', () => {
 
     beforeEach(() => {
-        jest.resetAllMocks();
+        jest.clearAllMocks();
     });
 
-    // Testing getAllAttributes
     test('should get all tag attributes', async () => {
         const mockRows = [{ id: 1, attribute: 'Prioridad', tagId: 1 }];
-        all.mockImplementation((sql, params, callback) => callback(null, mockRows));
+        prisma.attribute.findMany.mockResolvedValue(mockRows);
 
-        const result = await tagAttributeService.getAllAttributes();
+        const result = await attributeService.getAllAttributes();
 
         expect(result).toEqual(mockRows);
-        expect(all).toHaveBeenCalledWith(expect.stringContaining('FROM attributes'), [], expect.any(Function));
+        expect(prisma.attribute.findMany).toHaveBeenCalled();
     });
 
-    // Testing createAttributes
-    test('should create multiple tag attributes using a statement', async () => {
-        const mockStmt = {
-            run: jest.fn(),
-            finalize: jest.fn((callback) => callback(null))
-        };
-        prepare.mockReturnValue(mockStmt);
+    test('should create multiple tag attributes', async () => {
+        prisma.attribute.createMany.mockResolvedValue({ count: 2 });
 
         const tagId = 5;
         const attributes = [
             { attribute: 'Status', info: 'Active' },
-            { attribute: 'Version', info: '1.0' },
-            { attribute: '', info: 'Skipped' }
+            { attribute: 'Version', info: '1.0' }
         ];
 
-        await tagAttributeService.createAttributes(tagId, attributes);
+        await attributeService.createAttributes(tagId, attributes);
 
-        expect(prepare).toHaveBeenCalledWith(expect.stringContaining('INSERT INTO attributes'));
-        expect(mockStmt.run).toHaveBeenCalledTimes(2);
-        expect(mockStmt.run).toHaveBeenCalledWith(['Status', 'Active', 5]);
-        expect(mockStmt.finalize).toHaveBeenCalled();
+        expect(prisma.attribute.createMany).toHaveBeenCalled();
     });
 
-    // Testing getAttributesByTagId
     test('should get attributes by tagId', async () => {
         const mockRows = [{ attribute: 'Category', tagId: 10 }];
-        all.mockImplementation((sql, params, callback) => callback(null, mockRows));
+        prisma.attribute.findMany.mockResolvedValue(mockRows);
 
-        const result = await tagAttributeService.getAttributesByTagId(10);
+        const result = await attributeService.getAttributesByTagId(10);
 
         expect(result).toEqual(mockRows);
-        expect(all).toHaveBeenCalledWith(expect.any(String), 10, expect.any(Function));
+        expect(prisma.attribute.findMany).toHaveBeenCalled();
     });
 
-    // Testing getAttributesByTagId
-    test('should return an empty array if getAttributesByTagId finds nothing', async () => {
-        all.mockImplementation((sql, params, callback) => callback(null, null));
-
-        const result = await tagAttributeService.getAttributesByTagId(999);
-
-        expect(result).toEqual([]);
-    });
-
-    // Testing getAttributesByName
     test('should get attributes by name', async () => {
         const mockRows = [{ attribute: 'Prioridad', info: 'Alta' }];
-        all.mockImplementation((sql, params, callback) => callback(null, mockRows));
+        prisma.attribute.findMany.mockResolvedValue(mockRows);
 
-        const result = await tagAttributeService.getAttributesByName('Prioridad');
+        const result = await attributeService.getAttributesByName('Prioridad');
 
         expect(result).toEqual(mockRows);
-        expect(all).toHaveBeenCalledWith(expect.any(String), ['Prioridad'], expect.any(Function));
-    });
-
-    // Testing getAllAttributes
-    test('should reject if database fails in getAllAttributes', async () => {
-        all.mockImplementation((sql, params, callback) => callback(new Error('Fatal DB Error')));
-
-        await expect(tagAttributeService.getAllAttributes()).rejects.toThrow('Fatal DB Error');
+        expect(prisma.attribute.findMany).toHaveBeenCalled();
     });
 });

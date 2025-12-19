@@ -32,7 +32,7 @@ DocuKit is divided into four key functional pillars: Core Documentation, User Ma
 * **Full CRUD Control:** Administrators have complete authority to:
     * **Create/Update/Delete** tags, properties, and their associated attributes.
     * **Manage Metadata:** Update global attribute definitions.
-* **Automated Migrations:** Smart database initialization system that automatically updates the schema (e.g., adding Google Auth support) while preserving data.
+* **Modern Data Layer:** powered by **Prisma ORM** for type-safe database interactions and streamlined schema management.
 
 ---
 
@@ -41,7 +41,8 @@ DocuKit is divided into four key functional pillars: Core Documentation, User Ma
 | Category | Technology | Key Features |
 | :--- | :--- | :--- |
 | **Server** | Node.js & Express.js | Core application and API framework. |
-| **Database** | SQLite3 | Lightweight, transactional relational storage. |
+| **ORM** | Prisma | Type-safe database client and schema management. |
+| **Database** | SQLite | Lightweight, transactional relational storage. |
 | **Auth** | Passport.js & Google OAuth 2.0 | Multi-provider authentication system. |
 | **Templating** | EJS | Dynamic server-side rendering. |
 | **UI/UX** | Vanilla JS & CSS Variables | High-performance SPA navigation and theme logic. |
@@ -57,11 +58,12 @@ The codebase follows a clear **Feature-Driven Design** for maximum scalability.
 DocuKit/
 ├── config/             # Passport, Multer, and Route centralization
 ├── controllers/        # Request handling (Tags, Properties, Users, Partials)
-├── db/                 # SQLite connection & Auto-migration engine
+├── db/                 # Prisma client instance and Seeding logic
 ├── middleware/         # Auth guards & Validation
+├── prisma/             # Prisma schema and database migrations
 ├── public/             # SPA Logic, Global Styles, and Tools
 ├── routes/             # Centralized route definitions
-├── services/           # Decoupled Business Logic & DB queries
+├── services/           # Decoupled Business Logic using Prisma Client
 ├── views/              # Modular EJS templates
 └── app.js              # Application entry point & Middleware orchestration
 ```
@@ -85,15 +87,22 @@ DocuKit/
     NODE_ENV=development
     GOOGLE_CLIENT_ID=your_google_id
     GOOGLE_CLIENT_SECRET=your_google_secret
+    DATABASE_URL="file:./db/database.sqlite"
     ```
 
 3. **Initialize Database:**
     ```bash
-    # This creates the schema and seeds initial data
+    # This synchronizes the schema and seeds initial data via Prisma
     npm run create-db
     ```
 
-4. **Run Application:**
+4. **Database Exploration:**
+    ```bash
+    # Open Prisma Studio to view and edit your data
+    npm run studio
+    ```
+
+5. **Run Application:**
     ```bash
     npm start
     ```

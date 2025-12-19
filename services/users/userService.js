@@ -1,34 +1,34 @@
-import { get, run } from '../../db/database.js';
+import prisma from '../../db/prisma.js';
 import bcrypt from 'bcrypt';
 
+/**
+ * Service for handling user-related database operations using Prisma.
+ */
 const userService = {
     /**
      * Find user by login (username or email).
      * @param {string} login - Username or email.
-     * @returns {Promise<Object>} User object.
+     * @returns {Promise<Object|null>} User object.
      */
-    findByLogin: (login) => {
-        return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM users WHERE username = ? OR email = ?`;
-            get(sql, [login, login], (err, row) => {
-                if (err) reject(err);
-                resolve(row);
-            });
+    findByLogin: async (login) => {
+        return await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { username: login },
+                    { email: login }
+                ]
+            }
         });
     },
 
     /**
      * Find user by Google ID.
      * @param {string} googleId - Google profile ID.
-     * @returns {Promise<Object>} User object.
+     * @returns {Promise<Object|null>} User object.
      */
-    findByGoogleId: (googleId) => {
-        return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM users WHERE googleId = ?`;
-            get(sql, [googleId], (err, row) => {
-                if (err) reject(err);
-                resolve(row);
-            });
+    findByGoogleId: async (googleId) => {
+        return await prisma.user.findUnique({
+            where: { googleId }
         });
     },
 
@@ -48,13 +48,16 @@ const userService = {
             hash = await bcrypt.hash(password, saltRounds);
         }
 
-        return new Promise((resolve, reject) => {
-            const sql = `INSERT INTO users (username, email, password, admin, googleId) VALUES (?, ?, ?, ?, ?)`;
-            run(sql, [username, email, hash, admin, googleId], function (err) {
-                if (err) reject(err);
-                resolve(this.lastID);
-            });
+        const user = await prisma.user.create({
+            data: {
+                username,
+                email,
+                password: hash,
+                admin: parseInt(admin),
+                googleId
+            }
         });
+        return user.id;
     },
 
     /**
@@ -63,43 +66,41 @@ const userService = {
      * @param {string} photoPath - Path to the user's photo.
      * @returns {Promise<void>}
      */
-    updatePhoto: (userId, photoPath) => {
-        return new Promise((resolve, reject) => {
-            const sql = `UPDATE users SET photo = ? WHERE id = ?`;
-            run(sql, [photoPath, userId], (err) => {
-                if (err) reject(err);
-                resolve();
-            });
+    updatePhoto: async (userId, photoPath) => {
+        await prisma.user.update({
+            where: { id: parseInt(userId) },
+            data: { photo: photoPath }
         });
     },
 
     /**
      * Find user by ID.
      * @param {number} id - User ID.
-     * @returns {Promise<Object>} User object.
+     * @returns {Promise<Object|null>} User object.
      */
-    findById: (id) => {
-        return new Promise((resolve, reject) => {
-            const sql = `SELECT id, username, email, admin, photo, favorites, favoritesCss FROM users WHERE id = ?`;
-            get(sql, [id], (err, row) => {
-                if (err) reject(err);
-                resolve(row);
-            });
+    findById: async (id) => {
+        return await prisma.user.findUnique({
+            where: { id: parseInt(id) },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                admin: true,
+                photo: true,
+                favorites: true,
+                favoritesCss: true
+            }
         });
     },
 
     /**
-     * Find user by ID (for admin, returns all fields including password hash if needed, but usually limited).
+     * Find user by ID.
      * @param {number} id - User ID.
-     * @returns {Promise<Object>} User object.
+     * @returns {Promise<Object|null>} User object.
      */
-    findByIdAdmin: (id) => {
-        return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM users WHERE ID = ?`;
-            get(sql, [id], (err, row) => {
-                if (err) reject(err);
-                resolve(row);
-            });
+    findByIdAdmin: async (id) => {
+        return await prisma.user.findUnique({
+            where: { id: parseInt(id) }
         });
     },
 
@@ -109,21 +110,25 @@ const userService = {
      * @param {string} type - 'tags' or 'css'.
      * @returns {Promise<Array>} Array of favorite IDs.
      */
-    getFavorites: (userId, type = 'tags') => {
-        return new Promise((resolve, reject) => {
-            const column = type === 'css' ? 'favoritesCss' : 'favorites';
-            const sql = `SELECT ${column} FROM users WHERE id = ?`;
-            get(sql, [userId], (err, row) => {
-                if (err) reject(err);
-                if (!row) return resolve(null); // User not found
-                try {
-                    const favorites = row[column] ? JSON.parse(row[column]) : [];
-                    resolve(favorites);
-                } catch (parseErr) {
-                    resolve([]);
-                }
-            });
+    getFavorites: async (userId, type = 'tags') => {
+        const user = await prisma.user.findUnique({
+            where: { id: parseInt(userId) },
+            select: {
+                favorites: type !== 'css',
+                favoritesCss: type === 'css'
+            }
         });
+
+        if (!user) return null;
+
+        const column = type === 'css' ? 'favoritesCss' : 'favorites';
+        const data = user[column];
+
+        try {
+            return data ? JSON.parse(data) : [];
+        } catch (error) {
+            return [];
+        }
     },
 
     /**
@@ -133,14 +138,13 @@ const userService = {
      * @param {string} type - 'tags' or 'css'.
      * @returns {Promise<void>}
      */
-    updateFavorites: (userId, favorites, type = 'tags') => {
-        return new Promise((resolve, reject) => {
-            const column = type === 'css' ? 'favoritesCss' : 'favorites';
-            const sql = `UPDATE users SET ${column} = ? WHERE id = ?`;
-            run(sql, [JSON.stringify(favorites), userId], (err) => {
-                if (err) reject(err);
-                resolve();
-            });
+    updateFavorites: async (userId, favorites, type = 'tags') => {
+        const column = type === 'css' ? 'favoritesCss' : 'favorites';
+        await prisma.user.update({
+            where: { id: parseInt(userId) },
+            data: {
+                [column]: JSON.stringify(favorites)
+            }
         });
     }
 };

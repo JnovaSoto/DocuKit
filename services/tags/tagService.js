@@ -1,18 +1,15 @@
-import { get, run, all, prepare } from '../../db/database.js';
+import prisma from '../../db/prisma.js';
 
+/**
+ * Service for handling tag-related database operations using Prisma.
+ */
 const tagService = {
     /**
      * Retrieves all tags from the database.
      * @returns {Promise<Array>} A promise that resolves to an array of tag objects.
      */
-    getAllTags: () => {
-        return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM tags`;
-            all(sql, [], (err, rows) => {
-                if (err) reject(err);
-                resolve(rows);
-            });
-        });
+    getAllTags: async () => {
+        return await prisma.tag.findMany();
     },
 
     /**
@@ -22,28 +19,25 @@ const tagService = {
      * @param {string} [content] - Optional additional content for the tag.
      * @returns {Promise<number>} A promise that resolves to the ID of the newly created tag.
      */
-    createTag: (tagName, usability, content) => {
-        return new Promise((resolve, reject) => {
-            const sql = `INSERT INTO tags (tagName, usability, content) VALUES (?, ?, ?)`;
-            run(sql, [tagName, usability, content || ''], function (err) {
-                if (err) reject(err);
-                resolve(this.lastID);
-            });
+    createTag: async (tagName, usability, content) => {
+        const tag = await prisma.tag.create({
+            data: {
+                tagName,
+                usability,
+                content: content || ''
+            }
         });
+        return tag.id;
     },
 
     /**
      * Retrieves a tag by its ID.
      * @param {number} id - The ID of the tag to retrieve.
-     * @returns {Promise<Object|undefined>} A promise that resolves to the tag object if found, or undefined.
+     * @returns {Promise<Object|null>} A promise that resolves to the tag object if found, or null.
      */
-    getTagById: (id) => {
-        return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM tags WHERE id = ?`;
-            get(sql, [id], (err, row) => {
-                if (err) reject(err);
-                resolve(row);
-            });
+    getTagById: async (id) => {
+        return await prisma.tag.findUnique({
+            where: { id: parseInt(id) }
         });
     },
 
@@ -52,15 +46,13 @@ const tagService = {
      * @param {Array<number>} ids - An array of tag IDs.
      * @returns {Promise<Array>} A promise that resolves to an array of tag objects.
      */
-    getTagsByIds: (ids) => {
-        return new Promise((resolve, reject) => {
-            const placeholders = ids.map(() => '?').join(',');
-            const sqlTag = `SELECT * FROM Tags WHERE id IN (${placeholders})`;
-
-            all(sqlTag, ids, (err, tagRows) => {
-                if (err) reject(err);
-                resolve(tagRows);
-            });
+    getTagsByIds: async (ids) => {
+        return await prisma.tag.findMany({
+            where: {
+                id: {
+                    in: ids.map(id => parseInt(id))
+                }
+            }
         });
     },
 
@@ -69,13 +61,11 @@ const tagService = {
      * @param {string} tagName - The name of the tag to search for.
      * @returns {Promise<Array>} A promise that resolves to an array of matching tag objects.
      */
-    getTagByName: (tagName) => {
-        return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM tags WHERE tagName = ?`;
-            all(sql, [tagName.toLowerCase()], (err, rows) => {
-                if (err) reject(err);
-                resolve(rows);
-            });
+    getTagByName: async (tagName) => {
+        return await prisma.tag.findMany({
+            where: {
+                tagName: tagName.toLowerCase()
+            }
         });
     },
 
@@ -87,21 +77,30 @@ const tagService = {
      * @param {Array<Object>} [attributes] - An optional array of attributes to update.
      * @returns {Promise<boolean|null>} A promise that resolves to `true` if successful, or `null` if the tag was not found.
      */
-    updateTag: (id, tagName, usability, attributes) => {
-        return new Promise((resolve, reject) => {
-            const updateTagSql = `UPDATE tags SET tagName = ?, usability = ? WHERE id = ?`;
-
-            run(updateTagSql, [tagName, usability, id], function (err) {
-                if (err) return reject(new Error('Failed to update tag: ' + err.message));
-                if (this.changes === 0) return resolve(null);
-
-                if (!Array.isArray(attributes)) return resolve(true);
-
-                updateTagAttributes(id, attributes)
-                    .then(() => resolve(true))
-                    .catch(reject);
+    updateTag: async (id, tagName, usability, attributes) => {
+        try {
+            await prisma.tag.update({
+                where: { id: parseInt(id) },
+                data: {
+                    tagName,
+                    usability,
+                    attributes: attributes ? {
+                        deleteMany: {},
+                        create: attributes
+                            .filter(attr => attr.attribute)
+                            .map(attr => ({
+                                attribute: attr.attribute,
+                                info: attr.info || ''
+                            }))
+                    } : undefined
+                }
             });
-        });
+            return true;
+        } catch (error) {
+            // P2025 is the Prisma error code for "An operation failed because it depends on one or more records that were required but not found."
+            if (error.code === 'P2025') return null;
+            throw error;
+        }
     },
 
     /**
@@ -109,44 +108,17 @@ const tagService = {
      * @param {number} id - The ID of the tag to delete.
      * @returns {Promise<boolean>} A promise that resolves to `true` if the tag was deleted, or `false` if not found.
      */
-    deleteTag: (id) => {
-        return new Promise((resolve, reject) => {
-            const deleteAttributesSql = `DELETE FROM attributes WHERE tagId = ?`;
-            run(deleteAttributesSql, [id], function (err) {
-                if (err) return reject(new Error('Failed to delete tag attributes: ' + err.message));
-
-                const deleteTagSql = `DELETE FROM tags WHERE id = ?`;
-                run(deleteTagSql, [id], function (err) {
-                    if (err) return reject(new Error('Failed to delete tag: ' + err.message));
-                    if (this.changes === 0) return resolve(false);
-                    resolve(true);
-                });
+    deleteTag: async (id) => {
+        try {
+            await prisma.tag.delete({
+                where: { id: parseInt(id) }
             });
-        });
+            return true;
+        } catch (error) {
+            if (error.code === 'P2025') return false;
+            throw error;
+        }
     }
 };
 
-/**
- * Helper function to update attributes for a tag.
- * Deletes existing attributes and inserts new ones.
- * @param {number} tagId - The ID of the tag.
- * @param {Array<Object>} attributes - The new list of attributes.
- * @returns {Promise<void>} A promise that resolves when the update is complete.
- */
-const updateTagAttributes = (tagId, attributes) => {
-    return new Promise((resolve, reject) => {
-        run(`DELETE FROM attributes WHERE tagId = ?`, [tagId], (err) => {
-            if (err) return reject(new Error('Failed to clear attributes: ' + err.message));
-
-            if (attributes.length === 0) return resolve();
-
-            const stmt = prepare(`INSERT INTO attributes (attribute, info, tagId) VALUES (?, ?, ?)`);
-            attributes.forEach(attr => {
-                if (attr.attribute) stmt.run([attr.attribute, attr.info || '', tagId]);
-            });
-
-            stmt.finalize(err => err ? reject(new Error('Failed to insert attributes: ' + err.message)) : resolve());
-        });
-    });
-};
 export default tagService;

@@ -1,34 +1,25 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
+import prisma from './prisma.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const dbPath = path.join(__dirname, 'database.sqlite');
 
 /**
- * Seeds the database with initial data from scriptExample.txt.
- * 
- * This function performs the following steps:
- * 1. Deletes the existing database file if it exists.
- * 2. Dynamically imports the database module to initialize the connection.
- * 3. Reads the SQL script from `scriptExample.txt`.
- * 4. Executes the SQL script to create tables and insert data.
- * 5. Closes the database connection.
- * 
- * @async
- * @function seedDatabase
- * @returns {Promise<void>}
+ * Seeds the database with initial data from scriptExample.txt using Prisma.
  */
 const seedDatabase = async () => {
-    // Delete existing database if it exists
+    // Delete existing database if it exists to start fresh
     if (fs.existsSync(dbPath)) {
         try {
             fs.unlinkSync(dbPath);
             console.log('🗑️ Existing database deleted');
         } catch (err) {
             if (err.code === 'EBUSY') {
-                console.error('❌ Error: Database file is locked. Please stop the running server (npm start) and try again.');
+                console.error('❌ Error: Database file is locked. Please stop the running server and try again.');
             } else {
                 console.error('❌ Error deleting existing database:', err.message);
             }
@@ -36,32 +27,33 @@ const seedDatabase = async () => {
         }
     }
 
-    // Named imports from database.js
-    const { initDatabase, exec, closeDatabase } = await import('./database.js');
-
-    await initDatabase();
-
-    const scriptPath = path.join(__dirname, 'scriptExample.txt');
-
     try {
+        console.log('🏗️ Synchronizing database schema...');
+        // Use prisma db push to recreate the schema without needing migrations for a fresh seed
+        execSync('npx prisma db push --accept-data-loss', { stdio: 'inherit' });
+
+        const scriptPath = path.join(__dirname, 'scriptExample.txt');
         const sql = fs.readFileSync(scriptPath, 'utf8');
 
-        console.log('🌱 Seeding database...');
+        console.log('🌱 Seeding database with initial data...');
 
-        exec(sql, (err) => {
-            if (err) {
-                console.error('❌ Error seeding database:', err.message);
-                process.exit(1);
-            }
-            console.log('✅ Database seeded successfully');
-            console.log('🎟️ User Admin created successfully -> userAdmin12345@gmail.com | password: userAdmin12345');
+        const statements = sql
+            .split(';')
+            .map(s => s.trim())
+            .filter(s => s.length > 0);
 
-            closeDatabase();
-        });
+        for (const statement of statements) {
+            await prisma.$executeRawUnsafe(statement);
+        }
+
+        console.log('✅ Database seeded successfully');
+        console.log('🎟️ User Admin created successfully -> userAdmin12345@gmail.com | password: userAdmin12345');
 
     } catch (err) {
-        console.error('❌ Error reading script file:', err.message);
+        console.error('❌ Error during seeding:', err.message);
         process.exit(1);
+    } finally {
+        await prisma.$disconnect();
     }
 };
 

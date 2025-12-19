@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { requireAuth } from './middleware/auth.js';
-import { initDatabase } from './db/database.js';
+import prisma from './db/prisma.js';
 import passport from './config/passport.js';
 
 // Route imports
@@ -243,17 +243,18 @@ app.use((err, req, res, next) => {
 // Server Initialization
 // ============================================================================
 
-// Ensure DB is connected/initialized before starting the server
-initDatabase()
+// Ensure Prisma is connected before starting the server
+prisma.$connect()
   .then(() => {
     // Only start listening for requests after the database is ready
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
       console.log(`📦 Environment: ${NODE_ENV}`);
+      console.log('💎 Database: Prisma connected');
     });
   })
   .catch((err) => {
     // If database connection fails, log error and exit process
-    console.error('🛑 FATAL ERROR: Database initialization failed.', err);
+    console.error('🛑 FATAL ERROR: Database connection failed.', err);
     process.exit(1);
   });

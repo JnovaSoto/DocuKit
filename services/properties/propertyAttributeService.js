@@ -1,18 +1,15 @@
-import { all, prepare } from '../../db/database.js';
+import prisma from '../../db/prisma.js';
 
+/**
+ * Service for handling CSS property attribute-related database operations using Prisma.
+ */
 const propertyAttributeService = {
     /**
      * Retrieves all property attributes from the database.
      * @returns {Promise<Array>} A promise that resolves to an array of attribute objects.
      */
-    getAllAttributes: () => {
-        return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM property_attributes`;
-            all(sql, [], (err, rows) => {
-                if (err) reject(err);
-                resolve(rows);
-            });
-        });
+    getAllAttributes: async () => {
+        return await prisma.propertyAttribute.findMany();
     },
 
     /**
@@ -21,21 +18,20 @@ const propertyAttributeService = {
      * @param {Array<Object>} attributes - An array of attribute objects containing `attribute` and `info` properties.
      * @returns {Promise<void>} A promise that resolves when the attributes are created.
      */
-    createAttributes: (propertyId, attributes) => {
-        return new Promise((resolve, reject) => {
-            const sql = `INSERT INTO property_attributes (attribute, info, propertyId) VALUES (?, ?, ?)`;
-            const stmt = prepare(sql);
+    createAttributes: async (propertyId, attributes) => {
+        const data = attributes
+            .filter(attr => attr.attribute)
+            .map(attr => ({
+                attribute: attr.attribute,
+                info: attr.info || '',
+                propertyId: parseInt(propertyId)
+            }));
 
-            for (const attr of attributes) {
-                if (!attr.attribute) continue;
-                stmt.run([attr.attribute, attr.info, propertyId]);
-            }
-
-            stmt.finalize(err => {
-                if (err) reject(err);
-                resolve();
+        if (data.length > 0) {
+            await prisma.propertyAttribute.createMany({
+                data
             });
-        });
+        }
     },
 
     /**
@@ -43,13 +39,11 @@ const propertyAttributeService = {
      * @param {number} propertyId - The ID of the property.
      * @returns {Promise<Array>} A promise that resolves to an array of attribute objects.
      */
-    getAttributesByPropertyId: (propertyId) => {
-        return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM property_attributes WHERE propertyId = ?`;
-            all(sql, [propertyId], (err, rows) => {
-                if (err) reject(err);
-                resolve(rows);
-            });
+    getAttributesByPropertyId: async (propertyId) => {
+        return await prisma.propertyAttribute.findMany({
+            where: {
+                propertyId: parseInt(propertyId)
+            }
         });
     },
 
@@ -58,13 +52,11 @@ const propertyAttributeService = {
      * @param {string} attributeName - The name of the attribute to search for.
      * @returns {Promise<Array>} A promise that resolves to an array of matching attribute objects.
      */
-    getAttributesByName: (attributeName) => {
-        return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM property_attributes WHERE attribute = ?`;
-            all(sql, [attributeName], (err, rows) => {
-                if (err) reject(err);
-                resolve(rows);
-            });
+    getAttributesByName: async (attributeName) => {
+        return await prisma.propertyAttribute.findMany({
+            where: {
+                attribute: attributeName
+            }
         });
     }
 };

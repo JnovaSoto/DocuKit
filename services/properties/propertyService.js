@@ -1,18 +1,15 @@
-import { all, run, get, prepare } from '../../db/database.js';
+import prisma from '../../db/prisma.js';
 
+/**
+ * Service for handling CSS property-related database operations using Prisma.
+ */
 const propertyService = {
     /**
      * Retrieves all properties from the database.
      * @returns {Promise<Array>} A promise that resolves to an array of property objects.
      */
-    getAllProperties: () => {
-        return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM properties`;
-            all(sql, [], (err, rows) => {
-                if (err) reject(err);
-                resolve(rows);
-            });
-        });
+    getAllProperties: async () => {
+        return await prisma.property.findMany();
     },
 
     /**
@@ -22,28 +19,25 @@ const propertyService = {
      * @param {string} [content] - Optional additional content for the property.
      * @returns {Promise<number>} A promise that resolves to the ID of the newly created property.
      */
-    createProperty: (propertyName, usability, content) => {
-        return new Promise((resolve, reject) => {
-            const sql = `INSERT INTO properties (propertyName, usability, content) VALUES (?, ?, ?)`;
-            run(sql, [propertyName, usability, content || ''], function (err) {
-                if (err) return reject(err);
-                resolve(this.lastID);
-            });
+    createProperty: async (propertyName, usability, content) => {
+        const property = await prisma.property.create({
+            data: {
+                propertyName,
+                usability,
+                content: content || ''
+            }
         });
+        return property.id.toString(); // Return as string to maintain compatibility if needed, or number
     },
 
     /**
      * Retrieves a property by its ID.
      * @param {number} id - The ID of the property to retrieve.
-     * @returns {Promise<Object|undefined>} A promise that resolves to the property object if found, or undefined.
+     * @returns {Promise<Object|null>} A promise that resolves to the property object if found, or null.
      */
-    getPropertyById: (id) => {
-        return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM properties WHERE id = ?`;
-            get(sql, [id], (err, row) => {
-                if (err) reject(err);
-                resolve(row);
-            });
+    getPropertyById: async (id) => {
+        return await prisma.property.findUnique({
+            where: { id: parseInt(id) }
         });
     },
 
@@ -52,15 +46,13 @@ const propertyService = {
      * @param {Array<number>} ids - An array of property IDs.
      * @returns {Promise<Array>} A promise that resolves to an array of property objects.
      */
-    getPropertiesByIds: (ids) => {
-        return new Promise((resolve, reject) => {
-            const placeholders = ids.map(() => '?').join(',');
-            const sqlProperty = `SELECT * FROM properties WHERE id IN (${placeholders})`;
-
-            all(sqlProperty, ids, (err, propertyRows) => {
-                if (err) reject(err);
-                resolve(propertyRows);
-            });
+    getPropertiesByIds: async (ids) => {
+        return await prisma.property.findMany({
+            where: {
+                id: {
+                    in: ids.map(id => parseInt(id))
+                }
+            }
         });
     },
 
@@ -69,13 +61,11 @@ const propertyService = {
      * @param {string} propertyName - The name of the property to search for.
      * @returns {Promise<Array>} A promise that resolves to an array of matching property objects.
      */
-    getPropertyByName: (propertyName) => {
-        return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM properties WHERE propertyName = ?`;
-            all(sql, [propertyName.toLowerCase()], (err, rows) => {
-                if (err) reject(err);
-                resolve(rows);
-            });
+    getPropertyByName: async (propertyName) => {
+        return await prisma.property.findMany({
+            where: {
+                propertyName: propertyName.toLowerCase()
+            }
         });
     },
 
@@ -87,21 +77,29 @@ const propertyService = {
      * @param {Array<Object>} [attributes] - An optional array of attributes to update.
      * @returns {Promise<boolean|null>} A promise that resolves to `true` if successful, or `null` if the property was not found.
      */
-    updateProperty: (id, propertyName, usability, attributes) => {
-        return new Promise((resolve, reject) => {
-            const updatePropertySql = `UPDATE properties SET propertyName = ?, usability = ? WHERE id = ?`;
-
-            run(updatePropertySql, [propertyName, usability, id], function (err) {
-                if (err) return reject(new Error('Failed to update property: ' + err.message));
-                if (this.changes === 0) return resolve(null);
-
-                if (!Array.isArray(attributes)) return resolve(true);
-
-                updateAttributes(id, attributes)
-                    .then(() => resolve(true))
-                    .catch(reject);
+    updateProperty: async (id, propertyName, usability, attributes) => {
+        try {
+            await prisma.property.update({
+                where: { id: parseInt(id) },
+                data: {
+                    propertyName,
+                    usability,
+                    propertyAttributes: attributes ? {
+                        deleteMany: {},
+                        create: attributes
+                            .filter(attr => attr.attribute)
+                            .map(attr => ({
+                                attribute: attr.attribute,
+                                info: attr.info || ''
+                            }))
+                    } : undefined
+                }
             });
-        });
+            return true;
+        } catch (error) {
+            if (error.code === 'P2025') return null;
+            throw error;
+        }
     },
 
     /**
@@ -109,44 +107,17 @@ const propertyService = {
      * @param {number} id - The ID of the property to delete.
      * @returns {Promise<boolean>} A promise that resolves to `true` if the property was deleted, or `false` if not found.
      */
-    deleteProperty: (id) => {
-        return new Promise((resolve, reject) => {
-            const deleteAttributesSql = `DELETE FROM property_attributes WHERE propertyId = ?`;
-            run(deleteAttributesSql, [id], function (err) {
-                if (err) return reject(new Error('Failed to delete property attributes: ' + err.message));
-
-                const deletePropertySql = `DELETE FROM properties WHERE id = ?`;
-                run(deletePropertySql, [id], function (err) {
-                    if (err) return reject(new Error('Failed to delete property: ' + err.message));
-                    if (this.changes === 0) return resolve(false); // Property not found
-                    resolve(true);
-                });
+    deleteProperty: async (id) => {
+        try {
+            await prisma.property.delete({
+                where: { id: parseInt(id) }
             });
-        });
+            return true;
+        } catch (error) {
+            if (error.code === 'P2025') return false;
+            throw error;
+        }
     }
-};
-
-/**
- * Helper function to update attributes for a property.
- * Deletes existing attributes and inserts new ones.
- * @param {number} id - The ID of the property.
- * @param {Array<Object>} attributes - The new list of attributes.
- * @returns {Promise<void>} A promise that resolves when the update is complete.
- */
-const updateAttributes = (id, attributes) => {
-    return new Promise((resolve, reject) => {
-        run(`DELETE FROM property_attributes WHERE propertyId = ?`, [id], (err) => {
-            if (err) return reject(new Error('Failed to clear attributes: ' + err.message));
-            if (attributes.length === 0) return resolve();
-
-            const stmt = prepare(`INSERT INTO property_attributes (attribute, info, propertyId) VALUES (?, ?, ?)`);
-            attributes.forEach(attr => {
-                if (attr.attribute) stmt.run([attr.attribute, attr.info || '', id]);
-            });
-
-            stmt.finalize(err => err ? reject(new Error('Failed to insert attributes: ' + err.message)) : resolve());
-        });
-    });
 };
 
 export default propertyService;

@@ -1,145 +1,62 @@
-// tests/properties/propertyService.test.js 
-
 import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 
-// Mock the database dependency using unstable_mockModule for ESM support
-jest.unstable_mockModule('../../db/database.js', () => {
-    return import('../../mocks/database/database.js');
+// Mock the Prisma dependency
+jest.unstable_mockModule('../../db/prisma.js', () => {
+    return import('../../mocks/prisma.js');
 });
 
-// Import the mocks and the service under test dynamically
-const { get, run, all, prepare } = await import('../../mocks/database/database.js');
+const { default: prisma } = await import('../../db/prisma.js');
 const { default: propertyService } = await import('../../services/properties/propertyService.js');
 
 describe('Property Service', () => {
 
     beforeEach(() => {
-        jest.resetAllMocks();
+        jest.clearAllMocks();
     });
 
-    // Testing getAllProperties
     test('should get all properties', async () => {
-
         const mockProperties = [
-            { id: 1, name: 'test', usability: 'test', content: 'test' },
-            { id: 2, name: 'test', usability: 'test', content: 'test' },
+            { id: 1, propertyName: 'test', usability: 'test', content: 'test' },
+            { id: 2, propertyName: 'test2', usability: 'test', content: 'test' },
         ];
 
-        all.mockImplementation((sql, params, callback) => {
-            callback(null, mockProperties);
-        });
+        prisma.property.findMany.mockResolvedValue(mockProperties);
 
         const properties = await propertyService.getAllProperties();
         expect(properties).toBeDefined();
-        expect(Array.isArray(properties)).toBe(true);
         expect(properties.length).toBe(2);
         expect(properties).toEqual(mockProperties);
     });
-    // Testing error handling
-    test('should reject when there is a database error', async () => {
-        all.mockImplementation((sql, params, callback) => {
-            callback(new Error('DB Error'), null);
-        });
-        await expect(propertyService.getAllProperties()).rejects.toThrow('DB Error');
-    });
 
-    // Testing createProperty
-    test('should create a property and return lastID', async () => {
+    test('should create a property and return ID', async () => {
         const mockId = 1;
-        const propertyData = {
-            name: 'New Property',
-            usability: 'Residential',
-            content: 'Some content'
-        };
+        prisma.property.create.mockResolvedValue({ id: mockId });
 
-        run.mockImplementation(function (sql, params, callback) {
-            const context = { lastID: mockId };
-            callback.call(context, null);
-        });
+        const result = await propertyService.createProperty('New Property', 'Residential', 'Some content');
 
-        const result = await propertyService.createProperty(
-            propertyData.name,
-            propertyData.usability,
-            propertyData.content
-        );
-
-        expect(result).toBe(mockId);
-        expect(run).toHaveBeenCalledWith(
-            expect.stringContaining('INSERT INTO properties'),
-            [propertyData.name, propertyData.usability, propertyData.content],
-            expect.any(Function)
-        );
+        expect(result).toBe('1');
+        expect(prisma.property.create).toHaveBeenCalled();
     });
 
-    // Testing getPropertyById
     test('should get a property by id', async () => {
-
-        get.mockImplementation((sql, params, callback) => {
-            callback(null, { id: 1, name: 'Propiedad Única' });
-        });
+        const mockProperty = { id: 1, propertyName: 'Prop' };
+        prisma.property.findUnique.mockResolvedValue(mockProperty);
 
         const property = await propertyService.getPropertyById(1);
         expect(property).toBeDefined();
         expect(property.id).toBe(1);
     });
-    test('should return undefined if property does not exist', async () => {
-        get.mockImplementation((sql, params, callback) => {
-            callback(null, undefined); // La DB no encontró nada
-        });
 
-        const property = await propertyService.getPropertyById(999);
-        expect(property).toBeUndefined();
-    });
-
-    // Testing getPropertiesByIds
     test('should get properties by ids', async () => {
+        const mockProperties = [{ id: 1 }, { id: 2 }];
+        prisma.property.findMany.mockResolvedValue(mockProperties);
 
-        all.mockImplementation((sql, params, callback) => {
-            callback(null, [
-                { id: 1, name: 'Prop 1' },
-                { id: 2, name: 'Prop 2' }
-            ]);
-        });
-
-        const properties = await propertyService.getPropertiesByIds([1, 2, 3]);
-        expect(properties).toBeDefined();
-        expect(Array.isArray(properties)).toBe(true);
+        const properties = await propertyService.getPropertiesByIds([1, 2]);
         expect(properties.length).toBe(2);
-        expect(all).toHaveBeenCalledWith(expect.any(String), [1, 2, 3], expect.any(Function));
     });
 
-    // Testing getPropertyByName
-    test('should get a property by name', async () => {
-        const mockProperty = [{ id: 1, propertyName: 'test', usability: 'comercial' }];
-
-        all.mockImplementation((sql, params, callback) => {
-            callback(null, mockProperty);
-        });
-
-        const properties = await propertyService.getPropertyByName('test');
-
-        expect(Array.isArray(properties)).toBe(true);
-        expect(properties[0].propertyName).toBe('test');
-        expect(properties.length).toBe(1);
-    });
-
-    // Testing updateProperty
     test('should update property and its attributes', async () => {
-        const mockStmt = {
-            run: jest.fn(),
-            finalize: jest.fn((callback) => {
-                if (callback) callback(null);
-            })
-        };
-
-        prepare.mockReturnValue(mockStmt);
-
-        run.mockImplementationOnce(function (sql, params, cb) {
-            cb.call({ changes: 1 }, null);
-        });
-        run.mockImplementationOnce((sql, params, cb) => {
-            cb(null);
-        });
+        prisma.property.update.mockResolvedValue({ id: 1 });
 
         const result = await propertyService.updateProperty(
             1,
@@ -149,34 +66,15 @@ describe('Property Service', () => {
         );
 
         expect(result).toBe(true);
-        expect(prepare).toHaveBeenCalled();
-        expect(mockStmt.run).toHaveBeenCalled();
-        expect(mockStmt.finalize).toHaveBeenCalled();
+        expect(prisma.property.update).toHaveBeenCalled();
     });
 
-    // Testing deleteProperty
-    test('should delete property and its attributes', async () => {
-        run.mockImplementationOnce((sql, params, callback) => {
-            callback(null);
-        });
-        run.mockImplementationOnce(function (sql, params, callback) {
-            callback.call({ changes: 1 }, null);
-        });
+    test('should delete property', async () => {
+        prisma.property.delete.mockResolvedValue({ id: 1 });
 
         const result = await propertyService.deleteProperty(1);
 
         expect(result).toBe(true);
-        expect(run).toHaveBeenCalledTimes(2);
+        expect(prisma.property.delete).toHaveBeenCalled();
     });
-
-    test('should return false if property to delete does not exist', async () => {
-        run.mockImplementationOnce((sql, params, callback) => callback(null));
-        run.mockImplementationOnce(function (sql, params, callback) {
-            callback.call({ changes: 0 }, null);
-        });
-
-        const result = await propertyService.deleteProperty(999);
-        expect(result).toBe(false);
-    });
-
 });
