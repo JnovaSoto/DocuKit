@@ -81,11 +81,22 @@ footer {
     z-index: 1050;
     transition: right var(--transition-alert), opacity var(--transition-medium);
     opacity: 0;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px var(--shadow-medium);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     font-weight: 500;
     display: flex;
     align-items: center;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.slide-alert.pri {
+    background-color: rgba(30, 110, 30, 0.8) !important;
+}
+
+.slide-alert.sec {
+    background-color: rgba(196, 26, 26, 0.8) !important;
 }
 
 .slide-alert.show {

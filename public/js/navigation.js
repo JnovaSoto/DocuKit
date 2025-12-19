@@ -159,26 +159,34 @@ export async function changePage(path) {
       return response.text();
     })
     .then(html => {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
+      const performUpdate = () => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
 
-      const newContent = doc.querySelector('#app') ? doc.querySelector('#app').innerHTML : null;
+        const newContent = doc.querySelector('#app') ? doc.querySelector('#app').innerHTML : null;
 
-      if (!newContent) {
-        logger.error('Could not find #app content in response');
-        return;
+        if (!newContent) {
+          logger.error('Could not find #app content in response');
+          return;
+        }
+
+        // Remove any meta tags that might have been included in the content
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = newContent;
+        const metaTags = tempDiv.querySelectorAll('meta');
+        metaTags.forEach(meta => meta.remove());
+
+        document.querySelector('#app').innerHTML = tempDiv.innerHTML;
+
+        // Run page-specific scripts only
+        executePageScript();
+      };
+
+      if (!document.startViewTransition) {
+        performUpdate();
+      } else {
+        document.startViewTransition(() => performUpdate());
       }
-
-      // Remove any meta tags that might have been included in the content
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = newContent;
-      const metaTags = tempDiv.querySelectorAll('meta');
-      metaTags.forEach(meta => meta.remove());
-
-      document.querySelector('#app').innerHTML = tempDiv.innerHTML;
-
-      // Run page-specific scripts only
-      executePageScript();
     })
     .catch(err => logger.error('Page navigation error:', err));
 }

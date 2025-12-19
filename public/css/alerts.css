@@ -1,24 +1,18 @@
 @import url('./variables.css');
 
-.slide-alert {
-  position: fixed;
-  top: 20px;
-  right: -300px;
-  width: 250px;
-  color: var(--color-white);
-  padding: var(--spacing-sm);
-  z-index: var(--z-alert);
-  transition: right var(--transition-slow), opacity var(--transition-slow);
-  opacity: 0;
-  border-radius: var(--radius-small);
-}
-
+/* ID specific glassmorphism styles for alerts */
 #success {
-  background: var(--color-green);
+  background: rgba(30, 110, 30, 0.8) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 #alert {
-  background: var(--color-red-dark);
+  background: rgba(196, 26, 26, 0.8) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .slide-alert.show {
