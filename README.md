@@ -46,8 +46,9 @@ DocuKit is divided into four key functional pillars: Core Documentation, User Ma
 | **ORM** | Prisma | Type-safe database client and schema management. |
 | **Database** | SQLite | Lightweight, transactional relational storage. |
 | **Auth** | Passport.js & Google OAuth 2.0 | Multi-provider authentication system. |
+| **Security** | Helmet & Rate Limit | Enterprise-grade HTTP headers and request throttling (DDoS protection). |
 | **Templating** | EJS | Dynamic server-side rendering. |
-| **UI/UX** | Vanilla JS & CSS Variables | High-performance SPA navigation and theme logic. |
+| **UI/UX** | Vanilla JS, CSS Variables & Skeleton UI | High-performance SPA navigation, shimmering loading states, and theme logic. |
 | **Animations** | View Transitions API | Native-feel page transitions. |
 | **Docs** | JSDoc | Fully documented service and controller layers. |
 
