@@ -38,7 +38,11 @@ const userController = {
      */
     signUp: async (req, res) => {
         try {
-            const { username, email, password, admin } = req.body;
+            let { username, email, password, admin } = req.body;
+
+            // Sanitize input to prevent XSS
+            if (username) username = validator.escape(validator.trim(username));
+            if (email) email = validator.normalizeEmail(email);
 
             if (!username || !email || admin === undefined || admin === null || !password) {
                 return res.status(400).json({ error: 'All the attributes must be complete' });
