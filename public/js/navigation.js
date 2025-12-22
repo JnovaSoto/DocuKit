@@ -124,6 +124,39 @@ import { showTemporaryAlert } from './tools/alerts.js';
 
 // ... (existing imports)
 
+/**
+ * Renders a skeleton loader animation in the #app container
+ * visual polish: display skeleton while loading
+ */
+function showSkeleton() {
+  const app = document.querySelector('#app');
+  if (!app) return;
+
+  // Check if we are already showing a skeleton to avoid flickering
+  if (app.querySelector('.skeleton-page')) return;
+
+  app.innerHTML = `
+      <div class="skeleton-page" style="opacity: 0; animation: fadeIn 0.3s forwards;">
+        <div class="skeleton-header">
+          <div class="skeleton-header-left">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text" style="width: 80%"></div>
+          </div>
+          <div class="skeleton skeleton-rect" style="width: 100px; height: 40px;"></div>
+        </div>
+        <div class="skeleton skeleton-rect"></div>
+        <div class="skeleton-grid">
+          <div class="skeleton skeleton-rect" style="height: 150px"></div>
+          <div class="skeleton skeleton-rect" style="height: 150px"></div>
+          <div class="skeleton skeleton-rect" style="height: 150px"></div>
+        </div>
+      </div>
+      <style>
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      </style>
+    `;
+}
+
 export async function changePage(path) {
   logger.navigation(`Navigating to: ${path}`);
 
@@ -141,6 +174,8 @@ export async function changePage(path) {
   }
 
   history.pushState(null, null, path);
+
+  showSkeleton();
 
   fetch(path)
     .then(async response => {

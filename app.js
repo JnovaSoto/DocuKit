@@ -10,6 +10,8 @@ import { fileURLToPath } from 'url';
 import { requireAuth } from './middleware/auth.js';
 import prisma from './db/prisma.js';
 import passport from './config/passport.js';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 
 // Route imports
 
@@ -40,7 +42,7 @@ const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV;
-const SESSION_DURATION = 30 * 60 * 1000; // 30 minutes in milliseconds
+const SESSION_DURATION = 30 * 60 * 1000;
 
 // ============================================================================
 // Express App Initialization
@@ -57,6 +59,32 @@ app.use(expressLayouts);
 // ============================================================================
 // Middleware Setup
 // ============================================================================
+
+// Security Middleware
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "https://translate.googleapis.com", "https://translate.google.com", "'unsafe-inline'", "'unsafe-eval'"],
+      styleSrc: ["'self'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "https://translate.googleapis.com", "'unsafe-inline'"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdn.jsdelivr.net", "data:"],
+      imgSrc: ["'self'", "data:", "https://www.svgrepo.com", "https://lh3.googleusercontent.com", "https://www.google.com", "https://translate.googleapis.com"],
+      connectSrc: ["'self'", "https://translate.googleapis.com"],
+      frameSrc: ["'self'", "https://translate.googleapis.com"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: null,
+    },
+  },
+  crossOriginEmbedderPolicy: false,
+}));
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(limiter);
 
 // Body parsing middleware
 app.use(express.json());
