@@ -9,12 +9,14 @@
 DocuKit is divided into four key functional pillars: Core Documentation, User Management, Internationalization, and Administration.
 
 ### 🔍 Core Documentation & Interactivity
-* **SPA-like Experience:** Modern navigation system that updates content dynamically without full page reloads, providing a smooth, fluid user interface.
+* **SPA-like Experience:** Powered by the **View Transitions API**, providing fluid, native-like content fades and slides between pages.
 * **Intelligent Search:** Robust search functionality allows users to quickly locate tags/properties based on **name** or **attribute**.
+* **Global Command+K Search:** Instant access to all documentation via a global overlay (Ctrl+K/Cmd+K) with **Fuzzy Search** (Fuse.js) to handle typos effortlessly.
 * **Attribute Metadata:** Detailed descriptions, compatibility notes, and usage context for every HTML/CSS attribute.
 * **Dynamic Theme System:** 
     * **HTML Theme** (Gold): Tailored for HTML element exploration.
     * **CSS Theme** (Blue): Optimized for CSS property discovery.
+    * **Persistence Dark Mode:** A full dark theme that saves user preference in `localStorage`.
     * *Managed via **CSS Variables** for instant, across-the-board aesthetic swaps.*
 
 ### 👤 Advanced User System
@@ -46,6 +48,7 @@ DocuKit is divided into four key functional pillars: Core Documentation, User Ma
 | **Auth** | Passport.js & Google OAuth 2.0 | Multi-provider authentication system. |
 | **Templating** | EJS | Dynamic server-side rendering. |
 | **UI/UX** | Vanilla JS & CSS Variables | High-performance SPA navigation and theme logic. |
+| **Animations** | View Transitions API | Native-feel page transitions. |
 | **Docs** | JSDoc | Fully documented service and controller layers. |
 
 ---
