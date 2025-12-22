@@ -66,11 +66,11 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "https://translate.googleapis.com", "https://translate.google.com", "'unsafe-inline'", "'unsafe-eval'"],
-      styleSrc: ["'self'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "https://translate.googleapis.com", "'unsafe-inline'"],
+      scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "https://translate.googleapis.com", "https://translate.google.com", "https://translate-pa.googleapis.com", "'unsafe-inline'", "'unsafe-eval'"],
+      styleSrc: ["'self'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "https://translate.googleapis.com", "https://www.gstatic.com", "'unsafe-inline'"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdn.jsdelivr.net", "data:"],
-      imgSrc: ["'self'", "data:", "https://www.svgrepo.com", "https://lh3.googleusercontent.com", "https://www.google.com", "https://translate.googleapis.com"],
-      connectSrc: ["'self'", "https://translate.googleapis.com"],
+      imgSrc: ["'self'", "data:", "https:", "http://translate.google.com", "https://www.gstatic.com"],
+      connectSrc: ["'self'", "https://translate.googleapis.com", "https://translate-pa.googleapis.com", "https://cdn.jsdelivr.net"],
       frameSrc: ["'self'", "https://translate.googleapis.com"],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: null,
