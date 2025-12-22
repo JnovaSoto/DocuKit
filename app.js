@@ -12,6 +12,7 @@ import prisma from './db/prisma.js';
 import passport from './config/passport.js';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import connectSqlite3 from 'connect-sqlite3';
 
 // Route imports
 
@@ -91,13 +92,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Session middleware
+const SQLiteStore = connectSqlite3(session);
+
+// Session middleware
 app.use(session({
+  store: new SQLiteStore({
+    db: 'sessions.sqlite',
+    dir: './db'
+  }),
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
     secure: NODE_ENV === 'production',
+    sameSite: 'lax', // Protects against CSRF while allowing OAuth redirects
     maxAge: SESSION_DURATION
   }
 }));
