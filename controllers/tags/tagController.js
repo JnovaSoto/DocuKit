@@ -1,4 +1,5 @@
 import tagService from '../../services/tags/tagService.js';
+import validator from 'validator';
 
 const tagController = {
     /**
@@ -21,7 +22,13 @@ const tagController = {
      * @param {Object} res - The response object.
      */
     createTag: async (req, res) => {
-        const { tagName, usability, content } = req.body;
+        let { tagName, usability, content } = req.body;
+
+        // Sanitize input
+        if (tagName) tagName = validator.escape(validator.trim(tagName));
+        if (usability) usability = validator.escape(validator.trim(usability));
+        if (content) content = validator.escape(validator.trim(content));
+
         if (!tagName || !usability) return res.status(400).json({ error: 'Missing fields' });
 
         try {
@@ -90,7 +97,17 @@ const tagController = {
      */
     updateTag: async (req, res) => {
         const id = req.params.id;
-        const { tagName, usability, attributes } = req.body;
+        let { tagName, usability, attributes } = req.body;
+
+        // Sanitize input
+        if (tagName) tagName = validator.escape(validator.trim(tagName));
+        if (usability) usability = validator.escape(validator.trim(usability));
+        if (attributes && Array.isArray(attributes)) {
+            attributes = attributes.map(attr => ({
+                attribute: attr.attribute ? validator.escape(validator.trim(attr.attribute)) : '',
+                info: attr.info ? validator.escape(validator.trim(attr.info)) : ''
+            }));
+        }
 
         if (!tagName || !usability) {
             return res.status(400).json({ error: 'Missing required fields: tagName and usability' });

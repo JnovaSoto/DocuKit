@@ -37,11 +37,14 @@ const ensureDirectoryExists = (dirPath) => {
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         try {
-            const username = req.body.username;
+            let username = req.body.username;
 
             if (!username) {
                 return cb(new Error('Username is required for file upload'));
             }
+
+            // Sanitize username to prevent path traversal
+            username = username.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
             // For signups, always use temporary folder since user doesn't exist yet
             // We'll move the file to the user's ID folder after user creation

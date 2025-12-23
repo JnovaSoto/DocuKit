@@ -113,11 +113,18 @@ router.get(ROUTES.USERS.GOOGLE, passport.authenticate('google', { scope: ['profi
 router.get(ROUTES.USERS.GOOGLE_CALLBACK,
     passport.authenticate('google', { failureRedirect: '/logIn' }),
     (req, res) => {
-        req.session.userId = req.user.id;
-        req.session.username = req.user.username;
-        req.session.admin = req.user.admin;
-        req.session.photo = req.user.photo;
-        res.redirect('/');
+        // Regenerate session to prevent session fixation
+        req.session.regenerate((err) => {
+            if (err) {
+                console.error('Session regeneration failed:', err);
+                return res.redirect('/logIn');
+            }
+            req.session.userId = req.user.id;
+            req.session.username = req.user.username;
+            req.session.admin = req.user.admin;
+            req.session.photo = req.user.photo;
+            res.redirect('/');
+        });
     }
 );
 

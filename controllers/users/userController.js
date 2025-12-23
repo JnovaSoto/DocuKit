@@ -20,12 +20,17 @@ const userController = {
             const match = await bcrypt.compare(password, user.password);
             if (!match) return res.status(401).json({ error: 'User or password are incorrect' });
 
-            req.session.userId = user.id;
-            req.session.username = user.username;
-            req.session.admin = user.admin;
-            req.session.photo = user.photo;
+            // Regenerate session to prevent session fixation
+            req.session.regenerate((err) => {
+                if (err) return res.status(500).json({ error: 'Session regeneration failed' });
 
-            res.json({ message: 'Successfully Login', userId: user.id, username: user.username, admin: user.admin, photo: user.photo });
+                req.session.userId = user.id;
+                req.session.username = user.username;
+                req.session.admin = user.admin;
+                req.session.photo = user.photo;
+
+                res.json({ message: 'Successfully Login', userId: user.id, username: user.username, admin: user.admin, photo: user.photo });
+            });
         } catch (err) {
             res.status(500).json({ error: err.message });
         }

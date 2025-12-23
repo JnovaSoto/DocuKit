@@ -1,4 +1,5 @@
 import propertyService from '../../services/properties/propertyService.js';
+import validator from 'validator';
 
 const propertyController = {
     /**
@@ -21,7 +22,13 @@ const propertyController = {
      * @param {Object} res - The response object.
      */
     createProperty: async (req, res) => {
-        const { propertyName, usability, content } = req.body;
+        let { propertyName, usability, content } = req.body;
+
+        // Sanitize input
+        if (propertyName) propertyName = validator.escape(validator.trim(propertyName));
+        if (usability) usability = validator.escape(validator.trim(usability));
+        if (content) content = validator.escape(validator.trim(content));
+
         if (!propertyName || !usability) return res.status(400).json({ error: 'Missing fields' });
 
         try {
@@ -93,7 +100,17 @@ const propertyController = {
      */
     updateProperty: async (req, res) => {
         const id = req.params.id;
-        const { propertyName, usability, attributes } = req.body;
+        let { propertyName, usability, attributes } = req.body;
+
+        // Sanitize input
+        if (propertyName) propertyName = validator.escape(validator.trim(propertyName));
+        if (usability) usability = validator.escape(validator.trim(usability));
+        if (attributes && Array.isArray(attributes)) {
+            attributes = attributes.map(attr => ({
+                attribute: attr.attribute ? validator.escape(validator.trim(attr.attribute)) : '',
+                info: attr.info ? validator.escape(validator.trim(attr.info)) : ''
+            }));
+        }
 
         if (!propertyName || !usability) {
             return res.status(400).json({ error: 'Missing required fields: propertyName and usability' });
