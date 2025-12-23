@@ -31,7 +31,7 @@ import propertyAttributesRoutes from './routes/properties/propertyAttributes.js'
 import partialsRouter from './routes/partials.js';
 
 // User routes
-import usersRoutes from './routes/users.js';
+import usersRoutes from './routes/users.ss/index.js';
 
 // ============================================================================
 // Configuration
@@ -81,7 +81,7 @@ app.use(helmet({
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 300,
+  max: 1000,
   standardHeaders: true,
   legacyHeaders: false,
 });

@@ -1,5 +1,5 @@
 import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { Strategy as GoogleStrategy, Profile, VerifyCallback } from 'passport-google-oauth20';
 import userService from '../services/users/userService.js';
 import dotenv from 'dotenv';
 
@@ -15,37 +15,37 @@ dotenv.config();
  * 4. Creating a new user if no match is found.
  */
 passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "/users/google/callback"
+    clientID: process.env.GOOGLE_CLIENT_ID!,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    callbackURL: "/users/google/callback",
+    passReqToCallback: false
 },
-    async (accessToken, refreshToken, profile, done) => {
+    async (accessToken: string, refreshToken: string, profile: Profile, done: VerifyCallback) => {
         try {
-            // Find or create user in database
             let user = await userService.findByGoogleId(profile.id);
 
             if (!user) {
-                // Check if user already exists with this email
-                user = await userService.findByLogin(profile.emails[0].value);
 
-                if (user) {
-                    // LINK: If user exists with email but no googleId, link them
-                    return done(new Error('A user with this email already exists but is not linked to Google. Please log in with your password.'), null);
+                const email = profile.emails?.[0]?.value;
+                if (!email) return done(new Error('No email found'), undefined);
+
+                const existingUser = await userService.findByLogin({ login: email, password: '' });
+
+                if (existingUser) {
+                    return done(null, false, { message: 'Email already exists' });
                 } else {
-                    // Create new user
                     const username = profile.displayName.split(' ')[0] + Math.floor(Math.random() * 1000);
-                    const email = profile.emails[0].value;
-                    const photo = profile.photos[0].value || '/uploads/users/cat_default.webp';
 
-                    const userId = await userService.createUser(username, email, null, 0, profile.id);
+                    const photo = (profile.photos && profile.photos.length > 0) ? profile.photos[0].value : '/uploads/users/cat_default.webp';
+
+                    const userId = await userService.createUser(username, email, "", 0, profile.id);
                     await userService.updatePhoto(userId, photo);
                     user = await userService.findById(userId);
                 }
             }
-
-            return done(null, user);
+            return done(null, user || undefined);
         } catch (err) {
-            return done(err, null);
+            return done(err as Error, undefined);
         }
     }
 ));
@@ -56,7 +56,7 @@ passport.use(new GoogleStrategy({
  * @param {Object} user - The user object to serialize.
  * @param {Function} done - The callback function.
  */
-passport.serializeUser((user, done) => {
+passport.serializeUser((user: any, done) => {
     done(null, user.id);
 });
 
@@ -66,12 +66,15 @@ passport.serializeUser((user, done) => {
  * @param {number|string} id - The user ID from the session.
  * @param {Function} done - The callback function.
  */
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser(async (id: number, done) => {
     try {
         const user = await userService.findById(id);
-        done(null, user);
+        if (!user) {
+            return done(null, false);
+        }
+        return done(null, user);
     } catch (err) {
-        done(err, null);
+        done(err as Error, null);
     }
 });
 

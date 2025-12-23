@@ -1,7 +1,10 @@
 import userService from '../../services/users/userService.js';
+import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import validator from 'validator';
 import { movePhotoToUserFolder } from '../../config/multer.js';
+import { LoginRequest, SignUpRequest } from '../../types/user.js';
+import { User } from '@prisma/client';
 
 const userController = {
     /**
@@ -9,15 +12,19 @@ const userController = {
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    login: async (req, res) => {
-        const { login, password } = req.body;
-        if (!login || !password) return res.status(400).json({ error: 'All the inputs have to be fulled' });
+    login: async (req: Request, res: Response) => {
+
+        const { login, password } = req.body as LoginRequest;
+
+        const loginRequest: LoginRequest = { login, password };
+
+        if (!loginRequest.login || !loginRequest.password) return res.status(400).json({ error: 'All the inputs have to be fulled' });
 
         try {
-            const user = await userService.findByLogin(login);
+            const user = await userService.findByLogin(loginRequest);
             if (!user) return res.status(401).json({ error: 'User or password are incorrect' });
 
-            const match = await bcrypt.compare(password, user.password);
+            const match = await bcrypt.compare(loginRequest.password, user.password ?? "");
             if (!match) return res.status(401).json({ error: 'User or password are incorrect' });
 
             // Regenerate session to prevent session fixation
@@ -26,14 +33,28 @@ const userController = {
 
                 req.session.userId = user.id;
                 req.session.username = user.username;
-                req.session.admin = user.admin;
-                req.session.photo = user.photo;
+                req.session.admin = user.admin ?? 0;
 
-                res.json({ message: 'Successfully Login', userId: user.id, username: user.username, admin: user.admin, photo: user.photo });
+                res.json({ message: 'Successfully Login', userId: user.id, username: user.username, admin: user.admin });
             });
-        } catch (err) {
+        } catch (err: any) {
             res.status(500).json({ error: err.message });
         }
+    },
+
+    googleLogin: async (req: Request, res: Response) => {
+
+        const user = req.user as User;
+
+        if (!user) return res.status(401).json({ error: 'User not found' });
+
+        req.session.regenerate((err) => {
+            if (err) return res.status(500).json({ error: 'Session regeneration failed' });
+            req.session.userId = user.id;
+            req.session.username = user.username;
+            req.session.admin = user.admin ?? 0;
+            res.redirect('/');
+        });
     },
 
     /**
@@ -41,9 +62,11 @@ const userController = {
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    signUp: async (req, res) => {
+    signUp: async (req: Request, res: Response) => {
         try {
-            let { username, email, password, admin } = req.body;
+            let { username, email, password, admin } = req.body as SignUpRequest;
+
+            const signUpRequest: SignUpRequest = { username, email, password, admin, googleId };
 
             // Sanitize input to prevent XSS
             if (username) username = validator.escape(validator.trim(username));

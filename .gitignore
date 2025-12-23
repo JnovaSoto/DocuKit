@@ -30,3 +30,5 @@ Thumbs.db
 *.swo
 
 /generated/prisma
+dist/
+built/
