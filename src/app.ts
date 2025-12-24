@@ -3,6 +3,7 @@
 // ============================================================================
 import express from 'express';
 import expressLayouts from 'express-ejs-layouts';
+import { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -28,10 +29,10 @@ import propertiesRoutes from './routes/properties/properties.js';
 import propertyAttributesRoutes from './routes/properties/propertyAttributes.js';
 
 // Partial routes
-import partialsRouter from './routes/partials.js';
+import partialsRouter from './routes/partials';
 
 // User routes
-import usersRoutes from './routes/users.ss/index.js';
+import usersRoutes from './routes/users';
 
 // ============================================================================
 // Configuration
@@ -99,8 +100,8 @@ app.use(session({
   store: new SQLiteStore({
     db: 'sessions.sqlite',
     dir: './db'
-  }),
-  secret: process.env.SESSION_SECRET,
+  }) as any,
+  secret: process.env.SESSION_SECRET!,
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -140,7 +141,7 @@ app.use('/users', usersRoutes);
  * @param {express.Request} req - Express request object
  * @param {express.Response} res - Express response object
  */
-app.get(['/', '/home'], (req, res) => {
+app.get(['/', '/home'], (_req: Request, res: Response) => {
   res.render('home', { layout: 'layout', title: 'Home' });
 });
 
@@ -153,7 +154,7 @@ app.get(['/', '/home'], (req, res) => {
  * @param {express.Request} req - Express request object
  * @param {express.Response} res - Express response object
  */
-app.get(['/css', '/css-properties'], (req, res) => {
+app.get(['/css', '/css-properties'], (_req: Request, res: Response) => {
   res.render('css', { layout: 'layout', title: 'CSS Properties' });
 });
 
@@ -165,7 +166,7 @@ app.get(['/css', '/css-properties'], (req, res) => {
  * @param {express.Request} req - Express request object
  * @param {express.Response} res - Express response object
  */
-app.get('/create', requireAuth, (req, res) => {
+app.get('/create', requireAuth, (_req: Request, res: Response) => {
   res.render('create', { layout: 'layout', title: 'Create' });
 });
 
@@ -177,7 +178,7 @@ app.get('/create', requireAuth, (req, res) => {
  * @param {express.Request} req - Express request object
  * @param {express.Response} res - Express response object
  */
-app.get('/signUp', (req, res) => {
+app.get('/signUp', (_req: Request, res: Response) => {
   res.render('signUp', { layout: 'layout', title: 'SignUp' });
 });
 
@@ -189,7 +190,7 @@ app.get('/signUp', (req, res) => {
  * @param {express.Request} req - Express request object
  * @param {express.Response} res - Express response object
  */
-app.get('/logIn', (req, res) => {
+app.get('/logIn', (_req: Request, res: Response) => {
   res.render('logIn', { layout: 'layout', title: 'LogIn' });
 });
 
@@ -201,7 +202,7 @@ app.get('/logIn', (req, res) => {
  * @param {express.Request} req - Express request object
  * @param {express.Response} res - Express response object
  */
-app.get('/edit', requireAuth, (req, res) => {
+app.get('/edit', requireAuth, (_req: Request, res: Response) => {
   res.render('edit', { layout: 'layout', title: 'Edit' });
 });
 
@@ -213,7 +214,7 @@ app.get('/edit', requireAuth, (req, res) => {
  * @param {express.Request} req - Express request object
  * @param {express.Response} res - Express response object
  */
-app.get('/profile', requireAuth, (req, res) => {
+app.get('/profile', requireAuth, (_req: Request, res: Response) => {
   res.render('profile', { layout: 'layout', title: 'Profile' });
 });
 
@@ -225,7 +226,7 @@ app.get('/profile', requireAuth, (req, res) => {
  * @param {express.Request} req - Express request object
  * @param {express.Response} res - Express response object
  */
-app.get('/favorites', requireAuth, (req, res) => {
+app.get('/favorites', requireAuth, (_req: Request, res: Response) => {
   res.render('favorites', { layout: 'layout', title: 'Favorites' });
 });
 
@@ -239,7 +240,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
  * @name Not Found Page
  * @route {GET} /not-found
  */
-app.get('/not-found', (req, res) => {
+app.get('/not-found', (_req: Request, res: Response) => {
   res.render('notFound', { layout: 'layout', title: 'Not Found' });
 });
 
@@ -248,7 +249,7 @@ app.get('/not-found', (req, res) => {
 // ============================================================================
 
 // 404 Handler
-app.use((req, res) => {
+app.use((_req: Request, res: Response) => {
   res.status(404).render('error', {
     layout: 'layout',
     title: 'Page Not Found',
@@ -258,7 +259,7 @@ app.use((req, res) => {
 });
 
 // Global Error Handler
-app.use((err, req, res, next) => {
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Error:', err.stack);
 
   // Handle Multer errors
