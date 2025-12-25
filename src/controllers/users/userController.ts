@@ -1,5 +1,9 @@
 import userService from '../../services/users/userService.js';
 import { Request, Response } from 'express';
+interface MulterRequest extends Request {
+    isNewUser?: boolean;
+    userPhotoFolder?: string;
+}
 import bcrypt from 'bcrypt';
 import validator from 'validator';
 import { movePhotoToUserFolder } from '../../config/multer.js';
@@ -62,37 +66,45 @@ const userController = {
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    signUp: async (req: Request, res: Response) => {
+    signUp: async (req: MulterRequest, res: Response) => {
         try {
-            let { username, email, password, admin } = req.body as SignUpRequest;
+            let { username, email, password, admin, googleId } = req.body as SignUpRequest;
 
             const signUpRequest: SignUpRequest = { username, email, password, admin, googleId };
 
             // Sanitize input to prevent XSS
-            if (username) username = validator.escape(validator.trim(username));
-            if (email) email = validator.normalizeEmail(email);
+            if (signUpRequest.username) username = validator.escape(validator.trim(signUpRequest.username));
 
-            if (!username || !email || admin === undefined || admin === null || !password) {
+            if (signUpRequest.email) {
+                const normalizedEmail = validator.normalizeEmail(signUpRequest.email);
+
+                if (normalizedEmail === false) {
+                    return res.status(400).json({ error: 'Invalid email format' });
+                }
+                signUpRequest.email = normalizedEmail;
+            }
+
+            if (!signUpRequest.username || !signUpRequest.email || signUpRequest.admin === undefined || signUpRequest.admin === null || !signUpRequest.password || !signUpRequest.googleId) {
                 return res.status(400).json({ error: 'All the attributes must be complete' });
             }
 
-            if (!validator.isEmail(email)) {
+            if (!validator.isEmail(signUpRequest.email)) {
                 return res.status(400).json({ error: "Invalid email" });
             }
 
-            if (username.length > 20) return res.status(400).json({ error: 'Username too long' });
-            if (email.length > 40) return res.status(400).json({ error: 'Email too long' });
-            if (password.length < 8) return res.status(400).json({ error: 'Password too short' });
+            if (signUpRequest.username.length > 20) return res.status(400).json({ error: 'Username too long' });
+            if (signUpRequest.email.length > 40) return res.status(400).json({ error: 'Email too long' });
+            if (signUpRequest.password.length < 8) return res.status(400).json({ error: 'Password too short' });
 
-            const adminValue = parseInt(admin, 10);
+            const adminValue = admin;
 
-            const userId = await userService.createUser(username, email, password, adminValue);
+            const userId = await userService.createUser(signUpRequest.username, signUpRequest.email, signUpRequest.password, adminValue, signUpRequest.googleId);
 
             let photoPath = '/uploads/users/cat_default.webp';
 
             if (req.file && req.isNewUser) {
                 try {
-                    photoPath = movePhotoToUserFolder(req.userPhotoFolder, userId, req.file.filename);
+                    photoPath = movePhotoToUserFolder(req.userPhotoFolder!, userId, req.file.filename);
                 } catch (moveErr) {
                     // Continue with default photo if move fails
                 }
@@ -103,7 +115,7 @@ const userController = {
             await userService.updatePhoto(userId, photoPath);
 
             res.status(201).json({ id: userId, username, email, photo: photoPath });
-        } catch (error) {
+        } catch (error: any) {
             res.status(500).json({ error: error.message || 'An unexpected error occurred' });
         }
     },
@@ -113,7 +125,7 @@ const userController = {
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    logout: (req, res) => {
+    logout: (req: Request, res: Response) => {
         if (req.session) {
             req.session.destroy(err => {
                 if (err) return res.status(500).json({ message: 'Could not log out' });
@@ -130,13 +142,18 @@ const userController = {
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    getMe: async (req, res) => {
+    getMe: async (req: Request, res: Response) => {
         if (!req.session.userId) return res.json({ loggedIn: false });
 
         try {
             const user = await userService.findById(req.session.userId);
+
             if (!user) {
-                req.session.destroy();
+                req.session.destroy((err) => {
+                    if (err) {
+                        console.error("Error destroying session:", err);
+                    }
+                });
                 return res.json({ loggedIn: false });
             }
 
@@ -160,13 +177,13 @@ const userController = {
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    getFavorites: async (req, res) => {
-        const userId = req.session.userId;
+    getFavorites: async (req: Request, res: Response) => {
+        const userId: number = req.session.userId!;
         try {
             const favorites = await userService.getFavorites(userId, 'tags');
             if (favorites === null) return res.status(404).json({ error: 'User not found' });
             res.json({ favorites });
-        } catch (err) {
+        } catch (err: any) {
             res.status(500).json({ error: err.message });
         }
     },
@@ -176,8 +193,8 @@ const userController = {
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    addFavorite: async (req, res) => {
-        const userId = req.session.userId;
+    addFavorite: async (req: Request, res: Response) => {
+        const userId: number = req.session.userId!;
         const { tagId } = req.body;
 
         if (!tagId) return res.status(400).json({ error: 'Tag ID is required' });
@@ -195,7 +212,7 @@ const userController = {
             }
 
             res.json({ message: 'Tag added to favorites', favorites });
-        } catch (err) {
+        } catch (err: any) {
             res.status(500).json({ error: err.message });
         }
     },
@@ -205,8 +222,8 @@ const userController = {
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    removeFavorite: async (req, res) => {
-        const userId = req.session.userId;
+    removeFavorite: async (req: Request, res: Response) => {
+        const userId: number = req.session.userId!;
         const tagId = parseInt(req.params.tagId, 10);
 
         if (isNaN(tagId)) return res.status(400).json({ error: 'Invalid tag ID' });
@@ -219,7 +236,7 @@ const userController = {
             await userService.updateFavorites(userId, favorites, 'tags');
 
             res.json({ message: 'Tag removed from favorites', favorites });
-        } catch (err) {
+        } catch (err: any) {
             res.status(500).json({ error: err.message });
         }
     },
@@ -229,7 +246,7 @@ const userController = {
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    getUserById: async (req, res) => {
+    getUserById: async (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
         if (isNaN(id)) return res.status(400).json({ error: 'Invalid user ID' });
 
@@ -237,7 +254,7 @@ const userController = {
             const user = await userService.findByIdAdmin(id);
             if (!user) return res.status(404).json({ error: 'User not found' });
             res.json(user);
-        } catch (err) {
+        } catch (err: any) {
             res.status(500).json({ error: err.message });
         }
     },
@@ -247,13 +264,13 @@ const userController = {
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    getCssFavorites: async (req, res) => {
-        const userId = req.session.userId;
+    getCssFavorites: async (req: Request, res: Response) => {
+        const userId: number = req.session.userId!;
         try {
             const favorites = await userService.getFavorites(userId, 'css');
             if (favorites === null) return res.status(404).json({ error: 'User not found' });
             res.json({ favorites });
-        } catch (err) {
+        } catch (err: any) {
             res.status(500).json({ error: err.message });
         }
     },
@@ -263,8 +280,8 @@ const userController = {
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    addCssFavorite: async (req, res) => {
-        const userId = req.session.userId;
+    addCssFavorite: async (req: Request, res: Response) => {
+        const userId: number = req.session.userId!;
         const { propertyId } = req.body;
 
         if (!propertyId) return res.status(400).json({ error: 'Property ID is required' });
@@ -282,7 +299,7 @@ const userController = {
             }
 
             res.json({ message: 'Property added to favorites', favorites });
-        } catch (err) {
+        } catch (err: any) {
             res.status(500).json({ error: err.message });
         }
     },
@@ -292,8 +309,8 @@ const userController = {
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    removeCssFavorite: async (req, res) => {
-        const userId = req.session.userId;
+    removeCssFavorite: async (req: Request, res: Response) => {
+        const userId: number = req.session.userId!;
         const propertyId = parseInt(req.params.propertyId, 10);
 
         if (isNaN(propertyId)) return res.status(400).json({ error: 'Invalid property ID' });
@@ -306,7 +323,7 @@ const userController = {
             await userService.updateFavorites(userId, favorites, 'css');
 
             res.json({ message: 'Property removed from favorites', favorites });
-        } catch (err) {
+        } catch (err: any) {
             res.status(500).json({ error: err.message });
         }
     }

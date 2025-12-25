@@ -8,6 +8,11 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { Request } from 'express';
+interface MulterRequest extends Request {
+    userPhotoFolder?: string;
+    isNewUser?: boolean;
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,7 +25,7 @@ const __dirname = path.dirname(__filename);
  * Ensure directory exists, create if it doesn't
  * @param {string} dirPath - Directory path to create
  */
-const ensureDirectoryExists = (dirPath) => {
+const ensureDirectoryExists = (dirPath: string) => {
     if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath, { recursive: true });
     }
@@ -35,12 +40,12 @@ const ensureDirectoryExists = (dirPath) => {
  * Stores each user's photos in their own folder: uploads/users/{userId}/
  */
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
+    destination: function (req: MulterRequest, _file, cb) {
         try {
             let username = req.body.username;
 
             if (!username) {
-                return cb(new Error('Username is required for file upload'));
+                return cb(new Error('Username is required for file upload'), "");
             }
 
             // Sanitize username to prevent path traversal
@@ -58,11 +63,11 @@ const storage = multer.diskStorage({
             req.isNewUser = true;
 
             cb(null, userFolder);
-        } catch (error) {
-            cb(error);
+        } catch (error: any) {
+            cb(error, "");
         }
     },
-    filename: function (req, file, cb) {
+    filename: function (_req, file, cb) {
         // Generate filename: profile_timestamp.extension
         const timestamp = Date.now();
         const ext = path.extname(file.originalname);
@@ -77,7 +82,7 @@ const storage = multer.diskStorage({
 /**
  * Filter to accept only image files
  */
-const fileFilter = (req, file, cb) => {
+const fileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     // Allowed image types
     const allowedTypes = /jpeg|jpg|png|gif|webp/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
@@ -86,7 +91,7 @@ const fileFilter = (req, file, cb) => {
     if (mimetype && extname) {
         return cb(null, true);
     } else {
-        cb(new Error('Only image files are allowed (jpeg, jpg, png, gif, webp)'));
+        cb(new Error('Only image files are allowed (jpeg, jpg, png, gif, webp)') as any, false);
     }
 };
 
@@ -117,7 +122,7 @@ const upload = multer({
  * @param {string} filename - Uploaded filename
  * @returns {string} New file path
  */
-export const movePhotoToUserFolder = (tempFolder, userId, filename) => {
+export const movePhotoToUserFolder = (tempFolder: string, userId: number, filename: string) => {
     const userFolder = path.join(__dirname, '../uploads/users', userId.toString());
     ensureDirectoryExists(userFolder);
 
