@@ -29,10 +29,10 @@ import propertiesRoutes from './routes/properties/properties.js';
 import propertyAttributesRoutes from './routes/properties/propertyAttributes.js';
 
 // Partial routes
-import partialsRouter from './routes/partials';
+import partialsRouter from './routes/partials.js';
 
 // User routes
-import usersRoutes from './routes/users';
+import usersRoutes from './routes/users.js';
 
 // ============================================================================
 // Configuration
@@ -55,7 +55,7 @@ const app = express();
 // View Engine Configuration
 // ============================================================================
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, '..', 'views'));
 app.use(expressLayouts);
 
 // ============================================================================
@@ -231,8 +231,8 @@ app.get('/favorites', requireAuth, (_req: Request, res: Response) => {
 });
 
 // Static files middleware (comes last to not interfere with routes)
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 /**
  * Render the Not Found page.

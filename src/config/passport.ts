@@ -20,7 +20,7 @@ passport.use(new GoogleStrategy({
     callbackURL: "/users/google/callback",
     passReqToCallback: false
 },
-    async (accessToken: string, refreshToken: string, profile: Profile, done: VerifyCallback) => {
+    async (_accessToken: string, _refreshToken: string, profile: Profile, done: VerifyCallback) => {
         try {
             let user = await userService.findByGoogleId(profile.id);
 
