@@ -13,3 +13,16 @@ declare global {
         interface User extends PrismaUser { }
     }
 }
+declare module 'express-session' {
+    interface SessionData {
+        user: {
+            id: number;
+            username: string;
+            email: string;
+            admin: number;
+            photo: string;
+            favorites: user.favorites,
+            favoritesCss: user.favoritesCss
+        } | null;
+    }
+}

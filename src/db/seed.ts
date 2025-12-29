@@ -17,7 +17,7 @@ const seedDatabase = async () => {
         try {
             fs.unlinkSync(dbPath);
             console.log('🗑️ Existing database deleted');
-        } catch (err) {
+        } catch (err: any) {
             if (err.code === 'EBUSY') {
                 console.error('❌ Error: Database file is locked. Please stop the running server and try again.');
             } else {
@@ -49,7 +49,7 @@ const seedDatabase = async () => {
         console.log('✅ Database seeded successfully');
         console.log('🎟️ User Admin created successfully -> userAdmin12345@gmail.com | password: userAdmin12345');
 
-    } catch (err) {
+    } catch (err: any) {
         console.error('❌ Error during seeding:', err.message);
         process.exit(1);
     } finally {

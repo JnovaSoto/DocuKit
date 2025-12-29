@@ -1,10 +1,12 @@
+import { Request, Response } from 'express';
+
 const partialController = {
     /**
      * Render the header partial.
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    getHeader: (req, res) => {
+    getHeader: (req: Request, res: Response) => {
         res.render('partials/header', {
             layout: false,
             user: req.session?.user || null
@@ -16,7 +18,7 @@ const partialController = {
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    getFooter: (req, res) => {
+    getFooter: (_req: Request, res: Response) => {
         res.render('partials/footer', {
             layout: false
         });
