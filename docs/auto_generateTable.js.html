@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: auto/generateTable.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: auto/generateTable.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { escapeHTML } from '../tools/escapeHTML.js';
+
+/**
+ * Generates table rows for an item (tag or property) with its attributes.
+ * @param {Object} item - Item object (tag or property)
+ * @param {Array} attributes - Array of attribute objects for this item
+ * @param {HTMLElement} row - Main row element
+ * @param {HTMLElement} dropdownRow - Dropdown row element
+ * @param {boolean} isFavorite - Whether this item is in user's favorites
+ * @param {Object} userPermissions - User permissions object {loggedIn: boolean, adminLevel: number}
+ * @param {string} itemNameKey - Key to access item name ('tagName' or 'propertyName')
+ * @param {string} dropdownLabel - Label for dropdown button ('Tags inside' or 'CSS inside')
+ * @returns {Object} Object containing row and dropdownRow elements
+ */
+export function generateTable(item, attributes, row, dropdownRow, isFavorite = false, userPermissions = { loggedIn: false, adminLevel: null }, itemNameKey = 'tagName', dropdownLabel = 'Tags inside') {
+
+    const safeItemName = item &amp;&amp; item[itemNameKey] ? escapeHTML(item[itemNameKey]) : '';
+    const safeUsability = item &amp;&amp; item.usability ? escapeHTML(item.usability) : '';
+
+    // Determine heart icon style based on favorite status
+    const heartIcon = isFavorite ? 'favorite' : 'favorite_border';
+
+    // Determine which buttons to show based on user permissions
+    const showFavorite = userPermissions.loggedIn; // All logged in users can favorite
+    const showEdit = userPermissions.loggedIn &amp;&amp; userPermissions.adminLevel === 1;
+    const showDelete = userPermissions.loggedIn &amp;&amp; userPermissions.adminLevel === 1;
+
+    // Determine type for buttons
+    const type = itemNameKey === 'propertyName' ? 'property' : 'tag';
+
+    // Build action buttons HTML
+    let favoriteButtonHTML = '';
+    let editButtonHTML = '';
+    let deleteButtonHTML = '';
+
+    if (showFavorite) {
+        favoriteButtonHTML = `
+        &lt;button class="favorite-btn js-favorite-toggle ${isFavorite ? 'favorited' : ''}" data-id="${item.id}" data-favorited="${isFavorite}" data-type="${type}">
+            &lt;span class="material-symbols-outlined icon_favorite" translate="no">${heartIcon}&lt;/span>
+        &lt;/button>`;
+    }
+
+    if (showEdit) {
+        editButtonHTML = `
+        &lt;button class="edit-btn edit" data-id="${item.id}" data-type="${type}">
+            &lt;span class="material-symbols-outlined icon_edit" translate="no">edit&lt;/span>
+        &lt;/button>`;
+    }
+
+    if (showDelete) {
+        deleteButtonHTML = `
+        &lt;button class="delete-btn delete" data-id="${item.id}" data-type="${type}">
+            &lt;span class="material-symbols-outlined icon_delete" translate="no">delete&lt;/span>
+        &lt;/button>`;
+    }
+
+    // Build row HTML with only the columns that should be visible
+    // Add tooltip to item name if content exists
+    let rowHTML = `
+        &lt;td class="tag-name-cell">
+            &lt;strong translate="no">${safeItemName}&lt;/strong>
+            ${item.content ? `&lt;div class="tag-tooltip ${item.content.length > 50 ? 'multiline' : ''}">${escapeHTML(item.content)}&lt;/div>` : ''}
+        &lt;/td>
+        &lt;td>${safeUsability}&lt;/td>
+        &lt;td>
+        &lt;button class="dropdown-btn table-button">
+            &lt;strong>${dropdownLabel}&lt;/strong>
+            &lt;span class="material-symbols-outlined arrow" translate="no">arrow_drop_down&lt;/span>
+        &lt;/button>
+        &lt;/td>`;
+
+    // Add action columns only if they have content
+    if (showFavorite) {
+        rowHTML += `&lt;td>${favoriteButtonHTML}&lt;/td>`;
+    }
+    if (showEdit) {
+        rowHTML += `&lt;td>${editButtonHTML}&lt;/td>`;
+    }
+    if (showDelete) {
+        rowHTML += `&lt;td>${deleteButtonHTML}&lt;/td>`;
+    }
+
+    row.innerHTML = rowHTML;
+
+    // Calculate colspan for dropdown row based on visible columns
+    const totalColumns = 3 + (showFavorite ? 1 : 0) + (showEdit ? 1 : 0) + (showDelete ? 1 : 0);
+    let html = `&lt;td colspan="${totalColumns}" class="dropdown-content">&lt;table class="attribute-table">`;
+
+    // Build inner rows for each attribute
+    if (Array.isArray(attributes)) {
+
+        attributes.forEach(att => {
+
+            html += `
+          &lt;tr>
+            &lt;td>Attribute&lt;/td>
+            &lt;td translate="no">${escapeHTML(att.attribute)}&lt;/td>
+            &lt;td>Information&lt;/td>
+            &lt;td>${escapeHTML(att.info)}&lt;/td>
+          &lt;/tr>
+        `;
+
+        });
+    }
+
+    html += `&lt;/table>&lt;/td>`;
+    dropdownRow.innerHTML = html;
+
+    return { row, dropdownRow }
+
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ALERT_IDS">ALERT_IDS</a></li><li><a href="global.html#ALERT_TIMING">ALERT_TIMING</a></li><li><a href="global.html#API">API</a></li><li><a href="global.html#ERROR_MESSAGES">ERROR_MESSAGES</a></li><li><a href="global.html#HTTP_STATUS">HTTP_STATUS</a></li><li><a href="global.html#LOG_LEVELS">LOG_LEVELS</a></li><li><a href="global.html#ROUTES">ROUTES</a></li><li><a href="global.html#SESSION">SESSION</a></li><li><a href="global.html#SUCCESS_MESSAGES">SUCCESS_MESSAGES</a></li><li><a href="global.html#VALIDATION">VALIDATION</a></li><li><a href="global.html#addFavorite">addFavorite</a></li><li><a href="global.html#alert">alert</a></li><li><a href="global.html#applyTheme">applyTheme</a></li><li><a href="global.html#auth">auth</a></li><li><a href="global.html#checkSession">checkSession</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#darkThemes">darkThemes</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#deleteLog">deleteLog</a></li><li><a href="global.html#displayAttributeMetadata">displayAttributeMetadata</a></li><li><a href="global.html#edit">edit</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#executePageScript">executePageScript</a></li><li><a href="global.html#form">form</a></li><li><a href="global.html#generateAttributeBlock">generateAttributeBlock</a></li><li><a href="global.html#generateTable">generateTable</a></li><li><a href="global.html#getCurrentTheme">getCurrentTheme</a></li><li><a href="global.html#getCurrentUser">getCurrentUser</a></li><li><a href="global.html#getDarkMode">getDarkMode</a></li><li><a href="global.html#handlePopState">handlePopState</a></li><li><a href="global.html#handleResponseError">handleResponseError</a></li><li><a href="global.html#info">info</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initNavigation">initNavigation</a></li><li><a href="global.html#initSearch">initSearch</a></li><li><a href="global.html#initTheme">initTheme</a></li><li><a href="global.html#isDevelopment">isDevelopment</a></li><li><a href="global.html#lightThemes">lightThemes</a></li><li><a href="global.html#loadCssFavorites">loadCssFavorites</a></li><li><a href="global.html#loadEditForm">loadEditForm</a></li><li><a href="global.html#loadHeaderAndFooter">loadHeaderAndFooter</a></li><li><a href="global.html#loadTagFavorites">loadTagFavorites</a></li><li><a href="global.html#navigation">navigation</a></li><li><a href="global.html#network">network</a></li><li><a href="global.html#reloadHeader">reloadHeader</a></li><li><a href="global.html#removeFavorite">removeFavorite</a></li><li><a href="global.html#renderTable">renderTable</a></li><li><a href="global.html#requireAdmin">requireAdmin</a></li><li><a href="global.html#requireLogin">requireLogin</a></li><li><a href="global.html#resetInit">resetInit</a></li><li><a href="global.html#setupDarkModeToggle">setupDarkModeToggle</a></li><li><a href="global.html#setupSubmitHandler">setupSubmitHandler</a></li><li><a href="global.html#setupThemeSwitcher">setupThemeSwitcher</a></li><li><a href="global.html#showSkeleton">showSkeleton</a></li><li><a href="global.html#showTemporaryAlert">showTemporaryAlert</a></li><li><a href="global.html#success">success</a></li><li><a href="global.html#tag">tag</a></li><li><a href="global.html#toggleDarkMode">toggleDarkMode</a></li><li><a href="global.html#toggleTheme">toggleTheme</a></li><li><a href="global.html#user">user</a></li><li><a href="global.html#warn">warn</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Tue Dec 30 2025 11:32:18 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

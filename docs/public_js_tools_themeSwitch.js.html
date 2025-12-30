@@ -28,16 +28,18 @@
         <article>
             <pre class="prettyprint source linenums"><code>/**
  * Theme Switcher - Dynamically changes CSS variables for different themes
+ * Supports both color themes (HTML/CSS) and dark mode
  */
 
 import logger from './logger.js';
 
-let currentTheme = 'html'; // Default theme
+let currentTheme = 'html'; // Default theme (html or css)
+let isDarkMode = false; // Default dark mode state
 
 /**
- * Theme configurations
+ * Theme configurations for light mode
  */
-const themes = {
+const lightThemes = {
     html: {
         // Original HTML theme (yellow/gold)
         '--color-primary': '#cca31e',
@@ -48,7 +50,12 @@ const themes = {
         '--color-secondary': '#9b884a',
         '--bg-hover': '#fff9e6',
         '--shadow-primary': 'rgba(204, 163, 30, 0.2)',
-        '--shadow-primary-strong': 'rgba(204, 163, 30, 0.3)'
+        '--shadow-primary-strong': 'rgba(204, 163, 30, 0.3)',
+        '--color-bg-primary': '#ffffff',
+        '--color-bg-secondary': '#f8f9fa',
+        '--color-text-primary': '#333',
+        '--color-text-secondary': '#555',
+        '--color-border': '#ddd'
     },
     css: {
         // CSS theme (blue)
@@ -60,15 +67,63 @@ const themes = {
         '--color-secondary': '#4c6ef5',
         '--bg-hover': '#e7f5ff',
         '--shadow-primary': 'rgba(28, 126, 214, 0.2)',
-        '--shadow-primary-strong': 'rgba(28, 126, 214, 0.3)'
+        '--shadow-primary-strong': 'rgba(28, 126, 214, 0.3)',
+        '--color-bg-primary': '#ffffff',
+        '--color-bg-secondary': '#f8f9fa',
+        '--color-text-primary': '#333',
+        '--color-text-secondary': '#555',
+        '--color-border': '#ddd'
+    }
+};
+
+/**
+ * Dark mode theme configurations
+ */
+const darkThemes = {
+    html: {
+        // HTML theme in dark mode (Even darker amber-gold)
+        '--color-primary': '#c2942d',
+        '--color-primary-dark': '#a37a23',
+        '--color-primary-light': '#d4a843',
+        '--color-primary-lighter': '#e0b855',
+        '--color-primary-gradient': '#a37a23',
+        '--color-secondary': '#8f7635',
+        '--bg-hover': '#24201a',
+        '--shadow-primary': 'rgba(194, 148, 45, 0.2)',
+        '--shadow-primary-strong': 'rgba(194, 148, 45, 0.3)',
+        '--color-bg-primary': '#1a1a1a',
+        '--color-bg-secondary': '#242424',
+        '--color-text-primary': '#ffffff',
+        '--color-text-secondary': '#cccccc',
+        '--color-border': '#404040'
+    },
+    css: {
+        // CSS theme in dark mode (Even darker ocean blue)
+        '--color-primary': '#2a75bb',
+        '--color-primary-dark': '#20609a',
+        '--color-primary-light': '#3a8fd9',
+        '--color-primary-lighter': '#5ba3e0',
+        '--color-primary-gradient': '#20609a',
+        '--color-secondary': '#4a65a3',
+        '--bg-hover': '#161d26',
+        '--shadow-primary': 'rgba(42, 117, 187, 0.2)',
+        '--shadow-primary-strong': 'rgba(42, 117, 187, 0.3)',
+        '--color-bg-primary': '#1a1a1a',
+        '--color-bg-secondary': '#242424',
+        '--color-text-primary': '#ffffff',
+        '--color-text-secondary': '#cccccc',
+        '--color-border': '#404040'
     }
 };
 
 /**
  * Applies a theme by updating CSS variables
  * @param {string} themeName - Name of the theme to apply ('html' or 'css')
+ * @param {boolean} dark - Whether to apply dark mode
  */
-export function applyTheme(themeName) {
+export function applyTheme(themeName, dark = isDarkMode) {
+    const themes = dark ? darkThemes : lightThemes;
+
     if (!themes[themeName]) {
         logger.error(`Theme "${themeName}" not found`);
         return;
@@ -82,11 +137,20 @@ export function applyTheme(themeName) {
         root.style.setProperty(property, value);
     });
 
-    currentTheme = themeName;
-    logger.success(`Theme switched to: ${themeName}`);
+    // Update body class for dark mode
+    if (dark) {
+        root.classList.add('dark-mode');
+    } else {
+        root.classList.remove('dark-mode');
+    }
 
-    // Store theme preference in localStorage
+    currentTheme = themeName;
+    isDarkMode = dark;
+    logger.success(`Theme switched to: ${themeName} ${dark ? '(Dark)' : '(Light)'}`);
+
+    // Store preferences in localStorage
     localStorage.setItem('preferredTheme', themeName);
+    localStorage.setItem('darkMode', dark.toString());
 }
 
 /**
@@ -98,21 +162,58 @@ export function getCurrentTheme() {
 }
 
 /**
- * Initializes the theme system
- * Loads saved theme preference or defaults to 'html'
+ * Gets the current dark mode state
+ * @returns {boolean} Whether dark mode is enabled
  */
-export function initTheme() {
-    const savedTheme = localStorage.getItem('preferredTheme') || 'html';
-    applyTheme(savedTheme);
-    logger.info(`Theme initialized: ${savedTheme}`);
+export function getDarkMode() {
+    return isDarkMode;
 }
 
 /**
- * Toggles between HTML and CSS themes
+ * Toggles dark mode on/off
+ */
+export function toggleDarkMode() {
+    applyTheme(currentTheme, !isDarkMode);
+    logger.info(`Dark mode ${!isDarkMode ? 'enabled' : 'disabled'}`);
+}
+
+/**
+ * Initializes the theme system
+ * Loads saved theme preference or defaults to 'html' light mode
+ * Also checks system preference for dark mode if no saved preference
+ */
+export function initTheme() {
+    const savedTheme = localStorage.getItem('preferredTheme') || 'html';
+    const savedDarkMode = localStorage.getItem('darkMode');
+
+    // If no saved dark mode preference, check system preference
+    let useDarkMode = false;
+    if (savedDarkMode !== null) {
+        useDarkMode = savedDarkMode === 'true';
+    } else if (window.matchMedia &amp;&amp; window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        useDarkMode = true;
+    }
+
+    applyTheme(savedTheme, useDarkMode);
+    logger.info(`Theme initialized: ${savedTheme} ${useDarkMode ? '(Dark)' : '(Light)'}`);
+
+    // Listen for system dark mode changes
+    if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            // Only auto-switch if user hasn't set a preference
+            if (localStorage.getItem('darkMode') === null) {
+                applyTheme(currentTheme, e.matches);
+            }
+        });
+    }
+}
+
+/**
+ * Toggles between HTML and CSS themes (maintains dark mode state)
  */
 export function toggleTheme() {
     const newTheme = currentTheme === 'html' ? 'css' : 'html';
-    applyTheme(newTheme);
+    applyTheme(newTheme, isDarkMode);
 }
 </code></pre>
         </article>
@@ -124,13 +225,13 @@ export function toggleTheme() {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ALERT_IDS">ALERT_IDS</a></li><li><a href="global.html#ALERT_TIMING">ALERT_TIMING</a></li><li><a href="global.html#API">API</a></li><li><a href="global.html#AddCSSFavorite">Add CSS Favorite</a></li><li><a href="global.html#AddFavorite">Add Favorite</a></li><li><a href="global.html#CSSPropertiesPage">CSS Properties Page</a></li><li><a href="global.html#CreateAttributeMetadata">Create Attribute Metadata</a></li><li><a href="global.html#CreateAttributes">Create Attributes</a></li><li><a href="global.html#CreatePage">Create Page</a></li><li><a href="global.html#CreateProperty">Create Property</a></li><li><a href="global.html#CreatePropertyAttribute">Create Property Attribute</a></li><li><a href="global.html#CreateTag">Create Tag</a></li><li><a href="global.html#DeleteProperty">Delete Property</a></li><li><a href="global.html#DeleteTag">Delete Tag</a></li><li><a href="global.html#ERROR_MESSAGES">ERROR_MESSAGES</a></li><li><a href="global.html#EditPage">Edit Page</a></li><li><a href="global.html#FavoritesPage">Favorites Page</a></li><li><a href="global.html#GetAllAttributeMetadata">Get All Attribute Metadata</a></li><li><a href="global.html#GetAllAttributes">Get All Attributes</a></li><li><a href="global.html#GetAllProperties">Get All Properties</a></li><li><a href="global.html#GetAllPropertyAttributes">Get All Property Attributes</a></li><li><a href="global.html#GetAllTags">Get All Tags</a></li><li><a href="global.html#GetAttributeByName">Get Attribute By Name</a></li><li><a href="global.html#GetAttributeMetadataByName">Get Attribute Metadata By Name</a></li><li><a href="global.html#GetAttributesByPropertyID">Get Attributes By Property ID</a></li><li><a href="global.html#GetAttributesByTagID">Get Attributes By Tag ID</a></li><li><a href="global.html#GetCSSFavorites">Get CSS Favorites</a></li><li><a href="global.html#GetCurrentUser">Get Current User</a></li><li><a href="global.html#GetFavorites">Get Favorites</a></li><li><a href="global.html#GetFooter">Get Footer</a></li><li><a href="global.html#GetHeader">Get Header</a></li><li><a href="global.html#GetPropertiesByIDs">Get Properties By IDs</a></li><li><a href="global.html#GetPropertyAttributeByName">Get Property Attribute By Name</a></li><li><a href="global.html#GetPropertyByID">Get Property By ID</a></li><li><a href="global.html#GetPropertyByName">Get Property By Name</a></li><li><a href="global.html#GetTagByID">Get Tag By ID</a></li><li><a href="global.html#GetTagByName">Get Tag By Name</a></li><li><a href="global.html#GetTagsByIDs">Get Tags By IDs</a></li><li><a href="global.html#GetUserByID">Get User By ID</a></li><li><a href="global.html#GoogleAuth">Google Auth</a></li><li><a href="global.html#GoogleAuthCallback">Google Auth Callback</a></li><li><a href="global.html#HTTP_STATUS">HTTP_STATUS</a></li><li><a href="global.html#HomePage">Home Page</a></li><li><a href="global.html#LOG_LEVELS">LOG_LEVELS</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#LoginPage">Login Page</a></li><li><a href="global.html#Logout">Logout</a></li><li><a href="global.html#ProfilePage">Profile Page</a></li><li><a href="global.html#ROUTES">ROUTES</a></li><li><a href="global.html#RemoveCSSFavorite">Remove CSS Favorite</a></li><li><a href="global.html#RemoveFavorite">Remove Favorite</a></li><li><a href="global.html#SESSION">SESSION</a></li><li><a href="global.html#SUCCESS_MESSAGES">SUCCESS_MESSAGES</a></li><li><a href="global.html#SignUp">Sign Up</a></li><li><a href="global.html#SignUpPage">Sign Up Page</a></li><li><a href="global.html#UpdateProperty">Update Property</a></li><li><a href="global.html#UpdateTag">Update Tag</a></li><li><a href="global.html#VALIDATION">VALIDATION</a></li><li><a href="global.html#addFavorite">addFavorite</a></li><li><a href="global.html#alert">alert</a></li><li><a href="global.html#all">all</a></li><li><a href="global.html#applyTheme">applyTheme</a></li><li><a href="global.html#auth">auth</a></li><li><a href="global.html#checkSession">checkSession</a></li><li><a href="global.html#closeDatabase">closeDatabase</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#createTables">createTables</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#deleteLog">deleteLog</a></li><li><a href="global.html#displayAttributeMetadata">displayAttributeMetadata</a></li><li><a href="global.html#edit">edit</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#exec">exec</a></li><li><a href="global.html#executePageScript">executePageScript</a></li><li><a href="global.html#form">form</a></li><li><a href="global.html#generateAttributeBlock">generateAttributeBlock</a></li><li><a href="global.html#generateTable">generateTable</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getCurrentTheme">getCurrentTheme</a></li><li><a href="global.html#getCurrentUser">getCurrentUser</a></li><li><a href="global.html#handlePopState">handlePopState</a></li><li><a href="global.html#handleResponseError">handleResponseError</a></li><li><a href="global.html#info">info</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initDatabase">initDatabase</a></li><li><a href="global.html#initNavigation">initNavigation</a></li><li><a href="global.html#initTheme">initTheme</a></li><li><a href="global.html#isAdminLevel1">isAdminLevel1</a></li><li><a href="global.html#isAuthenticated">isAuthenticated</a></li><li><a href="global.html#isDevelopment">isDevelopment</a></li><li><a href="global.html#loadCssFavorites">loadCssFavorites</a></li><li><a href="global.html#loadEditForm">loadEditForm</a></li><li><a href="global.html#loadHeaderAndFooter">loadHeaderAndFooter</a></li><li><a href="global.html#loadTagFavorites">loadTagFavorites</a></li><li><a href="global.html#navigation">navigation</a></li><li><a href="global.html#network">network</a></li><li><a href="global.html#prepare">prepare</a></li><li><a href="global.html#removeFavorite">removeFavorite</a></li><li><a href="global.html#renderTable">renderTable</a></li><li><a href="global.html#requireAdmin">requireAdmin</a></li><li><a href="global.html#requireAuth">requireAuth</a></li><li><a href="global.html#requireLogin">requireLogin</a></li><li><a href="global.html#run">run</a></li><li><a href="global.html#seedDatabase">seedDatabase</a></li><li><a href="global.html#setupSubmitHandler">setupSubmitHandler</a></li><li><a href="global.html#setupThemeSwitcher">setupThemeSwitcher</a></li><li><a href="global.html#showTemporaryAlert">showTemporaryAlert</a></li><li><a href="global.html#success">success</a></li><li><a href="global.html#tag">tag</a></li><li><a href="global.html#themes">themes</a></li><li><a href="global.html#toggleTheme">toggleTheme</a></li><li><a href="global.html#updateAttributes">updateAttributes</a></li><li><a href="global.html#updateTagAttributes">updateTagAttributes</a></li><li><a href="global.html#user">user</a></li><li><a href="global.html#validateDbInstance">validateDbInstance</a></li><li><a href="global.html#warn">warn</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ALERT_IDS">ALERT_IDS</a></li><li><a href="global.html#ALERT_TIMING">ALERT_TIMING</a></li><li><a href="global.html#API">API</a></li><li><a href="global.html#AddCSSFavorite">Add CSS Favorite</a></li><li><a href="global.html#AddFavorite">Add Favorite</a></li><li><a href="global.html#CreateAttributeMetadata">Create Attribute Metadata</a></li><li><a href="global.html#CreateAttributes">Create Attributes</a></li><li><a href="global.html#CreateProperty">Create Property</a></li><li><a href="global.html#CreatePropertyAttribute">Create Property Attribute</a></li><li><a href="global.html#CreateTag">Create Tag</a></li><li><a href="global.html#DeleteProperty">Delete Property</a></li><li><a href="global.html#DeleteTag">Delete Tag</a></li><li><a href="global.html#ERROR_MESSAGES">ERROR_MESSAGES</a></li><li><a href="global.html#GetAllAttributeMetadata">Get All Attribute Metadata</a></li><li><a href="global.html#GetAllAttributes">Get All Attributes</a></li><li><a href="global.html#GetAllProperties">Get All Properties</a></li><li><a href="global.html#GetAllPropertyAttributes">Get All Property Attributes</a></li><li><a href="global.html#GetAllTags">Get All Tags</a></li><li><a href="global.html#GetAttributeByName">Get Attribute By Name</a></li><li><a href="global.html#GetAttributeMetadataByName">Get Attribute Metadata By Name</a></li><li><a href="global.html#GetAttributesByPropertyID">Get Attributes By Property ID</a></li><li><a href="global.html#GetAttributesByTagID">Get Attributes By Tag ID</a></li><li><a href="global.html#GetCSSFavorites">Get CSS Favorites</a></li><li><a href="global.html#GetCurrentUser">Get Current User</a></li><li><a href="global.html#GetFavorites">Get Favorites</a></li><li><a href="global.html#GetFooter">Get Footer</a></li><li><a href="global.html#GetHeader">Get Header</a></li><li><a href="global.html#GetPropertiesByIDs">Get Properties By IDs</a></li><li><a href="global.html#GetPropertyAttributeByName">Get Property Attribute By Name</a></li><li><a href="global.html#GetPropertyByID">Get Property By ID</a></li><li><a href="global.html#GetPropertyByName">Get Property By Name</a></li><li><a href="global.html#GetTagByID">Get Tag By ID</a></li><li><a href="global.html#GetTagByName">Get Tag By Name</a></li><li><a href="global.html#GetTagsByIDs">Get Tags By IDs</a></li><li><a href="global.html#GetUserByID">Get User By ID</a></li><li><a href="global.html#GoogleAuth">Google Auth</a></li><li><a href="global.html#GoogleAuthCallback">Google Auth Callback</a></li><li><a href="global.html#HTTP_STATUS">HTTP_STATUS</a></li><li><a href="global.html#LOG_LEVELS">LOG_LEVELS</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Logout">Logout</a></li><li><a href="global.html#ROUTES">ROUTES</a></li><li><a href="global.html#RemoveCSSFavorite">Remove CSS Favorite</a></li><li><a href="global.html#RemoveFavorite">Remove Favorite</a></li><li><a href="global.html#SESSION">SESSION</a></li><li><a href="global.html#SUCCESS_MESSAGES">SUCCESS_MESSAGES</a></li><li><a href="global.html#SignUp">Sign Up</a></li><li><a href="global.html#UpdateProperty">Update Property</a></li><li><a href="global.html#UpdateTag">Update Tag</a></li><li><a href="global.html#VALIDATION">VALIDATION</a></li><li><a href="global.html#addFavorite">addFavorite</a></li><li><a href="global.html#alert">alert</a></li><li><a href="global.html#applyTheme">applyTheme</a></li><li><a href="global.html#auth">auth</a></li><li><a href="global.html#checkSession">checkSession</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#darkThemes">darkThemes</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#deleteLog">deleteLog</a></li><li><a href="global.html#displayAttributeMetadata">displayAttributeMetadata</a></li><li><a href="global.html#edit">edit</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#executePageScript">executePageScript</a></li><li><a href="global.html#form">form</a></li><li><a href="global.html#generateAttributeBlock">generateAttributeBlock</a></li><li><a href="global.html#generateTable">generateTable</a></li><li><a href="global.html#getCurrentTheme">getCurrentTheme</a></li><li><a href="global.html#getCurrentUser">getCurrentUser</a></li><li><a href="global.html#getDarkMode">getDarkMode</a></li><li><a href="global.html#handlePopState">handlePopState</a></li><li><a href="global.html#handleResponseError">handleResponseError</a></li><li><a href="global.html#info">info</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initNavigation">initNavigation</a></li><li><a href="global.html#initSearch">initSearch</a></li><li><a href="global.html#initTheme">initTheme</a></li><li><a href="global.html#isDevelopment">isDevelopment</a></li><li><a href="global.html#lightThemes">lightThemes</a></li><li><a href="global.html#loadCssFavorites">loadCssFavorites</a></li><li><a href="global.html#loadEditForm">loadEditForm</a></li><li><a href="global.html#loadHeaderAndFooter">loadHeaderAndFooter</a></li><li><a href="global.html#loadTagFavorites">loadTagFavorites</a></li><li><a href="global.html#navigation">navigation</a></li><li><a href="global.html#network">network</a></li><li><a href="global.html#reloadHeader">reloadHeader</a></li><li><a href="global.html#removeFavorite">removeFavorite</a></li><li><a href="global.html#renderTable">renderTable</a></li><li><a href="global.html#requireAdmin">requireAdmin</a></li><li><a href="global.html#requireLogin">requireLogin</a></li><li><a href="global.html#resetInit">resetInit</a></li><li><a href="global.html#setupDarkModeToggle">setupDarkModeToggle</a></li><li><a href="global.html#setupSubmitHandler">setupSubmitHandler</a></li><li><a href="global.html#setupThemeSwitcher">setupThemeSwitcher</a></li><li><a href="global.html#showSkeleton">showSkeleton</a></li><li><a href="global.html#showTemporaryAlert">showTemporaryAlert</a></li><li><a href="global.html#success">success</a></li><li><a href="global.html#tag">tag</a></li><li><a href="global.html#toggleDarkMode">toggleDarkMode</a></li><li><a href="global.html#toggleTheme">toggleTheme</a></li><li><a href="global.html#user">user</a></li><li><a href="global.html#warn">warn</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Dec 18 2025 11:56:16 GMT+0100 (hora estándar de Europa central)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Tue Dec 30 2025 11:34:27 GMT+0100 (hora estándar de Europa central)
 </footer>
 
 <script> prettyPrint(); </script>

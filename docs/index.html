@@ -50,13 +50,15 @@
 <p>DocuKit is divided into four key functional pillars: Core Documentation, User Management, Internationalization, and Administration.</p>
 <h3>🔍 Core Documentation &amp; Interactivity</h3>
 <ul>
-<li><strong>SPA-like Experience:</strong> Modern navigation system that updates content dynamically without full page reloads, providing a smooth, fluid user interface.</li>
+<li><strong>SPA-like Experience:</strong> Powered by the <strong>View Transitions API</strong>, providing fluid, native-like content fades and slides between pages.</li>
 <li><strong>Intelligent Search:</strong> Robust search functionality allows users to quickly locate tags/properties based on <strong>name</strong> or <strong>attribute</strong>.</li>
+<li><strong>Global Command+K Search:</strong> Instant access to all documentation via a global overlay (Ctrl+K/Cmd+K) with <strong>Fuzzy Search</strong> (Fuse.js) to handle typos effortlessly.</li>
 <li><strong>Attribute Metadata:</strong> Detailed descriptions, compatibility notes, and usage context for every HTML/CSS attribute.</li>
 <li><strong>Dynamic Theme System:</strong>
 <ul>
 <li><strong>HTML Theme</strong> (Gold): Tailored for HTML element exploration.</li>
 <li><strong>CSS Theme</strong> (Blue): Optimized for CSS property discovery.</li>
+<li><strong>Persistence Dark Mode:</strong> A full dark theme that saves user preference in <code>localStorage</code>.</li>
 <li><em>Managed via <strong>CSS Variables</strong> for instant, across-the-board aesthetic swaps.</em></li>
 </ul>
 </li>
@@ -64,9 +66,9 @@
 <h3>👤 Advanced User System</h3>
 <ul>
 <li><strong>Unified Authentication:</strong> Supports both traditional <strong>Email/Password</strong> and <strong>Google OAuth 2.0</strong> login/signup.</li>
-<li><strong>Secure Sessions:</strong> Utilizes <code>passport.js</code> and <code>express-session</code> for high-security session management.</li>
+<li><strong>Secure Sessions:</strong> Utilizes <code>passport.js</code> and <code>express-session</code> for high-security session management with persistent SQLite storage.</li>
 <li><strong>Smart Favorites:</strong> Separate bookmarking systems for HTML tags and CSS properties, persisting within the user's secure profile.</li>
-<li><strong>Profile Customization:</strong> Dynamic profile photo uploads with automated folder management for users.</li>
+<li><strong>Profile Customization:</strong> Dynamic profile photo uploads with automated folder management for users via <strong>Multer</strong>.</li>
 </ul>
 <h3>🌎 Internationalization (i18n)</h3>
 <ul>
@@ -76,13 +78,9 @@
 </ul>
 <h3>🛡️ Administration Module</h3>
 <ul>
-<li><strong>Full CRUD Control:</strong> Administrators have complete authority to:
-<ul>
-<li><strong>Create/Update/Delete</strong> tags, properties, and their associated attributes.</li>
-<li><strong>Manage Metadata:</strong> Update global attribute definitions.</li>
-</ul>
-</li>
-<li><strong>Automated Migrations:</strong> Smart database initialization system that automatically updates the schema (e.g., adding Google Auth support) while preserving data.</li>
+<li><strong>Full CRUD Control:</strong> Administrators have complete authority to create, update, and delete tags, properties, and metadata.</li>
+<li><strong>Schema Validation:</strong> Powered by <strong>Zod</strong>, ensuring all API inputs are validated with detailed error reporting and full type safety.</li>
+<li><strong>Modern Data Layer:</strong> Powered by <strong>Prisma ORM</strong> for type-safe database interactions and streamlined schema management.</li>
 </ul>
 <hr>
 <h2>🛠️ Technology Stack</h2>
@@ -96,13 +94,28 @@
 </thead>
 <tbody>
 <tr>
+<td style="text-align:left"><strong>Language</strong></td>
+<td style="text-align:left"><strong>TypeScript</strong></td>
+<td style="text-align:left">100% Type-safe codebase for robust development.</td>
+</tr>
+<tr>
 <td style="text-align:left"><strong>Server</strong></td>
 <td style="text-align:left">Node.js &amp; Express.js</td>
 <td style="text-align:left">Core application and API framework.</td>
 </tr>
 <tr>
+<td style="text-align:left"><strong>Validation</strong></td>
+<td style="text-align:left"><strong>Zod</strong></td>
+<td style="text-align:left">Schema-based validation with automatic TS type inference.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>ORM</strong></td>
+<td style="text-align:left">Prisma</td>
+<td style="text-align:left">Type-safe database client and schema management.</td>
+</tr>
+<tr>
 <td style="text-align:left"><strong>Database</strong></td>
-<td style="text-align:left">SQLite3</td>
+<td style="text-align:left">SQLite</td>
 <td style="text-align:left">Lightweight, transactional relational storage.</td>
 </tr>
 <tr>
@@ -111,35 +124,46 @@
 <td style="text-align:left">Multi-provider authentication system.</td>
 </tr>
 <tr>
+<td style="text-align:left"><strong>Security</strong></td>
+<td style="text-align:left">Helmet, Rate Limit &amp; Bcrypt</td>
+<td style="text-align:left">CSP protection, DDoS prevention, and secure password hashing.</td>
+</tr>
+<tr>
 <td style="text-align:left"><strong>Templating</strong></td>
 <td style="text-align:left">EJS</td>
-<td style="text-align:left">Dynamic server-side rendering.</td>
+<td style="text-align:left">Dynamic server-side rendering with layout support.</td>
 </tr>
 <tr>
 <td style="text-align:left"><strong>UI/UX</strong></td>
-<td style="text-align:left">Vanilla JS &amp; CSS Variables</td>
-<td style="text-align:left">High-performance SPA navigation and theme logic.</td>
+<td style="text-align:left">Vanilla JS, CSS Variables &amp; Skeleton UI</td>
+<td style="text-align:left">High-performance SPA navigation and shimmering loading states.</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Docs</strong></td>
-<td style="text-align:left">JSDoc</td>
-<td style="text-align:left">Fully documented service and controller layers.</td>
+<td style="text-align:left"><strong>Animations</strong></td>
+<td style="text-align:left">View Transitions API</td>
+<td style="text-align:left">Native-feel page transitions.</td>
 </tr>
 </tbody>
 </table>
 <hr>
 <h2>📂 Internal Architecture</h2>
-<p>The codebase follows a clear <strong>Feature-Driven Design</strong> for maximum scalability.</p>
+<p>The codebase follows a clear <strong>Feature-Driven Design</strong> refactored for TypeScript.</p>
 <pre class="prettyprint source lang-bash"><code>DocuKit/
-├── config/             # Passport, Multer, and Route centralization
-├── controllers/        # Request handling (Tags, Properties, Users, Partials)
-├── db/                 # SQLite connection & Auto-migration engine
-├── middleware/         # Auth guards & Validation
-├── public/             # SPA Logic, Global Styles, and Tools
-├── routes/             # Centralized route definitions
-├── services/           # Decoupled Business Logic & DB queries
+├── src/                # Source Code (TypeScript)
+│   ├── config/         # Passport, Multer, and Route configuration
+│   ├── controllers/    # Request handling logic (Tags, Properties, etc.)
+│   ├── db/             # Prisma client instance and Seeding logic
+│   ├── middleware/     # Auth guards & Validation middleware
+│   ├── routes/         # Centralized API and Page route definitions
+│   ├── schemas/        # Zod validation schemas for API inputs
+│   ├── services/       # Decoupled Business Logic using Prisma Client
+│   ├── types/          # Global TypeScript interfaces & types
+│   └── app.ts          # Application entry point & Middleware orchestration
+├── prisma/             # Prisma schema and database migrations
+├── public/             # Static assets, Global Styles, and Frontend Tools
+├── uploads/            # User-uploaded content (Profile photos)
 ├── views/              # Modular EJS templates
-└── app.js              # Application entry point & Middleware orchestration
+└── ...
 </code></pre>
 <hr>
 <h2>⚡ Installation &amp; Setup</h2>
@@ -159,17 +183,28 @@ SESSION_SECRET=your_super_secret_key
 NODE_ENV=development
 GOOGLE_CLIENT_ID=your_google_id
 GOOGLE_CLIENT_SECRET=your_google_secret
+DATABASE_URL=&quot;file:./db/database.sqlite&quot;
 </code></pre>
 </li>
 <li>
 <p><strong>Initialize Database:</strong></p>
-<pre class="prettyprint source lang-bash"><code># This creates the schema and seeds initial data
+<pre class="prettyprint source lang-bash"><code># This synchronizes the schema and seeds initial data via Prisma
 npm run create-db
 </code></pre>
 </li>
 <li>
-<p><strong>Run Application:</strong></p>
-<pre class="prettyprint source lang-bash"><code>npm start
+<p><strong>Build &amp; Develop:</strong></p>
+<pre class="prettyprint source lang-bash"><code># Compile TypeScript
+npm run build
+
+# Run in development mode (auto-reload)
+npm run dev
+</code></pre>
+</li>
+<li>
+<p><strong>Database Exploration:</strong></p>
+<pre class="prettyprint source lang-bash"><code># Open Prisma Studio to view and edit your data
+npm run studio
 </code></pre>
 </li>
 </ol>
@@ -189,13 +224,13 @@ npm run create-db
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ALERT_IDS">ALERT_IDS</a></li><li><a href="global.html#ALERT_TIMING">ALERT_TIMING</a></li><li><a href="global.html#API">API</a></li><li><a href="global.html#AddCSSFavorite">Add CSS Favorite</a></li><li><a href="global.html#AddFavorite">Add Favorite</a></li><li><a href="global.html#CSSPropertiesPage">CSS Properties Page</a></li><li><a href="global.html#CreateAttributeMetadata">Create Attribute Metadata</a></li><li><a href="global.html#CreateAttributes">Create Attributes</a></li><li><a href="global.html#CreatePage">Create Page</a></li><li><a href="global.html#CreateProperty">Create Property</a></li><li><a href="global.html#CreatePropertyAttribute">Create Property Attribute</a></li><li><a href="global.html#CreateTag">Create Tag</a></li><li><a href="global.html#DeleteProperty">Delete Property</a></li><li><a href="global.html#DeleteTag">Delete Tag</a></li><li><a href="global.html#ERROR_MESSAGES">ERROR_MESSAGES</a></li><li><a href="global.html#EditPage">Edit Page</a></li><li><a href="global.html#FavoritesPage">Favorites Page</a></li><li><a href="global.html#GetAllAttributeMetadata">Get All Attribute Metadata</a></li><li><a href="global.html#GetAllAttributes">Get All Attributes</a></li><li><a href="global.html#GetAllProperties">Get All Properties</a></li><li><a href="global.html#GetAllPropertyAttributes">Get All Property Attributes</a></li><li><a href="global.html#GetAllTags">Get All Tags</a></li><li><a href="global.html#GetAttributeByName">Get Attribute By Name</a></li><li><a href="global.html#GetAttributeMetadataByName">Get Attribute Metadata By Name</a></li><li><a href="global.html#GetAttributesByPropertyID">Get Attributes By Property ID</a></li><li><a href="global.html#GetAttributesByTagID">Get Attributes By Tag ID</a></li><li><a href="global.html#GetCSSFavorites">Get CSS Favorites</a></li><li><a href="global.html#GetCurrentUser">Get Current User</a></li><li><a href="global.html#GetFavorites">Get Favorites</a></li><li><a href="global.html#GetFooter">Get Footer</a></li><li><a href="global.html#GetHeader">Get Header</a></li><li><a href="global.html#GetPropertiesByIDs">Get Properties By IDs</a></li><li><a href="global.html#GetPropertyAttributeByName">Get Property Attribute By Name</a></li><li><a href="global.html#GetPropertyByID">Get Property By ID</a></li><li><a href="global.html#GetPropertyByName">Get Property By Name</a></li><li><a href="global.html#GetTagByID">Get Tag By ID</a></li><li><a href="global.html#GetTagByName">Get Tag By Name</a></li><li><a href="global.html#GetTagsByIDs">Get Tags By IDs</a></li><li><a href="global.html#GetUserByID">Get User By ID</a></li><li><a href="global.html#GoogleAuth">Google Auth</a></li><li><a href="global.html#GoogleAuthCallback">Google Auth Callback</a></li><li><a href="global.html#HTTP_STATUS">HTTP_STATUS</a></li><li><a href="global.html#HomePage">Home Page</a></li><li><a href="global.html#LOG_LEVELS">LOG_LEVELS</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#LoginPage">Login Page</a></li><li><a href="global.html#Logout">Logout</a></li><li><a href="global.html#ProfilePage">Profile Page</a></li><li><a href="global.html#ROUTES">ROUTES</a></li><li><a href="global.html#RemoveCSSFavorite">Remove CSS Favorite</a></li><li><a href="global.html#RemoveFavorite">Remove Favorite</a></li><li><a href="global.html#SESSION">SESSION</a></li><li><a href="global.html#SUCCESS_MESSAGES">SUCCESS_MESSAGES</a></li><li><a href="global.html#SignUp">Sign Up</a></li><li><a href="global.html#SignUpPage">Sign Up Page</a></li><li><a href="global.html#UpdateProperty">Update Property</a></li><li><a href="global.html#UpdateTag">Update Tag</a></li><li><a href="global.html#VALIDATION">VALIDATION</a></li><li><a href="global.html#addFavorite">addFavorite</a></li><li><a href="global.html#alert">alert</a></li><li><a href="global.html#all">all</a></li><li><a href="global.html#applyTheme">applyTheme</a></li><li><a href="global.html#auth">auth</a></li><li><a href="global.html#checkSession">checkSession</a></li><li><a href="global.html#closeDatabase">closeDatabase</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#createTables">createTables</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#deleteLog">deleteLog</a></li><li><a href="global.html#displayAttributeMetadata">displayAttributeMetadata</a></li><li><a href="global.html#edit">edit</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#exec">exec</a></li><li><a href="global.html#executePageScript">executePageScript</a></li><li><a href="global.html#form">form</a></li><li><a href="global.html#generateAttributeBlock">generateAttributeBlock</a></li><li><a href="global.html#generateTable">generateTable</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getCurrentTheme">getCurrentTheme</a></li><li><a href="global.html#getCurrentUser">getCurrentUser</a></li><li><a href="global.html#handlePopState">handlePopState</a></li><li><a href="global.html#handleResponseError">handleResponseError</a></li><li><a href="global.html#info">info</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initDatabase">initDatabase</a></li><li><a href="global.html#initNavigation">initNavigation</a></li><li><a href="global.html#initTheme">initTheme</a></li><li><a href="global.html#isAdminLevel1">isAdminLevel1</a></li><li><a href="global.html#isAuthenticated">isAuthenticated</a></li><li><a href="global.html#isDevelopment">isDevelopment</a></li><li><a href="global.html#loadCssFavorites">loadCssFavorites</a></li><li><a href="global.html#loadEditForm">loadEditForm</a></li><li><a href="global.html#loadHeaderAndFooter">loadHeaderAndFooter</a></li><li><a href="global.html#loadTagFavorites">loadTagFavorites</a></li><li><a href="global.html#navigation">navigation</a></li><li><a href="global.html#network">network</a></li><li><a href="global.html#prepare">prepare</a></li><li><a href="global.html#removeFavorite">removeFavorite</a></li><li><a href="global.html#renderTable">renderTable</a></li><li><a href="global.html#requireAdmin">requireAdmin</a></li><li><a href="global.html#requireAuth">requireAuth</a></li><li><a href="global.html#requireLogin">requireLogin</a></li><li><a href="global.html#run">run</a></li><li><a href="global.html#seedDatabase">seedDatabase</a></li><li><a href="global.html#setupSubmitHandler">setupSubmitHandler</a></li><li><a href="global.html#setupThemeSwitcher">setupThemeSwitcher</a></li><li><a href="global.html#showTemporaryAlert">showTemporaryAlert</a></li><li><a href="global.html#success">success</a></li><li><a href="global.html#tag">tag</a></li><li><a href="global.html#themes">themes</a></li><li><a href="global.html#toggleTheme">toggleTheme</a></li><li><a href="global.html#updateAttributes">updateAttributes</a></li><li><a href="global.html#updateTagAttributes">updateTagAttributes</a></li><li><a href="global.html#user">user</a></li><li><a href="global.html#validateDbInstance">validateDbInstance</a></li><li><a href="global.html#warn">warn</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ALERT_IDS">ALERT_IDS</a></li><li><a href="global.html#ALERT_TIMING">ALERT_TIMING</a></li><li><a href="global.html#API">API</a></li><li><a href="global.html#AddCSSFavorite">Add CSS Favorite</a></li><li><a href="global.html#AddFavorite">Add Favorite</a></li><li><a href="global.html#CreateAttributeMetadata">Create Attribute Metadata</a></li><li><a href="global.html#CreateAttributes">Create Attributes</a></li><li><a href="global.html#CreateProperty">Create Property</a></li><li><a href="global.html#CreatePropertyAttribute">Create Property Attribute</a></li><li><a href="global.html#CreateTag">Create Tag</a></li><li><a href="global.html#DeleteProperty">Delete Property</a></li><li><a href="global.html#DeleteTag">Delete Tag</a></li><li><a href="global.html#ERROR_MESSAGES">ERROR_MESSAGES</a></li><li><a href="global.html#GetAllAttributeMetadata">Get All Attribute Metadata</a></li><li><a href="global.html#GetAllAttributes">Get All Attributes</a></li><li><a href="global.html#GetAllProperties">Get All Properties</a></li><li><a href="global.html#GetAllPropertyAttributes">Get All Property Attributes</a></li><li><a href="global.html#GetAllTags">Get All Tags</a></li><li><a href="global.html#GetAttributeByName">Get Attribute By Name</a></li><li><a href="global.html#GetAttributeMetadataByName">Get Attribute Metadata By Name</a></li><li><a href="global.html#GetAttributesByPropertyID">Get Attributes By Property ID</a></li><li><a href="global.html#GetAttributesByTagID">Get Attributes By Tag ID</a></li><li><a href="global.html#GetCSSFavorites">Get CSS Favorites</a></li><li><a href="global.html#GetCurrentUser">Get Current User</a></li><li><a href="global.html#GetFavorites">Get Favorites</a></li><li><a href="global.html#GetFooter">Get Footer</a></li><li><a href="global.html#GetHeader">Get Header</a></li><li><a href="global.html#GetPropertiesByIDs">Get Properties By IDs</a></li><li><a href="global.html#GetPropertyAttributeByName">Get Property Attribute By Name</a></li><li><a href="global.html#GetPropertyByID">Get Property By ID</a></li><li><a href="global.html#GetPropertyByName">Get Property By Name</a></li><li><a href="global.html#GetTagByID">Get Tag By ID</a></li><li><a href="global.html#GetTagByName">Get Tag By Name</a></li><li><a href="global.html#GetTagsByIDs">Get Tags By IDs</a></li><li><a href="global.html#GetUserByID">Get User By ID</a></li><li><a href="global.html#GoogleAuth">Google Auth</a></li><li><a href="global.html#GoogleAuthCallback">Google Auth Callback</a></li><li><a href="global.html#HTTP_STATUS">HTTP_STATUS</a></li><li><a href="global.html#LOG_LEVELS">LOG_LEVELS</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Logout">Logout</a></li><li><a href="global.html#ROUTES">ROUTES</a></li><li><a href="global.html#RemoveCSSFavorite">Remove CSS Favorite</a></li><li><a href="global.html#RemoveFavorite">Remove Favorite</a></li><li><a href="global.html#SESSION">SESSION</a></li><li><a href="global.html#SUCCESS_MESSAGES">SUCCESS_MESSAGES</a></li><li><a href="global.html#SignUp">Sign Up</a></li><li><a href="global.html#UpdateProperty">Update Property</a></li><li><a href="global.html#UpdateTag">Update Tag</a></li><li><a href="global.html#VALIDATION">VALIDATION</a></li><li><a href="global.html#addFavorite">addFavorite</a></li><li><a href="global.html#alert">alert</a></li><li><a href="global.html#applyTheme">applyTheme</a></li><li><a href="global.html#auth">auth</a></li><li><a href="global.html#checkSession">checkSession</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#darkThemes">darkThemes</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#deleteLog">deleteLog</a></li><li><a href="global.html#displayAttributeMetadata">displayAttributeMetadata</a></li><li><a href="global.html#edit">edit</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#executePageScript">executePageScript</a></li><li><a href="global.html#form">form</a></li><li><a href="global.html#generateAttributeBlock">generateAttributeBlock</a></li><li><a href="global.html#generateTable">generateTable</a></li><li><a href="global.html#getCurrentTheme">getCurrentTheme</a></li><li><a href="global.html#getCurrentUser">getCurrentUser</a></li><li><a href="global.html#getDarkMode">getDarkMode</a></li><li><a href="global.html#handlePopState">handlePopState</a></li><li><a href="global.html#handleResponseError">handleResponseError</a></li><li><a href="global.html#info">info</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initNavigation">initNavigation</a></li><li><a href="global.html#initSearch">initSearch</a></li><li><a href="global.html#initTheme">initTheme</a></li><li><a href="global.html#isDevelopment">isDevelopment</a></li><li><a href="global.html#lightThemes">lightThemes</a></li><li><a href="global.html#loadCssFavorites">loadCssFavorites</a></li><li><a href="global.html#loadEditForm">loadEditForm</a></li><li><a href="global.html#loadHeaderAndFooter">loadHeaderAndFooter</a></li><li><a href="global.html#loadTagFavorites">loadTagFavorites</a></li><li><a href="global.html#navigation">navigation</a></li><li><a href="global.html#network">network</a></li><li><a href="global.html#reloadHeader">reloadHeader</a></li><li><a href="global.html#removeFavorite">removeFavorite</a></li><li><a href="global.html#renderTable">renderTable</a></li><li><a href="global.html#requireAdmin">requireAdmin</a></li><li><a href="global.html#requireLogin">requireLogin</a></li><li><a href="global.html#resetInit">resetInit</a></li><li><a href="global.html#setupDarkModeToggle">setupDarkModeToggle</a></li><li><a href="global.html#setupSubmitHandler">setupSubmitHandler</a></li><li><a href="global.html#setupThemeSwitcher">setupThemeSwitcher</a></li><li><a href="global.html#showSkeleton">showSkeleton</a></li><li><a href="global.html#showTemporaryAlert">showTemporaryAlert</a></li><li><a href="global.html#success">success</a></li><li><a href="global.html#tag">tag</a></li><li><a href="global.html#toggleDarkMode">toggleDarkMode</a></li><li><a href="global.html#toggleTheme">toggleTheme</a></li><li><a href="global.html#user">user</a></li><li><a href="global.html#warn">warn</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Dec 18 2025 11:56:16 GMT+0100 (hora estándar de Europa central)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Tue Dec 30 2025 11:34:27 GMT+0100 (hora estándar de Europa central)
 </footer>
 
 <script> prettyPrint(); </script>

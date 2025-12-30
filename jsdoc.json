@@ -5,15 +5,9 @@
     "recurseDepth": 10,
     "source": {
         "include": [
-            "app.js",
-            "db",
-            "middleware",
-            "routes",
-            "public/js",
-            "controllers",
-            "services"
+            "public/js"
         ],
-        "includePattern": ".+\\.js(doc|x)?$",
+        "includePattern": ".+\\.js$",
         "excludePattern": "(^|\\/|\\\\)_"
     },
     "sourceType": "module",
@@ -29,7 +23,7 @@
         "monospaceLinks": false
     },
     "opts": {
-        "destination": "./docs",
+        "destination": "./docs/js",
         "recurse": true,
         "readme": "README.md"
     }

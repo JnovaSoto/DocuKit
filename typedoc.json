@@ -1,0 +1,16 @@
+{
+    "entryPoints": [
+        "src/app.ts",
+        "src/controllers",
+        "src/services",
+        "src/middleware",
+        "src/config"
+    ],
+    "out": "docs/ts",
+    "name": "DocuKit Server API (TypeScript)",
+    "includeVersion": true,
+    "categorizeByGroup": true,
+    "excludeInternal": true,
+    "excludePrivate": true,
+    "plugin": []
+}
