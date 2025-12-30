@@ -302,7 +302,7 @@ prisma.$connect()
       console.log('💎 Database: Prisma connected');
     });
   })
-  .catch((err) => {
+  .catch((err: any) => {
     // If database connection fails, log error and exit process
     console.error('🛑 FATAL ERROR: Database connection failed.', err);
     process.exit(1);

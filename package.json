@@ -8,7 +8,8 @@
     "start": "node dist/app.js",
     "dev": "node --loader ts-node/esm --watch src/app.ts",
     "build": "rimraf dist && tsc",
-    "create-db": "node src/db/seed.js",
+    "postinstall": "prisma generate",
+    "create-db": "node --loader ts-node/esm src/db/seed.ts",
     "docs": "jsdoc -c jsdoc.json",
     "studio": "npx prisma studio"
   },

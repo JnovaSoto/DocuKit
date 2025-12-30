@@ -96,7 +96,7 @@ DocuKit/
     NODE_ENV=development
     GOOGLE_CLIENT_ID=your_google_id
     GOOGLE_CLIENT_SECRET=your_google_secret
-    DATABASE_URL="file:./src/db/database.sqlite"
+    DATABASE_URL="file:./db/database.sqlite"
     ```
 
 3. **Initialize Database:**
