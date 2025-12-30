@@ -19,7 +19,7 @@ const propertyService = {
      * @param {string} [content] - Optional additional content for the property.
      * @returns {Promise<number>} A promise that resolves to the ID of the newly created property.
      */
-    createProperty: async (propertyName, usability, content) => {
+    createProperty: async (propertyName: string, usability: string, content: string) => {
         const property = await prisma.property.create({
             data: {
                 propertyName,
@@ -35,9 +35,9 @@ const propertyService = {
      * @param {number} id - The ID of the property to retrieve.
      * @returns {Promise<Object|null>} A promise that resolves to the property object if found, or null.
      */
-    getPropertyById: async (id) => {
+    getPropertyById: async (id: number) => {
         return await prisma.property.findUnique({
-            where: { id: parseInt(id) }
+            where: { id: id }
         });
     },
 
@@ -46,11 +46,11 @@ const propertyService = {
      * @param {Array<number>} ids - An array of property IDs.
      * @returns {Promise<Array>} A promise that resolves to an array of property objects.
      */
-    getPropertiesByIds: async (ids) => {
+    getPropertiesByIds: async (ids: number[]) => {
         return await prisma.property.findMany({
             where: {
                 id: {
-                    in: ids.map(id => parseInt(id))
+                    in: ids
                 }
             }
         });
@@ -61,7 +61,7 @@ const propertyService = {
      * @param {string} propertyName - The name of the property to search for.
      * @returns {Promise<Array>} A promise that resolves to an array of matching property objects.
      */
-    getPropertyByName: async (propertyName) => {
+    getPropertyByName: async (propertyName: string) => {
         return await prisma.property.findMany({
             where: {
                 propertyName: propertyName.toLowerCase()
@@ -77,26 +77,30 @@ const propertyService = {
      * @param {Array<Object>} [attributes] - An optional array of attributes to update.
      * @returns {Promise<boolean|null>} A promise that resolves to `true` if successful, or `null` if the property was not found.
      */
-    updateProperty: async (id, propertyName, usability, attributes) => {
+    updateProperty: async (id: number, propertyName: string, usability: string, attributes: { attribute: string; info: string }[]) => {
         try {
+            const updateData: any = {
+                propertyName,
+                usability,
+            };
+
+            if (attributes && attributes.length > 0) {
+                updateData.propertyAttributes = {
+                    deleteMany: {},
+                    create: attributes
+                        .filter(attr => attr.attribute)
+                        .map(attr => ({
+                            attribute: attr.attribute,
+                            info: attr.info || ''
+                        }))
+                };
+            }
             await prisma.property.update({
-                where: { id: parseInt(id) },
-                data: {
-                    propertyName,
-                    usability,
-                    propertyAttributes: attributes ? {
-                        deleteMany: {},
-                        create: attributes
-                            .filter(attr => attr.attribute)
-                            .map(attr => ({
-                                attribute: attr.attribute,
-                                info: attr.info || ''
-                            }))
-                    } : undefined
-                }
+                where: { id: id },
+                data: updateData
             });
             return true;
-        } catch (error) {
+        } catch (error: any) {
             if (error.code === 'P2025') return null;
             throw error;
         }
@@ -107,13 +111,13 @@ const propertyService = {
      * @param {number} id - The ID of the property to delete.
      * @returns {Promise<boolean>} A promise that resolves to `true` if the property was deleted, or `false` if not found.
      */
-    deleteProperty: async (id) => {
+    deleteProperty: async (id: number) => {
         try {
             await prisma.property.delete({
-                where: { id: parseInt(id) }
+                where: { id: id }
             });
             return true;
-        } catch (error) {
+        } catch (error: any) {
             if (error.code === 'P2025') return false;
             throw error;
         }

@@ -21,7 +21,7 @@ const attributeMetadataService = {
      * @param {string} name - The name of the attribute.
      * @returns {Promise<Object|null>} A promise that resolves to the metadata object.
      */
-    getMetadataByName: async (name) => {
+    getMetadataByName: async (name: string) => {
         return await prisma.attributeMetadata.findUnique({
             where: {
                 attributeName: name
@@ -35,7 +35,7 @@ const attributeMetadataService = {
      * @param {string} generalDescription - A general description of the attribute.
      * @returns {Promise<number>} A promise that resolves to the ID of the newly created metadata.
      */
-    createMetadata: async (attributeName, generalDescription) => {
+    createMetadata: async (attributeName: string, generalDescription: string) => {
         const metadata = await prisma.attributeMetadata.create({
             data: {
                 attributeName,

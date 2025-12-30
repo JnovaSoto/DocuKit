@@ -1,16 +1,17 @@
 import propertyAttributeService from '../../services/properties/propertyAttributeService.js';
+import { Request, Response } from 'express';
 
 const propertyAttributeController = {
     /**
      * Get all property attributes.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
+     * @param {Request} req - The request object.
+     * @param {Response} res - The response object.
      */
-    getAllAttributes: async (req, res) => {
+    getAllAttributes: async (_req: Request, res: Response) => {
         try {
             const rows = await propertyAttributeService.getAllAttributes();
             res.json(rows);
-        } catch (err) {
+        } catch (err: any) {
             res.status(500).json({ error: err.message });
         }
     },
@@ -20,7 +21,7 @@ const propertyAttributeController = {
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    createAttributes: async (req, res) => {
+    createAttributes: async (req: Request, res: Response) => {
         const { propertyId, attributes } = req.body;
 
         if (!Array.isArray(attributes)) {
@@ -30,7 +31,7 @@ const propertyAttributeController = {
         try {
             await propertyAttributeService.createAttributes(propertyId, attributes);
             res.status(201).json({ message: 'Property attributes added successfully' });
-        } catch (err) {
+        } catch (err: any) {
             res.status(500).json({ error: err.message });
         }
     },
@@ -40,12 +41,12 @@ const propertyAttributeController = {
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    getAttributesByPropertyId: async (req, res) => {
-        const propertyId = req.params.id;
+    getAttributesByPropertyId: async (req: Request, res: Response) => {
+        const propertyId = parseInt(req.params.id);
         try {
             const rows = await propertyAttributeService.getAttributesByPropertyId(propertyId);
             res.json(rows);
-        } catch (err) {
+        } catch (err: any) {
             res.status(500).json({ error: 'Internal server error' });
         }
     },
@@ -55,7 +56,7 @@ const propertyAttributeController = {
      * @param {Object} req - The request object.
      * @param {Object} res - The response object.
      */
-    getAttributesByName: async (req, res) => {
+    getAttributesByName: async (req: Request, res: Response) => {
         const attributeName = req.params.name;
         try {
             const rows = await propertyAttributeService.getAttributesByName(attributeName);

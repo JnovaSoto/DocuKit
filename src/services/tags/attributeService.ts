@@ -18,13 +18,13 @@ const attributeService = {
      * @param {Array<Object>} attributes - An array of attribute objects containing `attribute` and `info` properties.
      * @returns {Promise<void>} A promise that resolves when the attributes are created.
      */
-    createAttributes: async (tagId, attributes) => {
+    createAttributes: async (tagId: number, attributes: { attribute: string; info?: string }[]) => {
         const data = attributes
             .filter(attr => attr.attribute)
             .map(attr => ({
                 attribute: attr.attribute,
                 info: attr.info || '',
-                tagId: parseInt(tagId)
+                tagId: tagId
             }));
 
         if (data.length > 0) {
@@ -39,10 +39,10 @@ const attributeService = {
      * @param {number} tagId - The ID of the tag.
      * @returns {Promise<Array>} A promise that resolves to an array of attribute objects.
      */
-    getAttributesByTagId: async (tagId) => {
+    getAttributesByTagId: async (tagId: number) => {
         return await prisma.attribute.findMany({
             where: {
-                tagId: parseInt(tagId)
+                tagId: tagId
             }
         });
     },
@@ -52,7 +52,7 @@ const attributeService = {
      * @param {string} name - The name of the attribute to search for.
      * @returns {Promise<Array>} A promise that resolves to an array of matching attribute objects.
      */
-    getAttributesByName: async (name) => {
+    getAttributesByName: async (name: string) => {
         return await prisma.attribute.findMany({
             where: {
                 attribute: name

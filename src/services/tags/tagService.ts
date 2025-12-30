@@ -19,7 +19,7 @@ const tagService = {
      * @param {string} [content] - Optional additional content for the tag.
      * @returns {Promise<number>} A promise that resolves to the ID of the newly created tag.
      */
-    createTag: async (tagName, usability, content) => {
+    createTag: async (tagName: string, usability: string, content?: string) => {
         const tag = await prisma.tag.create({
             data: {
                 tagName,
@@ -35,9 +35,9 @@ const tagService = {
      * @param {number} id - The ID of the tag to retrieve.
      * @returns {Promise<Object|null>} A promise that resolves to the tag object if found, or null.
      */
-    getTagById: async (id) => {
+    getTagById: async (id: number) => {
         return await prisma.tag.findUnique({
-            where: { id: parseInt(id) }
+            where: { id }
         });
     },
 
@@ -46,11 +46,11 @@ const tagService = {
      * @param {Array<number>} ids - An array of tag IDs.
      * @returns {Promise<Array>} A promise that resolves to an array of tag objects.
      */
-    getTagsByIds: async (ids) => {
+    getTagsByIds: async (ids: number[]) => {
         return await prisma.tag.findMany({
             where: {
                 id: {
-                    in: ids.map(id => parseInt(id))
+                    in: ids
                 }
             }
         });
@@ -61,7 +61,7 @@ const tagService = {
      * @param {string} tagName - The name of the tag to search for.
      * @returns {Promise<Array>} A promise that resolves to an array of matching tag objects.
      */
-    getTagByName: async (tagName) => {
+    getTagByName: async (tagName: string) => {
         return await prisma.tag.findMany({
             where: {
                 tagName: tagName.toLowerCase()
@@ -77,26 +77,30 @@ const tagService = {
      * @param {Array<Object>} [attributes] - An optional array of attributes to update.
      * @returns {Promise<boolean|null>} A promise that resolves to `true` if successful, or `null` if the tag was not found.
      */
-    updateTag: async (id, tagName, usability, attributes) => {
+    updateTag: async (id: number, tagName: string, usability: string, attributes: any[]) => {
         try {
+            const updateData: any = {
+                tagName,
+                usability,
+            };
+
+            if (attributes && attributes.length > 0) {
+                updateData.attributes = {
+                    deleteMany: {},
+                    create: attributes
+                        .filter(attr => attr.attribute)
+                        .map(attr => ({
+                            attribute: attr.attribute,
+                            info: attr.info || ''
+                        }))
+                };
+            }
             await prisma.tag.update({
-                where: { id: parseInt(id) },
-                data: {
-                    tagName,
-                    usability,
-                    attributes: attributes ? {
-                        deleteMany: {},
-                        create: attributes
-                            .filter(attr => attr.attribute)
-                            .map(attr => ({
-                                attribute: attr.attribute,
-                                info: attr.info || ''
-                            }))
-                    } : undefined
-                }
+                where: { id: id },
+                data: updateData
             });
             return true;
-        } catch (error) {
+        } catch (error: any) {
             // P2025 is the Prisma error code for "An operation failed because it depends on one or more records that were required but not found."
             if (error.code === 'P2025') return null;
             throw error;
@@ -108,13 +112,13 @@ const tagService = {
      * @param {number} id - The ID of the tag to delete.
      * @returns {Promise<boolean>} A promise that resolves to `true` if the tag was deleted, or `false` if not found.
      */
-    deleteTag: async (id) => {
+    deleteTag: async (id: number) => {
         try {
             await prisma.tag.delete({
-                where: { id: parseInt(id) }
+                where: { id }
             });
             return true;
-        } catch (error) {
+        } catch (error: any) {
             if (error.code === 'P2025') return false;
             throw error;
         }

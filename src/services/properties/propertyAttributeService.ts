@@ -18,13 +18,13 @@ const propertyAttributeService = {
      * @param {Array<Object>} attributes - An array of attribute objects containing `attribute` and `info` properties.
      * @returns {Promise<void>} A promise that resolves when the attributes are created.
      */
-    createAttributes: async (propertyId, attributes) => {
+    createAttributes: async (propertyId: number, attributes: { attribute: string; info: string }[]) => {
         const data = attributes
             .filter(attr => attr.attribute)
             .map(attr => ({
                 attribute: attr.attribute,
                 info: attr.info || '',
-                propertyId: parseInt(propertyId)
+                propertyId: propertyId
             }));
 
         if (data.length > 0) {
@@ -39,10 +39,10 @@ const propertyAttributeService = {
      * @param {number} propertyId - The ID of the property.
      * @returns {Promise<Array>} A promise that resolves to an array of attribute objects.
      */
-    getAttributesByPropertyId: async (propertyId) => {
+    getAttributesByPropertyId: async (propertyId: number) => {
         return await prisma.propertyAttribute.findMany({
             where: {
-                propertyId: parseInt(propertyId)
+                propertyId: propertyId
             }
         });
     },
@@ -52,7 +52,7 @@ const propertyAttributeService = {
      * @param {string} attributeName - The name of the attribute to search for.
      * @returns {Promise<Array>} A promise that resolves to an array of matching attribute objects.
      */
-    getAttributesByName: async (attributeName) => {
+    getAttributesByName: async (attributeName: string) => {
         return await prisma.propertyAttribute.findMany({
             where: {
                 attribute: attributeName
