@@ -43,7 +43,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
-const NODE_ENV = process.env.NODE_ENV;
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const SESSION_SECRET = process.env.SESSION_SECRET || 'dev_secret_key_123';
 const SESSION_DURATION = 30 * 60 * 1000;
 
 // ============================================================================
@@ -101,7 +102,7 @@ app.use(session({
     db: 'sessions.sqlite',
     dir: './db'
   }) as any,
-  secret: process.env.SESSION_SECRET!,
+  secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
