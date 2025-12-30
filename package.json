@@ -6,10 +6,10 @@
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "start": "node dist/app.js",
-    "dev": "node --loader ts-node/esm --watch src/app.ts",
+    "dev": "tsx watch src/app.ts",
     "build": "rimraf dist && tsc",
     "postinstall": "prisma generate",
-    "create-db": "node --loader ts-node/esm src/db/seed.ts",
+    "create-db": "tsx src/db/seed.ts",
     "docs": "jsdoc -c jsdoc.json",
     "studio": "npx prisma studio"
   },
@@ -61,6 +61,7 @@
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }
