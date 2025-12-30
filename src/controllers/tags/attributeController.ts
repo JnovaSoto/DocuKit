@@ -5,9 +5,9 @@ import { attributeSchema } from '../../schemas/attributeSchema.js';
 
 const attributeController = {
     /**
-     * Get all attributes.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Retrieve all attributes defined in the system.
+     * @param {Request} _req - The Express request object.
+     * @param {Response} res - The Express response object.
      */
     getAllAttributes: async (_req: Request, res: Response) => {
         try {
@@ -19,9 +19,9 @@ const attributeController = {
     },
 
     /**
-     * Create attributes for a tag.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Create several attribute associations for a specific tag.
+     * @param {Request} req - Request containing tagId and attributes array in body.
+     * @param {Response} res - The Express response object.
      */
     createAttributes: async (req: Request, res: Response) => {
         try {
@@ -39,9 +39,9 @@ const attributeController = {
     },
 
     /**
-     * Get attributes by tag ID.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Retrieve all attributes associated with a specific tag by its ID.
+     * @param {Request} req - Request containing tag ID in params.
+     * @param {Response} res - The Express response object.
      */
     getAttributesByTagId: async (req: Request, res: Response) => {
         const tagId = parseInt(req.params.id);
@@ -55,9 +55,9 @@ const attributeController = {
     },
 
     /**
-     * Get attributes by name.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Find attributes by their key name (e.g., 'src').
+     * @param {Request} req - Request containing the attribute name in params.
+     * @param {Response} res - The Express response object.
      */
     getAttributesByName: async (req: Request, res: Response) => {
         const name = req.params.name;
@@ -69,6 +69,7 @@ const attributeController = {
             res.status(500).json({ error: 'Internal server error' });
         }
     }
+
 };
 
 export default attributeController;

@@ -12,9 +12,9 @@ import { loginSchema, signUpSchema, favoriteSchema, cssFavoriteSchema } from '..
 
 const userController = {
     /**
-     * Authenticate and login a user.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
+     * Authenticate and login a user using traditional credentials.
+     * @param {Request} req - The Express request object.
+     * @param {Response} res - The Express response object.
      */
     login: async (req: Request, res: Response) => {
         try {
@@ -44,6 +44,11 @@ const userController = {
         }
     },
 
+    /**
+     * Handle logic after a successful Google OAuth authentication.
+     * @param {Request} req - The Express request object with passport user.
+     * @param {Response} res - The Express response object.
+     */
     googleLogin: async (req: Request, res: Response) => {
 
         const user = req.user as User;
@@ -60,9 +65,9 @@ const userController = {
     },
 
     /**
-     * Register a new user.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
+     * Register a new user in the system.
+     * @param {MulterRequest} req - The request object containing user data and profile photo.
+     * @param {Response} res - The Express response object.
      */
     signUp: async (req: MulterRequest, res: Response) => {
         try {
@@ -95,9 +100,9 @@ const userController = {
     },
 
     /**
-     * Logout the current user.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
+     * Destroy the current session and logout the user.
+     * @param {Request} req - The Express request object.
+     * @param {Response} res - The Express response object.
      */
     logout: (req: Request, res: Response) => {
         if (req.session) {
@@ -112,9 +117,9 @@ const userController = {
     },
 
     /**
-     * Get current user's session data.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
+     * Retrieve current session data for the logged-in user.
+     * @param {Request} req - The Express request object.
+     * @param {Response} res - The Express response object.
      */
     getMe: async (req: Request, res: Response) => {
         if (!req.session.userId) return res.json({ loggedIn: false });
@@ -147,9 +152,9 @@ const userController = {
     },
 
     /**
-     * Get current user's favorite tags.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
+     * Get the list of favorite tags for the current user.
+     * @param {Request} req - The Express request object.
+     * @param {Response} res - The Express response object.
      */
     getFavorites: async (req: Request, res: Response) => {
         const userId: number = req.session.userId!;
@@ -163,9 +168,9 @@ const userController = {
     },
 
     /**
-     * Add a tag to favorites.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
+     * Add a specific tag to the current user's favorites.
+     * @param {Request} req - The request object containing the tag ID.
+     * @param {Response} res - The Express response object.
      */
     addFavorite: async (req: Request, res: Response) => {
         const userId: number = req.session.userId!;
@@ -192,9 +197,9 @@ const userController = {
     },
 
     /**
-     * Remove a tag from favorites.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
+     * Remove a specific tag from the current user's favorites.
+     * @param {Request} req - The request with tagId in params.
+     * @param {Response} res - The Express response object.
      */
     removeFavorite: async (req: Request, res: Response) => {
         const userId: number = req.session.userId!;
@@ -216,9 +221,9 @@ const userController = {
     },
 
     /**
-     * Get user by ID (Admin).
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
+     * Retrieve a user's details by their ID (Admin only).
+     * @param {Request} req - Request with userId in params.
+     * @param {Response} res - The Express response object.
      */
     getUserById: async (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
@@ -234,9 +239,9 @@ const userController = {
     },
 
     /**
-     * Get current user's CSS property favorites.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
+     * Get the list of favorite CSS properties for the current user.
+     * @param {Request} req - The Express request object.
+     * @param {Response} res - The Express response object.
      */
     getCssFavorites: async (req: Request, res: Response) => {
         const userId: number = req.session.userId!;
@@ -250,9 +255,9 @@ const userController = {
     },
 
     /**
-     * Add a CSS property to favorites.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
+     * Add a specific CSS property to the current user's favorites.
+     * @param {Request} req - Request with propertyId in body.
+     * @param {Response} res - The Express response object.
      */
     addCssFavorite: async (req: Request, res: Response) => {
         const userId: number = req.session.userId!;
@@ -279,9 +284,9 @@ const userController = {
     },
 
     /**
-     * Remove a CSS property from favorites.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
+     * Remove a specific CSS property from the current user's favorites.
+     * @param {Request} req - Request with propertyId in params.
+     * @param {Response} res - The Express response object.
      */
     removeCssFavorite: async (req: Request, res: Response) => {
         const userId: number = req.session.userId!;
@@ -301,6 +306,7 @@ const userController = {
             res.status(500).json({ error: err.message });
         }
     }
+
 };
 
 export default userController;

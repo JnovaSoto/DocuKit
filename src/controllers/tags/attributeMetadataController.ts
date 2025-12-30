@@ -5,9 +5,9 @@ import { attributeMetadataSchema } from '../../schemas/attributeSchema.js';
 
 const attributeMetadataController = {
     /**
-     * Get all attribute metadata.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Retrieve all attribute documentation metadata.
+     * @param {Request} _req - The Express request object.
+     * @param {Response} res - The Express response object.
      */
     getAllMetadata: async (_req: Request, res: Response) => {
         try {
@@ -19,9 +19,9 @@ const attributeMetadataController = {
     },
 
     /**
-     * Get metadata by name.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Find documentation metadata for a specific attribute by name.
+     * @param {Request} req - Request containing attribute name in params.
+     * @param {Response} res - The Express response object.
      */
     getMetadataByName: async (req: Request, res: Response) => {
         const name = req.params.name;
@@ -35,9 +35,9 @@ const attributeMetadataController = {
     },
 
     /**
-     * Create attribute metadata.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Create a new documentation record for an attribute.
+     * @param {Request} req - Request containing attributeName and generalDescription in body.
+     * @param {Response} res - The Express response object.
      */
     createMetadata: async (req: Request, res: Response) => {
         try {
@@ -56,6 +56,7 @@ const attributeMetadataController = {
             res.status(500).json({ error: err.message });
         }
     }
+
 };
 
 export default attributeMetadataController;

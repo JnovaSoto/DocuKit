@@ -22,8 +22,9 @@ const __dirname = path.dirname(__filename);
 // ============================================================================
 
 /**
- * Ensure directory exists, create if it doesn't
- * @param {string} dirPath - Directory path to create
+ * Ensure a directory exists on the filesystem.
+ * If the directory does not exist, it is created recursively.
+ * @param {string} dirPath - The absolute or relative path to the directory.
  */
 const ensureDirectoryExists = (dirPath: string) => {
     if (!fs.existsSync(dirPath)) {
@@ -36,8 +37,9 @@ const ensureDirectoryExists = (dirPath: string) => {
 // ============================================================================
 
 /**
- * Configure storage for uploaded files
- * Stores each user's photos in their own folder: uploads/users/{userId}/
+ * Configure storage for uploaded user profile photos.
+ * Stores each user's photos in a structured directory: uploads/users/temp_{username}/
+ * or later moved to uploads/users/{userId}/.
  */
 const storage = multer.diskStorage({
     destination: function (req: MulterRequest, _file, cb) {
@@ -80,7 +82,8 @@ const storage = multer.diskStorage({
 // ============================================================================
 
 /**
- * Filter to accept only image files
+ * Express middleware filter to accept only specific image MIME types.
+ * Supported types: jpeg, jpg, png, gif, webp.
  */
 const fileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     // Allowed image types
@@ -100,7 +103,8 @@ const fileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFil
 // ============================================================================
 
 /**
- * Multer upload instance with configuration
+ * Pre-configured Multer instance for handling user photo uploads.
+ * Includes file size limits (5MB) and file type filtering.
  */
 const upload = multer({
     storage: storage,
@@ -115,12 +119,12 @@ const upload = multer({
 // ============================================================================
 
 /**
- * Move uploaded file from temp folder to user ID folder
- * Call this after user is created in database
- * @param {string} tempFolder - Temporary folder path
- * @param {number} userId - New user's ID
- * @param {string} filename - Uploaded filename
- * @returns {string} New file path
+ * Move an uploaded file from a temporary signup folder to a permanent user ID folder.
+ * This should be executed after a successful user creation in the database.
+ * @param {string} tempFolder - The path to the temporary folder.
+ * @param {number} userId - The unique ID of the newly created user.
+ * @param {string} filename - The name of the file to move.
+ * @returns {string} The public URL path to the moved photo.
  */
 export const movePhotoToUserFolder = (tempFolder: string, userId: number, filename: string) => {
     const userFolder = path.join(__dirname, '../uploads/users', userId.toString());
@@ -141,5 +145,6 @@ export const movePhotoToUserFolder = (tempFolder: string, userId: number, filena
 
     return `/uploads/users/${userId}/${filename}`;
 };
+
 
 export default upload;

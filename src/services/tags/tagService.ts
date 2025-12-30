@@ -6,18 +6,18 @@ import prisma from '../../db/prisma.js';
 const tagService = {
     /**
      * Retrieves all tags from the database.
-     * @returns {Promise<Array>} A promise that resolves to an array of tag objects.
+     * @returns {Promise<import('@prisma/client').Tag[]>} A promise that resolves to an array of tag objects.
      */
     getAllTags: async () => {
         return await prisma.tag.findMany();
     },
 
     /**
-     * Creates a new tag.
-     * @param {string} tagName - The name of the tag.
-     * @param {string} usability - A description of the tag's usability.
-     * @param {string} [content] - Optional additional content for the tag.
-     * @returns {Promise<number>} A promise that resolves to the ID of the newly created tag.
+     * Creates a new tag in the database.
+     * @param {string} tagName - The name of the tag (e.g., 'div', 'p').
+     * @param {string} usability - A description of when and how to use the tag.
+     * @param {string} [content] - Optional detailed content or documentation for the tag.
+     * @returns {Promise<number>} A promise that resolves to the auto-incremented ID of the new tag.
      */
     createTag: async (tagName: string, usability: string, content?: string) => {
         const tag = await prisma.tag.create({
@@ -31,9 +31,9 @@ const tagService = {
     },
 
     /**
-     * Retrieves a tag by its ID.
-     * @param {number} id - The ID of the tag to retrieve.
-     * @returns {Promise<Object|null>} A promise that resolves to the tag object if found, or null.
+     * Retrieves a single tag by its unique ID.
+     * @param {number} id - The integer ID of the tag.
+     * @returns {Promise<import('@prisma/client').Tag|null>} The tag object if found, otherwise null.
      */
     getTagById: async (id: number) => {
         return await prisma.tag.findUnique({
@@ -42,9 +42,9 @@ const tagService = {
     },
 
     /**
-     * Retrieves multiple tags by their IDs.
-     * @param {Array<number>} ids - An array of tag IDs.
-     * @returns {Promise<Array>} A promise that resolves to an array of tag objects.
+     * Retrieves multiple tags based on a list of IDs.
+     * @param {number[]} ids - An array of tag IDs to fetch.
+     * @returns {Promise<import('@prisma/client').Tag[]>} An array of tag objects.
      */
     getTagsByIds: async (ids: number[]) => {
         return await prisma.tag.findMany({
@@ -57,9 +57,9 @@ const tagService = {
     },
 
     /**
-     * Retrieves a tag by its name.
+     * Searches for tags by their name (case-insensitive).
      * @param {string} tagName - The name of the tag to search for.
-     * @returns {Promise<Array>} A promise that resolves to an array of matching tag objects.
+     * @returns {Promise<import('@prisma/client').Tag[]>} An array of matching tag objects.
      */
     getTagByName: async (tagName: string) => {
         return await prisma.tag.findMany({
@@ -70,12 +70,12 @@ const tagService = {
     },
 
     /**
-     * Updates an existing tag and its attributes.
+     * Updates an existing tag's data and replaces its attributes.
      * @param {number} id - The ID of the tag to update.
-     * @param {string} tagName - The new name of the tag.
-     * @param {string} usability - The new usability description.
-     * @param {Array<Object>} [attributes] - An optional array of attributes to update.
-     * @returns {Promise<boolean|null>} A promise that resolves to `true` if successful, or `null` if the tag was not found.
+     * @param {string} tagName - The updated name of the tag.
+     * @param {string} usability - The updated usability description.
+     * @param {Array<{attribute: string, info?: string}>} attributes - An array of attribute objects to associate with the tag.
+     * @returns {Promise<boolean|null>} True if updated, null if tag not found.
      */
     updateTag: async (id: number, tagName: string, usability: string, attributes: any[]) => {
         try {
@@ -108,9 +108,9 @@ const tagService = {
     },
 
     /**
-     * Deletes a tag and its related attributes.
+     * Deletes a tag and all its cascading relations (attributes).
      * @param {number} id - The ID of the tag to delete.
-     * @returns {Promise<boolean>} A promise that resolves to `true` if the tag was deleted, or `false` if not found.
+     * @returns {Promise<boolean>} True if deleted, false if tag not found.
      */
     deleteTag: async (id: number) => {
         try {
@@ -123,6 +123,7 @@ const tagService = {
             throw error;
         }
     }
+
 };
 
 export default tagService;

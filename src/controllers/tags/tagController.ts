@@ -5,9 +5,9 @@ import { tagSchema, updateTagSchema } from '../../schemas/tagSchema.js';
 
 const tagController = {
     /**
-     * Get all tags.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Retrieve all available tags.
+     * @param {Request} _req - The Express request object.
+     * @param {Response} res - The Express response object.
      */
     getAllTags: async (_req: Request, res: Response) => {
         try {
@@ -19,9 +19,9 @@ const tagController = {
     },
 
     /**
-     * Create a new tag.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Create a new tag entry with description and optional content.
+     * @param {Request} req - Request containing tagName, usability, and optional content in the body.
+     * @param {Response} res - The Express response object.
      */
     createTag: async (req: Request, res: Response) => {
         try {
@@ -39,9 +39,9 @@ const tagController = {
     },
 
     /**
-     * Get a tag by ID.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Find a specific tag by its primary key.
+     * @param {Request} req - Request containing the tag ID in params.
+     * @param {Response} res - The Express response object.
      */
     getTagById: async (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
@@ -55,9 +55,9 @@ const tagController = {
     },
 
     /**
-     * Get tags by multiple IDs.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Retrieve details for multiple tags by a comma-separated list of IDs.
+     * @param {Request} req - Request containing 'ids' in params (e.g., '1,2,3').
+     * @param {Response} res - The Express response object.
      */
     getTagsByIds: async (req: Request, res: Response) => {
         const idsParam = req.params.ids;
@@ -74,9 +74,9 @@ const tagController = {
     },
 
     /**
-     * Get a tag by name.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Find tags that match a specific name.
+     * @param {Request} req - Request containing 'name' in params.
+     * @param {Response} res - The Express response object.
      */
     getTagByName: async (req: Request, res: Response) => {
         const tagName = req.params.name;
@@ -90,9 +90,9 @@ const tagController = {
     },
 
     /**
-     * Update a tag.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Update an existing tag's metadata and its related attributes.
+     * @param {Request} req - Request with tag ID in params and updated data in body.
+     * @param {Response} res - The Express response object.
      */
     updateTag: async (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
@@ -121,9 +121,9 @@ const tagController = {
     },
 
     /**
-     * Delete a tag.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Permantently remove a tag and its associated attributes.
+     * @param {Request} req - Request containing the tag ID in params.
+     * @param {Response} res - The Express response object.
      */
     deleteTag: async (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
@@ -135,6 +135,7 @@ const tagController = {
             res.status(500).json({ error: err.message });
         }
     }
+
 };
 
 export default tagController;

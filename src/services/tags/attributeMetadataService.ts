@@ -5,8 +5,8 @@ import prisma from '../../db/prisma.js';
  */
 const attributeMetadataService = {
     /**
-     * Retrieves all attribute metadata from the database.
-     * @returns {Promise<Array>} A promise that resolves to an array of metadata objects.
+     * Retrieves all attribute metadata from the database, ordered by attribute name.
+     * @returns {Promise<import('@prisma/client').AttributeMetadata[]>} An array of metadata documentation objects.
      */
     getAllMetadata: async () => {
         return await prisma.attributeMetadata.findMany({
@@ -17,9 +17,9 @@ const attributeMetadataService = {
     },
 
     /**
-     * Retrieves metadata for a specific attribute by name.
-     * @param {string} name - The name of the attribute.
-     * @returns {Promise<Object|null>} A promise that resolves to the metadata object.
+     * Retrieves documentation metadata for a specific attribute.
+     * @param {string} name - The name of the attribute (e.g., 'alt').
+     * @returns {Promise<import('@prisma/client').AttributeMetadata|null>} The metadata object if found, otherwise null.
      */
     getMetadataByName: async (name: string) => {
         return await prisma.attributeMetadata.findUnique({
@@ -30,10 +30,10 @@ const attributeMetadataService = {
     },
 
     /**
-     * Creates new metadata for an attribute.
-     * @param {string} attributeName - The name of the attribute.
-     * @param {string} generalDescription - A general description of the attribute.
-     * @returns {Promise<number>} A promise that resolves to the ID of the newly created metadata.
+     * Creates new documentation metadata for an attribute.
+     * @param {string} attributeName - The name of the attribute to document.
+     * @param {string} generalDescription - The global description/documentation for this attribute.
+     * @returns {Promise<number>} The ID of the newly created metadata record.
      */
     createMetadata: async (attributeName: string, generalDescription: string) => {
         const metadata = await prisma.attributeMetadata.create({
@@ -44,6 +44,7 @@ const attributeMetadataService = {
         });
         return metadata.id;
     }
+
 };
 
 export default attributeMetadataService;

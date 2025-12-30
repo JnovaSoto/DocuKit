@@ -5,18 +5,18 @@ import prisma from '../../db/prisma.js';
  */
 const propertyAttributeService = {
     /**
-     * Retrieves all property attributes from the database.
-     * @returns {Promise<Array>} A promise that resolves to an array of attribute objects.
+     * Retrieves all CSS property attributes from the database.
+     * @returns {Promise<import('@prisma/client').PropertyAttribute[]>} An array of attribute objects.
      */
     getAllAttributes: async () => {
         return await prisma.propertyAttribute.findMany();
     },
 
     /**
-     * Creates multiple attributes for a property.
-     * @param {number} propertyId - The ID of the property the attributes belong to.
-     * @param {Array<Object>} attributes - An array of attribute objects containing `attribute` and `info` properties.
-     * @returns {Promise<void>} A promise that resolves when the attributes are created.
+     * Creates and associates multiple attributes with a CSS property.
+     * @param {number} propertyId - The ID of the parent CSS property.
+     * @param {Array<{attribute: string, info: string}>} attributes - An array of attribute data.
+     * @returns {Promise<void>}
      */
     createAttributes: async (propertyId: number, attributes: { attribute: string; info: string }[]) => {
         const data = attributes
@@ -35,9 +35,9 @@ const propertyAttributeService = {
     },
 
     /**
-     * Retrieves attributes associated with a specific property ID.
-     * @param {number} propertyId - The ID of the property.
-     * @returns {Promise<Array>} A promise that resolves to an array of attribute objects.
+     * Retrieves all attributes for a specific CSS property.
+     * @param {number} propertyId - The ID of the CSS property.
+     * @returns {Promise<import('@prisma/client').PropertyAttribute[]>} An array of attributes for the given property.
      */
     getAttributesByPropertyId: async (propertyId: number) => {
         return await prisma.propertyAttribute.findMany({
@@ -48,9 +48,9 @@ const propertyAttributeService = {
     },
 
     /**
-     * Retrieves attributes by their name.
-     * @param {string} attributeName - The name of the attribute to search for.
-     * @returns {Promise<Array>} A promise that resolves to an array of matching attribute objects.
+     * Searches for CSS property attributes by their key name.
+     * @param {string} attributeName - The name of the attribute.
+     * @returns {Promise<import('@prisma/client').PropertyAttribute[]>} An array of matching attribute instances.
      */
     getAttributesByName: async (attributeName: string) => {
         return await prisma.propertyAttribute.findMany({
@@ -59,6 +59,7 @@ const propertyAttributeService = {
             }
         });
     }
+
 };
 
 export default propertyAttributeService;

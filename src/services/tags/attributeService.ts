@@ -6,17 +6,17 @@ import prisma from '../../db/prisma.js';
 const attributeService = {
     /**
      * Retrieves all attributes from the database.
-     * @returns {Promise<Array>} A promise that resolves to an array of attribute objects.
+     * @returns {Promise<import('@prisma/client').Attribute[]>} A promise that resolves to an array of attribute objects.
      */
     getAllAttributes: async () => {
         return await prisma.attribute.findMany();
     },
 
     /**
-     * Creates multiple attributes for a tag.
-     * @param {number} tagId - The ID of the tag the attributes belong to.
-     * @param {Array<Object>} attributes - An array of attribute objects containing `attribute` and `info` properties.
-     * @returns {Promise<void>} A promise that resolves when the attributes are created.
+     * Creates multiple attributes and associates them with a specific tag.
+     * @param {number} tagId - The ID of the parent tag.
+     * @param {Array<{attribute: string, info?: string}>} attributes - An array of attribute data objects.
+     * @returns {Promise<void>}
      */
     createAttributes: async (tagId: number, attributes: { attribute: string; info?: string }[]) => {
         const data = attributes
@@ -35,9 +35,9 @@ const attributeService = {
     },
 
     /**
-     * Retrieves attributes associated with a specific tag ID.
+     * Retrieves all attributes associated with a specific tag.
      * @param {number} tagId - The ID of the tag.
-     * @returns {Promise<Array>} A promise that resolves to an array of attribute objects.
+     * @returns {Promise<import('@prisma/client').Attribute[]>} An array of attributes for the given tag.
      */
     getAttributesByTagId: async (tagId: number) => {
         return await prisma.attribute.findMany({
@@ -48,9 +48,9 @@ const attributeService = {
     },
 
     /**
-     * Retrieves attributes by their name.
-     * @param {string} name - The name of the attribute to search for.
-     * @returns {Promise<Array>} A promise that resolves to an array of matching attribute objects.
+     * Searches for attributes by their key name.
+     * @param {string} name - The name of the attribute (e.g., 'class', 'href').
+     * @returns {Promise<import('@prisma/client').Attribute[]>} An array of matching attribute instances.
      */
     getAttributesByName: async (name: string) => {
         return await prisma.attribute.findMany({
@@ -59,6 +59,7 @@ const attributeService = {
             }
         });
     }
+
 };
 
 export default attributeService;

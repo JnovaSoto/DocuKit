@@ -3,9 +3,9 @@ import { Request, Response } from 'express';
 
 const propertyAttributeController = {
     /**
-     * Get all property attributes.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Retrieve all CSS property attributes defined in the system.
+     * @param {Request} _req - The Express request object.
+     * @param {Response} res - The Express response object.
      */
     getAllAttributes: async (_req: Request, res: Response) => {
         try {
@@ -17,9 +17,9 @@ const propertyAttributeController = {
     },
 
     /**
-     * Create property attributes.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
+     * Create multiple attribute records for a specified CSS property.
+     * @param {Request} req - Request with propertyId and attributes array in body.
+     * @param {Response} res - The Express response object.
      */
     createAttributes: async (req: Request, res: Response) => {
         const { propertyId, attributes } = req.body;
@@ -37,9 +37,9 @@ const propertyAttributeController = {
     },
 
     /**
-     * Get attributes by property ID.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
+     * Retrieve all attributes associated with a specific CSS property by its ID.
+     * @param {Request} req - Request containing the property ID in params.
+     * @param {Response} res - The Express response object.
      */
     getAttributesByPropertyId: async (req: Request, res: Response) => {
         const propertyId = parseInt(req.params.id);
@@ -52,9 +52,9 @@ const propertyAttributeController = {
     },
 
     /**
-     * Get attributes by name.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
+     * Find CSS property attributes by their key name (e.g., 'font-family').
+     * @param {Request} req - Request containing the attribute name in params.
+     * @param {Response} res - The Express response object.
      */
     getAttributesByName: async (req: Request, res: Response) => {
         const attributeName = req.params.name;
@@ -66,6 +66,7 @@ const propertyAttributeController = {
             res.status(500).json({ error: 'Internal server error' });
         }
     }
+
 };
 
 export default propertyAttributeController;

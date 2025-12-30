@@ -5,9 +5,9 @@ import { propertySchema, updatePropertySchema } from '../../schemas/propertySche
 
 const propertyController = {
     /**
-     * Get all properties.  
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Retrieve all available CSS properties documentation.
+     * @param {Request} _req - The Express request object.
+     * @param {Response} res - The Express response object.
      */
     getAllProperties: async (_req: Request, res: Response) => {
         try {
@@ -19,9 +19,9 @@ const propertyController = {
     },
 
     /**
-     * Create a new property.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Create a new CSS property entry in the database.
+     * @param {Request} req - Request with propertyName, usability, and optional content.
+     * @param {Response} res - The Express response object.
      */
     createProperty: async (req: Request, res: Response) => {
         try {
@@ -42,9 +42,9 @@ const propertyController = {
     },
 
     /**
-     * Get a property by ID.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Find a specific CSS property by its primary key.
+     * @param {Request} req - Request containing the property ID in params.
+     * @param {Response} res - The Express response object.
      */
     getPropertyById: async (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
@@ -58,9 +58,9 @@ const propertyController = {
     },
 
     /**
-     * Get properties by multiple IDs.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Retrieve details for multiple CSS properties by a comma-separated list of IDs.
+     * @param {Request} req - Request containing 'ids' in params.
+     * @param {Response} res - The Express response object.
      */
     getPropertiesByIds: async (req: Request, res: Response) => {
         const idsParam = req.params.ids;
@@ -77,9 +77,9 @@ const propertyController = {
     },
 
     /**
-     * Get a property by name.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Find CSS properties by their name.
+     * @param {Request} req - Request containing the property name in params.
+     * @param {Response} res - The Express response object.
      */
     getPropertyByName: async (req: Request, res: Response) => {
         const propertyName = req.params.name;
@@ -93,9 +93,9 @@ const propertyController = {
     },
 
     /**
-     * Update a property.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Update an existing CSS property's data and its associated attributes.
+     * @param {Request} req - Request with property ID in params and update data in body.
+     * @param {Response} res - The Express response object.
      */
     updateProperty: async (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
@@ -124,9 +124,9 @@ const propertyController = {
     },
 
     /**
-     * Delete a property.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
+     * Permanently remove a CSS property and its related attributes.
+     * @param {Request} req - Request containing the property ID in params.
+     * @param {Response} res - The Express response object.
      */
     deleteProperty: async (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
@@ -138,6 +138,7 @@ const propertyController = {
             res.status(500).json({ error: err.message });
         }
     }
+
 };
 
 export default propertyController;

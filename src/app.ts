@@ -134,98 +134,90 @@ app.use('/users', usersRoutes);
 // ============================================================================
 
 /**
- * Render the Home page.
- * 
+ * Render the Home page showing the navigation and welcome screen.
  * @name Home Page
  * @route {GET} /
  * @route {GET} /home
- * @param {express.Request} req - Express request object
- * @param {express.Response} res - Express response object
+ * @param {Request} _req - Express request object
+ * @param {Response} res - Express response object
  */
 app.get(['/', '/home'], (_req: Request, res: Response) => {
   res.render('home', { layout: 'layout', title: 'Home' });
 });
 
 /**
- * Render the CSS Properties page.
- * 
+ * Render the CSS documentation gallery page.
  * @name CSS Properties Page
  * @route {GET} /css
  * @route {GET} /css-properties
- * @param {express.Request} req - Express request object
- * @param {express.Response} res - Express response object
+ * @param {Request} _req - Express request object
+ * @param {Response} res - Express response object
  */
 app.get(['/css', '/css-properties'], (_req: Request, res: Response) => {
   res.render('css', { layout: 'layout', title: 'CSS Properties' });
 });
 
 /**
- * Render the Create page (Protected).
- * 
+ * Render the creation form for adding new documentation (Admin/Auth protected).
  * @name Create Page
  * @route {GET} /create
- * @param {express.Request} req - Express request object
- * @param {express.Response} res - Express response object
+ * @param {Request} _req - Express request object
+ * @param {Response} res - Express response object
  */
 app.get('/create', requireAuth, (_req: Request, res: Response) => {
   res.render('create', { layout: 'layout', title: 'Create' });
 });
 
 /**
- * Render the Sign Up page.
- * 
+ * Render the user registration page.
  * @name Sign Up Page
  * @route {GET} /signUp
- * @param {express.Request} req - Express request object
- * @param {express.Response} res - Express response object
+ * @param {Request} _req - Express request object
+ * @param {Response} res - Express response object
  */
 app.get('/signUp', (_req: Request, res: Response) => {
   res.render('signUp', { layout: 'layout', title: 'SignUp' });
 });
 
 /**
- * Render the Login page.
- * 
+ * Render the user login page.
  * @name Login Page
  * @route {GET} /logIn
- * @param {express.Request} req - Express request object
- * @param {express.Response} res - Express response object
+ * @param {Request} _req - Express request object
+ * @param {Response} res - Express response object
  */
 app.get('/logIn', (_req: Request, res: Response) => {
   res.render('logIn', { layout: 'layout', title: 'LogIn' });
 });
 
 /**
- * Render the Edit page (Protected).
- * 
+ * Render the item editing page (Admin/Auth protected).
  * @name Edit Page
  * @route {GET} /edit
- * @param {express.Request} req - Express request object
- * @param {express.Response} res - Express response object
+ * @param {Request} _req - Express request object
+ * @param {Response} res - Express response object
  */
 app.get('/edit', requireAuth, (_req: Request, res: Response) => {
   res.render('edit', { layout: 'layout', title: 'Edit' });
 });
 
 /**
- * Render the Profile page (Protected).
- * 
+ * Render the user profile management page.
  * @name Profile Page
  * @route {GET} /profile
- * @param {express.Request} req - Express request object
- * @param {express.Response} res - Express response object
+ * @param {Request} _req - Express request object
+ * @param {Response} res - Express response object
  */
 app.get('/profile', requireAuth, (_req: Request, res: Response) => {
   res.render('profile', { layout: 'layout', title: 'Profile' });
 });
 
 /**
- * Render the Favorites page (Protected).
- * 
+ * Render the user's favorite tags and properties page.
  * @name Favorites Page
  * @route {GET} /favorites
- * @param {express.Request} req - Express request object
- * @param {express.Response} res - Express response object
+ * @param {Request} _req - Express request object
+ * @param {Response} res - Express response object
  */
 app.get('/favorites', requireAuth, (_req: Request, res: Response) => {
   res.render('favorites', { layout: 'layout', title: 'Favorites' });
@@ -236,14 +228,16 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 /**
- * Render the Not Found page.
- * 
+ * Render the dedicated 404 - Not Found page.
  * @name Not Found Page
  * @route {GET} /not-found
+ * @param {Request} _req - Express request object
+ * @param {Response} res - Express response object
  */
 app.get('/not-found', (_req: Request, res: Response) => {
   res.render('notFound', { layout: 'layout', title: 'Not Found' });
 });
+
 
 // ============================================================================
 // Error Handling Middleware
