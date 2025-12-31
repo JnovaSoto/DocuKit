@@ -21,9 +21,9 @@ DocuKit is divided into four key functional pillars: Core Documentation, User Ma
 
 ### 👤 Advanced User System
 * **Unified Authentication:** Supports both traditional **Email/Password** and **Google OAuth 2.0** login/signup.
-* **Secure Sessions:** Utilizes `passport.js` and `express-session` for high-security session management.
+* **Secure Sessions:** Utilizes `passport.js` and `express-session` for high-security session management with persistent SQLite storage.
 * **Smart Favorites:** Separate bookmarking systems for HTML tags and CSS properties, persisting within the user's secure profile.
-* **Profile Customization:** Dynamic profile photo uploads with automated folder management for users.
+* **Profile Customization:** Dynamic profile photo uploads with automated folder management for users via **Multer**.
 
 ### 🌎 Internationalization (i18n)
 * **Real-time Translation:** Integrated Google Translate engine with a **premium custom UI**.
@@ -31,10 +31,9 @@ DocuKit is divided into four key functional pillars: Core Documentation, User Ma
 * **Visual Polish:** Intelligent layout adjustments that prevent translation UI from interfering with the site's design.
 
 ### 🛡️ Administration Module
-* **Full CRUD Control:** Administrators have complete authority to:
-    * **Create/Update/Delete** tags, properties, and their associated attributes.
-    * **Manage Metadata:** Update global attribute definitions.
-* **Modern Data Layer:** powered by **Prisma ORM** for type-safe database interactions and streamlined schema management.
+* **Full CRUD Control:** Administrators have complete authority to create, update, and delete tags, properties, and metadata.
+* **Schema Validation:** Powered by **Zod**, ensuring all API inputs are validated with detailed error reporting and full type safety.
+* **Modern Data Layer:** Powered by **Prisma ORM** for type-safe database interactions and streamlined schema management.
 
 ---
 
@@ -42,34 +41,40 @@ DocuKit is divided into four key functional pillars: Core Documentation, User Ma
 
 | Category | Technology | Key Features |
 | :--- | :--- | :--- |
+| **Language** | **TypeScript** | 100% Type-safe codebase for robust development. |
 | **Server** | Node.js & Express.js | Core application and API framework. |
+| **Validation** | **Zod** | Schema-based validation with automatic TS type inference. |
 | **ORM** | Prisma | Type-safe database client and schema management. |
 | **Database** | SQLite | Lightweight, transactional relational storage. |
 | **Auth** | Passport.js & Google OAuth 2.0 | Multi-provider authentication system. |
-| **Security** | Helmet, Rate Limit & Validator | DDoS protection, HTTP hardening, XSS prevention, and persistent sessions. |
-| **Templating** | EJS | Dynamic server-side rendering. |
-| **UI/UX** | Vanilla JS, CSS Variables & Skeleton UI | High-performance SPA navigation, shimmering loading states, and theme logic. |
+| **Security** | Helmet, Rate Limit & Bcrypt | CSP protection, DDoS prevention, and secure password hashing. |
+| **Templating** | EJS | Dynamic server-side rendering with layout support. |
+| **UI/UX** | Vanilla JS, CSS Variables & Skeleton UI | High-performance SPA navigation and shimmering loading states. |
 | **Animations** | View Transitions API | Native-feel page transitions. |
-| **Docs** | JSDoc | Fully documented service and controller layers. |
 
 ---
 
 ## 📂 Internal Architecture
 
-The codebase follows a clear **Feature-Driven Design** for maximum scalability.
+The codebase follows a clear **Feature-Driven Design** refactored for TypeScript.
 
 ```bash
 DocuKit/
-├── config/             # Passport, Multer, and Route centralization
-├── controllers/        # Request handling (Tags, Properties, Users, Partials)
-├── db/                 # Prisma client instance and Seeding logic
-├── middleware/         # Auth guards & Validation
+├── src/                # Source Code (TypeScript)
+│   ├── config/         # Passport, Multer, and Route configuration
+│   ├── controllers/    # Request handling logic (Tags, Properties, etc.)
+│   ├── db/             # Prisma client instance and Seeding logic
+│   ├── middleware/     # Auth guards & Validation middleware
+│   ├── routes/         # Centralized API and Page route definitions
+│   ├── schemas/        # Zod validation schemas for API inputs
+│   ├── services/       # Decoupled Business Logic using Prisma Client
+│   ├── types/          # Global TypeScript interfaces & types
+│   └── app.ts          # Application entry point & Middleware orchestration
 ├── prisma/             # Prisma schema and database migrations
-├── public/             # SPA Logic, Global Styles, and Tools
-├── routes/             # Centralized route definitions
-├── services/           # Decoupled Business Logic using Prisma Client
+├── public/             # Static assets, Global Styles, and Frontend Tools
+├── uploads/            # User-uploaded content (Profile photos)
 ├── views/              # Modular EJS templates
-└── app.js              # Application entry point & Middleware orchestration
+└── ...
 ```
 
 ---
@@ -91,7 +96,7 @@ DocuKit/
     NODE_ENV=development
     GOOGLE_CLIENT_ID=your_google_id
     GOOGLE_CLIENT_SECRET=your_google_secret
-    DATABASE_URL="file:./db/database.sqlite"
+    DATABASE_URL="file:./src/db/database.sqlite"
     ```
 
 3. **Initialize Database:**
@@ -100,15 +105,19 @@ DocuKit/
     npm run create-db
     ```
 
-4. **Database Exploration:**
+4. **Build & Develop:**
+    ```bash
+    # Compile TypeScript
+    npm run build
+
+    # Run in development mode (auto-reload)
+    npm run dev
+    ```
+
+5. **Database Exploration:**
     ```bash
     # Open Prisma Studio to view and edit your data
     npm run studio
-    ```
-
-5. **Run Application:**
-    ```bash
-    npm start
     ```
 
 ---
