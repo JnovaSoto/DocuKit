@@ -1,6 +1,7 @@
 import tagService from '../../services/tags/tagService.js';
-import validator from 'validator';
 import { Request, Response } from 'express';
+import { z } from 'zod';
+import { tagSchema, updateTagSchema } from '../../schemas/tagSchema.js';
 
 const tagController = {
     /**
@@ -23,19 +24,16 @@ const tagController = {
      * @param {Response} res - The response object.
      */
     createTag: async (req: Request, res: Response) => {
-        let { tagName, usability, content } = req.body;
-
-        // Sanitize input
-        if (tagName) tagName = validator.escape(validator.trim(tagName));
-        if (usability) usability = validator.escape(validator.trim(usability));
-        if (content) content = validator.escape(validator.trim(content));
-
-        if (!tagName || !usability) return res.status(400).json({ error: 'Missing fields' });
-
         try {
-            const id = await tagService.createTag(tagName, usability, content);
+            const validatedData = tagSchema.parse(req.body);
+            const { tagName, usability, content } = validatedData;
+
+            const id = await tagService.createTag(tagName, usability, content || '');
             res.status(201).json({ id, tagName, usability, content });
         } catch (err: any) {
+            if (err instanceof z.ZodError) {
+                return res.status(400).json({ error: 'Validation failed', details: err.issues });
+            }
             res.status(500).json({ error: err.message });
         }
     },
@@ -98,32 +96,26 @@ const tagController = {
      */
     updateTag: async (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
-        let { tagName, usability, attributes } = req.body;
-
-        // Sanitize input
-        if (tagName) tagName = validator.escape(validator.trim(tagName));
-        if (usability) usability = validator.escape(validator.trim(usability));
-        if (attributes && Array.isArray(attributes)) {
-            attributes = attributes.map(attr => ({
-                attribute: attr.attribute ? validator.escape(validator.trim(attr.attribute)) : '',
-                info: attr.info ? validator.escape(validator.trim(attr.info)) : ''
-            }));
-        }
-
-        if (!tagName || !usability) {
-            return res.status(400).json({ error: 'Missing required fields: tagName and usability' });
-        }
 
         try {
-            const success = await tagService.updateTag(id, tagName, usability, attributes);
+            const validatedData = updateTagSchema.parse(req.body);
+            const { tagName, usability, attributes } = validatedData;
+
+            const success = await tagService.updateTag(id, tagName, usability, attributes || []);
             if (!success) return res.status(404).json({ error: 'Tag not found' });
 
-            if (attributes && attributes.length > 0) {
-                res.json({ message: 'Tag and attributes updated successfully', id, tagName, usability });
-            } else {
-                res.json({ message: 'Tag updated successfully', id, tagName, usability });
-            }
+            res.json({
+                message: attributes && attributes.length > 0
+                    ? 'Tag and attributes updated successfully'
+                    : 'Tag updated successfully',
+                id,
+                tagName,
+                usability
+            });
         } catch (err: any) {
+            if (err instanceof z.ZodError) {
+                return res.status(400).json({ error: 'Validation failed', details: err.issues });
+            }
             res.status(500).json({ error: err.message });
         }
     },

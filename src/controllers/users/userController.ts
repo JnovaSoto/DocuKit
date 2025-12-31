@@ -5,10 +5,10 @@ interface MulterRequest extends Request {
     userPhotoFolder?: string;
 }
 import bcrypt from 'bcrypt';
-import validator from 'validator';
+import { z } from 'zod';
 import { movePhotoToUserFolder } from '../../config/multer.js';
-import { LoginRequest, SignUpRequest } from '../../types/user.js';
 import { User } from '@prisma/client';
+import { loginSchema, signUpSchema, favoriteSchema, cssFavoriteSchema } from '../../schemas/userSchema.js';
 
 const userController = {
     /**
@@ -17,21 +17,16 @@ const userController = {
      * @param {Object} res - The response object.
      */
     login: async (req: Request, res: Response) => {
-
-        const { login, password } = req.body as LoginRequest;
-
-        const loginRequest: LoginRequest = { login, password };
-
-        if (!loginRequest.login || !loginRequest.password) return res.status(400).json({ error: 'All the inputs have to be fulled' });
-
         try {
-            const user = await userService.findByLogin(loginRequest);
+            const validatedData = loginSchema.parse(req.body);
+            const { login, password } = validatedData;
+
+            const user = await userService.findByLogin({ login, password });
             if (!user) return res.status(401).json({ error: 'User or password are incorrect' });
 
-            const match = await bcrypt.compare(loginRequest.password, user.password ?? "");
+            const match = await bcrypt.compare(password, user.password ?? "");
             if (!match) return res.status(401).json({ error: 'User or password are incorrect' });
 
-            // Regenerate session to prevent session fixation
             req.session.regenerate((err) => {
                 if (err) return res.status(500).json({ error: 'Session regeneration failed' });
 
@@ -42,6 +37,9 @@ const userController = {
                 res.json({ message: 'Successfully Login', userId: user.id, username: user.username, admin: user.admin });
             });
         } catch (err: any) {
+            if (err instanceof z.ZodError) {
+                return res.status(400).json({ error: 'Validation failed', details: err.issues });
+            }
             res.status(500).json({ error: err.message });
         }
     },
@@ -68,37 +66,10 @@ const userController = {
      */
     signUp: async (req: MulterRequest, res: Response) => {
         try {
-            let { username, email, password, admin, googleId } = req.body as SignUpRequest;
+            const validatedData = signUpSchema.parse(req.body);
+            const { username, email, password, admin, googleId } = validatedData;
 
-            const signUpRequest: SignUpRequest = { username, email, password, admin, googleId };
-
-            // Sanitize input to prevent XSS
-            if (signUpRequest.username) username = validator.escape(validator.trim(signUpRequest.username));
-
-            if (signUpRequest.email) {
-                const normalizedEmail = validator.normalizeEmail(signUpRequest.email);
-
-                if (normalizedEmail === false) {
-                    return res.status(400).json({ error: 'Invalid email format' });
-                }
-                signUpRequest.email = normalizedEmail;
-            }
-
-            if (!signUpRequest.username || !signUpRequest.email || signUpRequest.admin === undefined || signUpRequest.admin === null || !signUpRequest.password || !signUpRequest.googleId) {
-                return res.status(400).json({ error: 'All the attributes must be complete' });
-            }
-
-            if (!validator.isEmail(signUpRequest.email)) {
-                return res.status(400).json({ error: "Invalid email" });
-            }
-
-            if (signUpRequest.username.length > 20) return res.status(400).json({ error: 'Username too long' });
-            if (signUpRequest.email.length > 40) return res.status(400).json({ error: 'Email too long' });
-            if (signUpRequest.password.length < 8) return res.status(400).json({ error: 'Password too short' });
-
-            const adminValue = admin;
-
-            const userId = await userService.createUser(signUpRequest.username, signUpRequest.email, signUpRequest.password, adminValue, signUpRequest.googleId);
+            const userId = await userService.createUser(username, email, password, admin, googleId);
 
             let photoPath = '/uploads/users/cat_default.webp';
 
@@ -115,8 +86,11 @@ const userController = {
             await userService.updatePhoto(userId, photoPath);
 
             res.status(201).json({ id: userId, username, email, photo: photoPath });
-        } catch (error: any) {
-            res.status(500).json({ error: error.message || 'An unexpected error occurred' });
+        } catch (err: any) {
+            if (err instanceof z.ZodError) {
+                return res.status(400).json({ error: 'Validation failed', details: err.issues });
+            }
+            res.status(500).json({ error: err.message || 'An unexpected error occurred' });
         }
     },
 
@@ -195,24 +169,24 @@ const userController = {
      */
     addFavorite: async (req: Request, res: Response) => {
         const userId: number = req.session.userId!;
-        const { tagId } = req.body;
-
-        if (!tagId) return res.status(400).json({ error: 'Tag ID is required' });
 
         try {
+            const validatedData = favoriteSchema.parse(req.body);
+            const { tagId } = validatedData;
+
             const favorites = await userService.getFavorites(userId, 'tags');
             if (favorites === null) return res.status(404).json({ error: 'User not found' });
 
-            const tagIdNum = parseInt(tagId, 10);
-            if (isNaN(tagIdNum)) return res.status(400).json({ error: 'Invalid tag ID' });
-
-            if (!favorites.includes(tagIdNum)) {
-                favorites.push(tagIdNum);
+            if (!favorites.includes(tagId)) {
+                favorites.push(tagId);
                 await userService.updateFavorites(userId, favorites, 'tags');
             }
 
             res.json({ message: 'Tag added to favorites', favorites });
         } catch (err: any) {
+            if (err instanceof z.ZodError) {
+                return res.status(400).json({ error: 'Validation failed', details: err.issues });
+            }
             res.status(500).json({ error: err.message });
         }
     },
@@ -282,24 +256,24 @@ const userController = {
      */
     addCssFavorite: async (req: Request, res: Response) => {
         const userId: number = req.session.userId!;
-        const { propertyId } = req.body;
-
-        if (!propertyId) return res.status(400).json({ error: 'Property ID is required' });
 
         try {
+            const validatedData = cssFavoriteSchema.parse(req.body);
+            const { propertyId } = validatedData;
+
             const favorites = await userService.getFavorites(userId, 'css');
             if (favorites === null) return res.status(404).json({ error: 'User not found' });
 
-            const propertyIdNum = parseInt(propertyId, 10);
-            if (isNaN(propertyIdNum)) return res.status(400).json({ error: 'Invalid property ID' });
-
-            if (!favorites.includes(propertyIdNum)) {
-                favorites.push(propertyIdNum);
+            if (!favorites.includes(propertyId)) {
+                favorites.push(propertyId);
                 await userService.updateFavorites(userId, favorites, 'css');
             }
 
             res.json({ message: 'Property added to favorites', favorites });
         } catch (err: any) {
+            if (err instanceof z.ZodError) {
+                return res.status(400).json({ error: 'Validation failed', details: err.issues });
+            }
             res.status(500).json({ error: err.message });
         }
     },

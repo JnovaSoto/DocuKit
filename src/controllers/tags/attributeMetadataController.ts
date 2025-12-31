@@ -1,5 +1,7 @@
 import attributeMetadataService from '../../services/tags/attributeMetadataService.js';
 import { Request, Response } from 'express';
+import { z } from 'zod';
+import { attributeMetadataSchema } from '../../schemas/attributeSchema.js';
 
 const attributeMetadataController = {
     /**
@@ -38,16 +40,16 @@ const attributeMetadataController = {
      * @param {Response} res - The response object.
      */
     createMetadata: async (req: Request, res: Response) => {
-        const { attributeName, generalDescription } = req.body;
-
-        if (!attributeName || !generalDescription) {
-            return res.status(400).json({ error: 'Missing required fields: attributeName and generalDescription' });
-        }
-
         try {
+            const validatedData = attributeMetadataSchema.parse(req.body);
+            const { attributeName, generalDescription } = validatedData;
+
             const id = await attributeMetadataService.createMetadata(attributeName, generalDescription);
             res.status(201).json({ id, attributeName, generalDescription });
         } catch (err: any) {
+            if (err instanceof z.ZodError) {
+                return res.status(400).json({ error: 'Validation failed', details: err.issues });
+            }
             if (err.message && err.message.includes('UNIQUE constraint failed')) {
                 return res.status(409).json({ error: 'Attribute metadata already exists' });
             }

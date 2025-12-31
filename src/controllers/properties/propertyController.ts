@@ -1,6 +1,7 @@
 import propertyService from '../../services/properties/propertyService.js';
-import validator from 'validator';
 import { Request, Response } from 'express';
+import { z } from 'zod';
+import { propertySchema, updatePropertySchema } from '../../schemas/propertySchema.js';
 
 const propertyController = {
     /**
@@ -23,19 +24,16 @@ const propertyController = {
      * @param {Response} res - The response object.
      */
     createProperty: async (req: Request, res: Response) => {
-        let { propertyName, usability, content } = req.body;
-
-        // Sanitize input
-        if (propertyName) propertyName = validator.escape(validator.trim(propertyName));
-        if (usability) usability = validator.escape(validator.trim(usability));
-        if (content) content = validator.escape(validator.trim(content));
-
-        if (!propertyName || !usability) return res.status(400).json({ error: 'Missing fields' });
-
         try {
-            const id = await propertyService.createProperty(propertyName, usability, content);
+            const validatedData = propertySchema.parse(req.body);
+            const { propertyName, usability, content } = validatedData;
+
+            const id = await propertyService.createProperty(propertyName, usability, content || '');
             res.status(201).json({ id, propertyName, usability, content });
         } catch (err: any) {
+            if (err instanceof z.ZodError) {
+                return res.status(400).json({ error: 'Validation failed', details: err.issues });
+            }
             if (err.message && err.message.includes('UNIQUE constraint failed')) {
                 return res.status(409).json({ error: 'Property name already exists' });
             }
@@ -101,32 +99,26 @@ const propertyController = {
      */
     updateProperty: async (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
-        let { propertyName, usability, attributes } = req.body;
-
-        // Sanitize input
-        if (propertyName) propertyName = validator.escape(validator.trim(propertyName));
-        if (usability) usability = validator.escape(validator.trim(usability));
-        if (attributes && Array.isArray(attributes)) {
-            attributes = attributes.map(attr => ({
-                attribute: attr.attribute ? validator.escape(validator.trim(attr.attribute)) : '',
-                info: attr.info ? validator.escape(validator.trim(attr.info)) : ''
-            }));
-        }
-
-        if (!propertyName || !usability) {
-            return res.status(400).json({ error: 'Missing required fields: propertyName and usability' });
-        }
 
         try {
-            const success = await propertyService.updateProperty(id, propertyName, usability, attributes);
+            const validatedData = updatePropertySchema.parse(req.body);
+            const { propertyName, usability, attributes } = validatedData;
+
+            const success = await propertyService.updateProperty(id, propertyName, usability, attributes || []);
             if (!success) return res.status(404).json({ error: 'Property not found' });
 
-            if (attributes && attributes.length > 0) {
-                res.json({ message: 'Property and attributes updated successfully', id, propertyName, usability });
-            } else {
-                res.json({ message: 'Property updated successfully (no attributes)', id, propertyName, usability });
-            }
+            res.json({
+                message: attributes && attributes.length > 0
+                    ? 'Property and attributes updated successfully'
+                    : 'Property updated successfully (no attributes)',
+                id,
+                propertyName,
+                usability
+            });
         } catch (err: any) {
+            if (err instanceof z.ZodError) {
+                return res.status(400).json({ error: 'Validation failed', details: err.issues });
+            }
             res.status(500).json({ error: err.message });
         }
     },

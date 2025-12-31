@@ -1,5 +1,7 @@
 import attributeService from '../../services/tags/attributeService.js';
 import { Request, Response } from 'express';
+import { z } from 'zod';
+import { attributeSchema } from '../../schemas/attributeSchema.js';
 
 const attributeController = {
     /**
@@ -22,16 +24,16 @@ const attributeController = {
      * @param {Response} res - The response object.
      */
     createAttributes: async (req: Request, res: Response) => {
-        const { tagId, attributes } = req.body;
-
-        if (!Array.isArray(attributes)) {
-            return res.status(400).json({ error: 'attributes must be an array.' });
-        }
-
         try {
+            const validatedData = attributeSchema.parse(req.body);
+            const { tagId, attributes } = validatedData;
+
             await attributeService.createAttributes(tagId, attributes);
             res.status(201).json({ message: 'Attributes added successfully' });
         } catch (err: any) {
+            if (err instanceof z.ZodError) {
+                return res.status(400).json({ error: 'Validation failed', details: err.issues });
+            }
             res.status(500).json({ error: err.message });
         }
     },
